@@ -177,6 +177,9 @@ class Robot:
             a=int((self.left + tl[0]+int(tw/2))/self.zoom_count)
             b=int((self.top + tl[1]+int(th/2))/self.zoom_count)
             new_target = (a,b)
+            # cv.rectangle(tpl,tl,br,(0, 0, 255),1)  
+            # cv.imshow('t',tpl)  
+            # cv.waitKey(0)  
             return new_target     
         
     def clike_map(self):
@@ -192,14 +195,16 @@ class Robot:
         target = cv.imread("./images/map_x.jpg") 
         new_target = self.matchTemplate(tpl,target)
         self.animateMoveAndClick(self.getCurPos(),new_target) 
+        time.sleep(3)
+        
         number_list = [n for n in number]
         for n in number_list:
             tpl = self.Print_screen() 
             number_images = "./images/"+ numbers_images[n] + ".jpg"
             X_t = cv.imread(number_images) 
             new_X_t = self.matchTemplate(tpl,X_t)
-            self.animateMoveAndClick(self.getCurPos(),new_X_t) 
-            time.sleep(1)
+            self.animateMoveAndClick(self.getCurPos(),new_X_t)
+            
             
         tpl = self.Print_screen() 
         target = cv.imread("./images/ok.jpg")
@@ -208,6 +213,28 @@ class Robot:
         time.sleep(1) 
         
             
+    def clike_y_map(self,number:str):
+        global numbers_images
+        tpl = self.Print_screen() 
+        target = cv.imread("./images/map_y.jpg") 
+        new_target = self.matchTemplate(tpl,target)
+        self.animateMoveAndClick(self.getCurPos(),new_target) 
+        time.sleep(3)
+        
+        number_list = [n for n in number]
+        for n in number_list:
+            tpl = self.Print_screen() 
+            number_images = "./images/"+ numbers_images[n] + ".jpg"
+            X_t = cv.imread(number_images) 
+            new_X_t = self.matchTemplate(tpl,X_t)
+            self.animateMoveAndClick(self.getCurPos(),new_X_t)
+            
+            
+        tpl = self.Print_screen() 
+        target = cv.imread("./images/ok.jpg")
+        new_target = self.matchTemplate(tpl,target)
+        self.animateMoveAndClick(self.getCurPos(),new_target) 
+        time.sleep(1)             
             
 
         
@@ -219,6 +246,8 @@ def main():
     blRobot.clike_map()
     time.sleep(3)
     blRobot.clike_x_map("56")
+    blRobot.clike_x_map("57")
+    
     
     
     
