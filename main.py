@@ -102,16 +102,17 @@ class Robot:
             print("Not found game hwnd")
     """
     x,y = findMultiColorInRegionFuzzy( 0xef6fdc, "24|5|0xffeecb,-7|30|0x2fb7ff", 90, 0, 0, 1919, 1079)
-    """        
+    """
     def findMultiColorInRegionFuzzy(self,color,posandcolor,degree,x1=None,y1=None,x2=None,y2=None,tab=None):
         x = None
         y = None
+        tolerance = 100 - degree
         r,g,b  = Hex_to_RGB(color)
         tpl = self.Print_screen()
         posandcolor_list = list()
         posandcolors_param = posandcolor.split(",")
         state = State.OK
-        pos_x_y_list = self.__findMultiColor(tpl,(r,g,b),10)   
+        pos_x_y_list = self.__findMultiColor(tpl,(r,g,b),tolerance)   
         if pos_x_y_list:
             for p in posandcolors_param:
                 __c = p.split("|")
@@ -126,10 +127,10 @@ class Robot:
                     __py = p["py"]
                     __rgb_hex = p["rgb_hex"]
                     b,g,r = tpl[y+__py,x+__px]
-                    exR = int(__rgb_hex[1:3],16) 
-                    exG = int(__rgb_hex[3:5],16) 
-                    exB = int(__rgb_hex[5:7],16) 
-                    if (pixelMatchesColor((r, g, b),(exR,exG,exB),10)):
+                    exR = int(__rgb_hex[2:4],16) 
+                    exG = int(__rgb_hex[4:6],16) 
+                    exB = int(__rgb_hex[6:8],16) 
+                    if (pixelMatchesColor((r, g, b),(exR,exG,exB),tolerance)):
                         state = State.OK
                     else:
                         state = State.NOTMATCH
@@ -137,7 +138,6 @@ class Robot:
                 if state == State.OK:
                     return x,y
         return (-1,-1)
-            
         
         
         
@@ -405,13 +405,10 @@ def robot_fire(blRobot):
 def main():
     state = None
     new_target = None
-    
     blRobot = Robot(class_name="subWin",title_name="sub",zoom_count=1.5)
     blRobot.Get_GameHwnd()
     start = time.time()
-    #x,y = blRobot.findMultiColorInRegionFuzzy( "#2ce5a5", "19|17|#2ce5a6", 90, 0, 0, 1919, 1079)
-    x,y = blRobot.findMultiColorInRegionFuzzy( "#ee9607", "18|14|#e31314", 90, 0, 0, 1919, 1079)
-    # x,y = blRobot.findMultiColorInRegionFuzzy( 0xef6fdc, "24|5|0xffeecb,-7|30|0x2fb7ff", 90, 0, 0, 1919, 1079)
+    x,y = blRobot.findMultiColorInRegionFuzzy( "0xee9607", "18|14|0xe31314", 90, 0, 0, 1919, 1079)
     print("posx:{0} posy:{1}".format(x,y))
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))

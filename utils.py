@@ -23,9 +23,9 @@ def rgb_to_hex(tup):
  
 # 16进制颜色格式颜色转换为RGB格式
 def Hex_to_RGB(hex):
-    r = int(hex[1:3],16)
-    g = int(hex[3:5],16)
-    b = int(hex[5:7], 16)
+    r = int(hex[2:4],16)
+    g = int(hex[4:6],16)
+    b = int(hex[6:8], 16)
     # rgb = str(r)+','+str(g)+','+str(b)
     # print(rgb)
     return r , g ,b
