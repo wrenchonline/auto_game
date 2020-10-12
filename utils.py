@@ -49,31 +49,3 @@ def pixelMatchesColor(pix,expectedRGBColor,tolerance=0):
         return (abs(r - exR) <= tolerance) and (abs(g - exG) <= tolerance) and (abs(b - exB) <= tolerance)
     else:
         assert False, 'Color mode was expected to be length 3 (RGB) or 4 (RGBA), but pixel is length %s and expectedRGBColor is length %s' % (len(pix), len(expectedRGBColor))
-
-
-
-
-
-
-
-# @jit
-# def __findMultiColor(s_c,expectedRGBColor,tolerance,x1=None,y1=None,x2=None,y2=None):
-#     ret = False
-#     height = 1599
-#     width = 899
-#     for y in range(height):
-#         for x in range(width):
-#             b,g,r = s_c[y,x]
-#             exR, exG, exB = expectedRGBColor[:3]
-#             if (abs(r - exR) <= tolerance) and (abs(g - exG) <= tolerance) and (abs(b - exB) <= tolerance):
-#                 ret = True
-#     return ret
-
-# @jit
-# def imgMin(img):
-#     H,W,C = img.shape
-#     img_min = np.zeros((H,W),np.uint8)
-#     for i in range(H):
-#         for j in range(W):
-#             img_min[i,j] = np.max(img[i,j])
-#     return img_min

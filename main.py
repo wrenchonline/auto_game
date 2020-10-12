@@ -15,6 +15,7 @@ import time
 import ctypes
 from ctypes import *
 from PIL import ImageGrab,Image
+
 from utils import * 
 import re 
 import random
@@ -65,20 +66,18 @@ class Robot:
         self.game_height = 0
         self.zoom_count = zoom_count
         self.rollback_list = list() #回滚机制，在于颜色匹配没找到或者卡屏的情况,根据此列表操作步骤重新回滚。
-
+        
+    @staticmethod
     @jit
-    def __findMultiColor(self,s_c,expectedRGBColor,tolerance,x1=None,y1=None,x2=None,y2=None):
-        ret = False
-        height = 1079
-        width = 1919
+    def __findMultiColor(s_c,expectedRGBColor,tolerance,width = 1919,height = 1079):
+        pos_x_y = []
         for y in range(height):
             for x in range(width):
                 b,g,r = s_c[y,x]
                 exR, exG, exB = expectedRGBColor[:3]
                 if (abs(r - exR) <= tolerance) and (abs(g - exG) <= tolerance) and (abs(b - exB) <= tolerance):
-                    ret = True
-                    return x,y
-        return (-1,-1)
+                    pos_x_y.append((x,y))
+        return pos_x_y
     
     def Get_GameHwnd(self):
         self.hwnd= win32gui.FindWindow('Qt5QWindowIcon','夜神模拟器')
@@ -101,7 +100,9 @@ class Robot:
             
         else:
             print("Not found game hwnd")
-            
+    """
+    x,y = findMultiColorInRegionFuzzy( 0xef6fdc, "24|5|0xffeecb,-7|30|0x2fb7ff", 90, 0, 0, 1919, 1079)
+    """        
     def findMultiColorInRegionFuzzy(self,color,posandcolor,degree,x1=None,y1=None,x2=None,y2=None,tab=None):
         x = None
         y = None
@@ -110,33 +111,32 @@ class Robot:
         posandcolor_list = list()
         posandcolors_param = posandcolor.split(",")
         state = State.OK
-        
-        for p in posandcolors_param:
-            __c = p.split("|")
-            px = __c[0]
-            py = __c[1]
-            rgb_hex = __c[2]
-            _tmp = {"px":int(px),"py":int(py),"rgb_hex":rgb_hex}
-            posandcolor_list.append(_tmp)
-            
-        for posandcolor in posandcolor_list:
-            x,y = self.__findMultiColor(tpl,(r,g,b),10)   
-            __px = posandcolor["px"]
-            __py = posandcolor["py"]
-            __rgb_hex = posandcolor["rgb_hex"]
-            if x!=-1:
-                b,g,r = tpl[y+py,x+px]
-                exR = int(__rgb_hex[2:3],16) 
-                exG = int(__rgb_hex[4:5],16) 
-                exB = int(__rgb_hex[6:7],16) 
-                if (pixelMatchesColor((r, g, b),(exR,exG,exB),10)):
-                    continue
-                else:
-                    state = State.NOTMATCH
-                    break
-        if state == State.NOTMATCH:
-            return (-1,-1)
-        return x,y
+        pos_x_y_list = self.__findMultiColor(tpl,(r,g,b),10)   
+        if pos_x_y_list:
+            for p in posandcolors_param:
+                __c = p.split("|")
+                px = __c[0]
+                py = __c[1]
+                rgb_hex = __c[2]
+                _tmp = {"px":int(px),"py":int(py),"rgb_hex":rgb_hex}
+                posandcolor_list.append(_tmp)
+            for x,y in pos_x_y_list:
+                for p in posandcolor_list:
+                    __px = p["px"]
+                    __py = p["py"]
+                    __rgb_hex = p["rgb_hex"]
+                    b,g,r = tpl[y+__py,x+__px]
+                    exR = int(__rgb_hex[1:3],16) 
+                    exG = int(__rgb_hex[3:5],16) 
+                    exB = int(__rgb_hex[5:7],16) 
+                    if (pixelMatchesColor((r, g, b),(exR,exG,exB),10)):
+                        state = State.OK
+                    else:
+                        state = State.NOTMATCH
+                        break
+                if state == State.OK:
+                    return x,y
+        return (-1,-1)
             
         
         
@@ -394,22 +394,25 @@ class Robot:
         else:
             print("点击自动战斗 posx:{0} posy:{1}".format(x,y))
             self.click(x,y)
-            
+def robot_fire(blRobot):
+    #tql = blRobot.Print_screen()
+    while True:
+        bfire = blRobot.check_fire()
+    print("check_fire:{0}".format(bfire))
+    if bfire:
+        blRobot.fire()             
         
 def main():
     state = None
     new_target = None
+    
     blRobot = Robot(class_name="subWin",title_name="sub",zoom_count=1.5)
     blRobot.Get_GameHwnd()
     start = time.time()
-    tql = blRobot.Print_screen()
-    while True:
-        bfire = blRobot.check_fire()
-        print("check_fire:{0}".format(bfire))
-        if bfire:
-            blRobot.fire()
-        
-    
+    #x,y = blRobot.findMultiColorInRegionFuzzy( "#2ce5a5", "19|17|#2ce5a6", 90, 0, 0, 1919, 1079)
+    x,y = blRobot.findMultiColorInRegionFuzzy( "#ee9607", "18|14|#e31314", 90, 0, 0, 1919, 1079)
+    # x,y = blRobot.findMultiColorInRegionFuzzy( 0xef6fdc, "24|5|0xffeecb,-7|30|0x2fb7ff", 90, 0, 0, 1919, 1079)
+    print("posx:{0} posy:{1}".format(x,y))
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     
