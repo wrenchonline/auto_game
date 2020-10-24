@@ -23,7 +23,7 @@ xstr = blRobot.Ocrtext(tab,"303137,2F3036",173, 40, 285, 76)
 x,y = blRobot.findMultiColorInRegionFuzzy( 0xef6fdc, "24|5|0xffeecb,-7|30|0x2fb7ff", 90, 0, 0, 1919, 1079)
 ```
 
-### 向虚拟机模拟鼠标点击:
+### 模拟虚拟机鼠标点击:
 
 ```python
 blRobot.click(125,33)
