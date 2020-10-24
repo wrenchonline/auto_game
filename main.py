@@ -2,7 +2,8 @@
 
 
 #模板匹配
-import cv2 as cv
+from re import split
+import cv2
 import numpy as np
 import numpy 
 import win32gui 
@@ -35,6 +36,17 @@ pls = (( 1059,  268, 0x4e3011),(1059,  269, 0x4f310e),)
 numbers_images = {'0':"num_0",'1':"num_1",'2':"num_2",'3':"num_3",'4':"num_4",'5':"num_5",'6':"num_6",
            '7':"num_7",'8':"num_8",'9':"num_9"}
 
+def binstr_to_nparray(hex_2_str,abs_x,abs_y):
+    binary = np.zeros((abs_y,abs_x), dtype=np.uint8)
+    i = 0
+    for j in range(abs_x):
+        for k in range(abs_y):
+            if hex_2_str[i] == "0":
+                binary[k][j]=0
+            else:
+                binary[k][j]=255
+            i+=1
+    return binary
 
 def get_window_rect(hwnd):
     try:
@@ -78,6 +90,23 @@ class Robot:
                 if (abs(r - exR) <= tolerance) and (abs(g - exG) <= tolerance) and (abs(b - exB) <= tolerance):
                     pos_x_y.append((x,y))
         return pos_x_y
+    
+
+
+
+    #像素转换成二值化点阵，返回二进制字符串
+    @staticmethod
+    @jit
+    def rgb_to_hexstr_2(image_arrays,binary,scx_rgb,__mean_s_r,__mean_s_g,__mean_s_b,__mean_e_r,__mean_e_g,__mean_e_b,x1,y1,x2,y2):
+        for idx ,x in enumerate (range(x1,x2)):
+            for idy, y in enumerate (range(y1,y2)):
+                b,g,r = image_arrays[y,x]
+                if  (r<__mean_s_r*2) and (g<(__mean_s_g*2)) and (b<(__mean_s_b*2)):
+                    binary[idy,idx] = 255
+                else:
+                    binary[idy,idx] = 0
+        return binary
+        
     
     def Get_GameHwnd(self):
         self.hwnd= win32gui.FindWindow('Qt5QWindowIcon','夜神模拟器')
@@ -174,7 +203,7 @@ class Robot:
             signedIntsArray, 'raw', 'BGRX', 0, 1)
         # im_PIL.save("C:\\Users\\Wrench\\Desktop\\tmp\\im_opencv_" + salt + ".png")
         # im = Image.open("C:\\Users\\Wrench\\Desktop\\tmp\\im_opencv_" + salt + ".png")
-        return cv.cvtColor(np.array(im_PIL),cv.COLOR_RGB2BGR)
+        return cv2.cvtColor(np.array(im_PIL),cv2.COLOR_RGB2BGR)
     
     def doClick(self,cx,cy):
         ctr = pynput.mouse.Controller()
@@ -239,27 +268,27 @@ class Robot:
         self.clickLeft()
 
     def matchTemplate(self,tpl,target,tolerance=0.2):
-        methods = [cv.TM_SQDIFF_NORMED]   #3种模板匹配方法 cv.TM_CCORR_NORMED, cv.TM_CCOEFF_NORMED
+        methods = [cv2.TM_SQDIFF_NORMED]   #3种模板匹配方法 cv2.TM_CCORR_NORMED, cv2.TM_CCOEFF_NORMED
         th, tw = target.shape[:2]
         
         for md in methods:
-            #result = cv.matchTemplate(tpl,target, md)
+            #result = cv2.matchTemplate(tpl,target, md)
             try:
-                result =cv.matchTemplate(tpl,target, md)
+                result =cv2.matchTemplate(tpl,target, md)
                 ok = True
-            except cv.error as e: 
+            except cv2.error as e: 
                 ok = False
                 print("匹配错误")
                 return (-1,-1)
             
-            min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
             if min_val > tolerance:
                 print("not match")
                 return (-1,-1)
             else:
                 pass
                 
-            if md == cv.TM_SQDIFF_NORMED:
+            if md == cv2.TM_SQDIFF_NORMED:
                 tl = min_loc
             else:
                 tl = max_loc
@@ -267,14 +296,14 @@ class Robot:
             a=int((tl[0]+int(tw/2)))
             b=int((tl[1]+int(th/2)))
             #new_target = (a,b)
-            # cv.rectangle(tpl,tl,br,(0, 0, 255),1)  
-            # cv.imshow('t',tpl)  
-            # cv.waitKey(0)  
+            # cv2.rectangle(tpl,tl,br,(0, 0, 255),1)  
+            # cv2.imshow('t',tpl)  
+            # cv2.waitKey(0)  
             return a,b     
         
     def clike_map(self):
         tpl = self.Print_screen() 
-        target = cv.imread("./images/map.jpg")  
+        target = cv2.imread("./images/map.jpg")  
         new_target = self.matchTemplate(tpl,target)    
         self.click(new_target) 
         
@@ -282,7 +311,7 @@ class Robot:
     def clike_x_map(self,number:str):
         global numbers_images
         tpl = self.Print_screen() 
-        target = cv.imread("./images/map_x.jpg") 
+        target = cv2.imread("./images/map_x.jpg") 
         x,y = self.matchTemplate(tpl,target)
         self.click(x,y)
         time.sleep(1)
@@ -291,13 +320,13 @@ class Robot:
         for n in number_list:
             tpl = self.Print_screen() 
             number_images = "./images/"+ numbers_images[n] + ".jpg"
-            X_t = cv.imread(number_images) 
+            X_t = cv2.imread(number_images) 
             x,y = self.matchTemplate(tpl,X_t)
             self.click(x,y)
             
             
         tpl = self.Print_screen() 
-        target = cv.imread("./images/ok.jpg")
+        target = cv2.imread("./images/ok.jpg")
         x,y = self.matchTemplate(tpl,target)
         self.click(x,y)
         time.sleep(1) 
@@ -306,7 +335,7 @@ class Robot:
     def clike_y_map(self,number:str):
         global numbers_images
         tpl = self.Print_screen() 
-        target = cv.imread("./images/map_y.jpg") 
+        target = cv2.imread("./images/map_y.jpg") 
         x,y = self.matchTemplate(tpl,target)
         self.click(x,y)
         time.sleep(1)
@@ -314,18 +343,18 @@ class Robot:
         for n in number_list:
             tpl = self.Print_screen() 
             number_images = "./images/"+ numbers_images[n] + ".jpg"
-            X_t = cv.imread(number_images) 
+            X_t = cv2.imread(number_images) 
             new_X_t = self.matchTemplate(tpl,X_t)
             self.animateMoveAndClick(self.getCurPos(),new_X_t)
         tpl = self.Print_screen() 
-        target = cv.imread("./images/ok.jpg")
+        target = cv2.imread("./images/ok.jpg")
         x,y = self.matchTemplate(tpl,target)
         self.click(x,y)
         time.sleep(1)    
         
     def clike_expr_tool(self):
         tpl = self.Print_screen() 
-        target = cv.imread("./images/expr_tool.jpg")
+        target = cv2.imread("./images/expr_tool.jpg")
         x,y = self.matchTemplate(tpl,target)
         self.click(x,y)
         
@@ -360,7 +389,7 @@ class Robot:
     
     def check_fire(self):
         tpl = self.Print_screen()
-        target = cv.imread("./images/check_fire.jpg")
+        target = cv2.imread("./images/check_fire.jpg")
         x,y = self.matchTemplate(tpl,target)
         if x == -1:
             return False
@@ -387,35 +416,76 @@ class Robot:
     def fire(self):
         #check autofire
         tpl = self.Print_screen()
-        target = cv.imread("./images/auto.jpg")
+        target = cv2.imread("./images/auto.jpg")
         x,y = self.matchTemplate(tpl,target)
         if x == -1:
             print("正在自动战斗中")
         else:
             print("点击自动战斗 posx:{0} posy:{1}".format(x,y))
             self.click(x,y)
+            
+
+
+                    
+    def __Ocrtext(self,tab,scx_rgb,x1,y1,x2,y2):
+        tpl = self.Print_screen()
+        se_rgb_tupe = scx_rgb.split(",")
+        
+        __mean_s_r = int(se_rgb_tupe[0][0:2],16)
+        __mean_s_g = int(se_rgb_tupe[0][2:4],16)
+        __mean_s_b = int(se_rgb_tupe[0][4:6],16)
+        
+        
+        __mean_e_r = int(se_rgb_tupe[1][0:2],16)
+        __mean_e_g = int(se_rgb_tupe[1][2:4],16)
+        __mean_e_b = int(se_rgb_tupe[1][4:6],16)
+        
+        binary = np.zeros((abs(y2-y1),abs(x2-x1)), dtype=np.uint8)
+        
+        bin_2_ = self.rgb_to_hexstr_2(tpl,binary,scx_rgb,__mean_s_r,__mean_s_g,__mean_s_b,__mean_e_r,__mean_e_g,__mean_e_b,x1,y1,x2,y2)
+                
+        return bin_2_
+    
+    def Ocrtext(self,tab,scx_rgb,x1,y1,x2,y2):
+        
+        #ret = re.findall(r"@(.*?)\$",tab,re.I|re.M)
+        data_tuple = tab.split("@")[1]
+        data_tuple = data_tuple.split("$")
+        if len(data_tuple):
+            p_hexstr_2 = data_tuple[0]
+            hex_str_16 = tab.split("@")[0]
+            hexstr_2 = hexstr_16_to_hexstr_2(hex_str_16)
+            hexstr_2 += p_hexstr_2
+            word = data_tuple[1]
+            x =  int(data_tuple[4])
+            y = int(data_tuple[3])
+            image_array = binstr_to_nparray(hexstr_2,x,y)
+            image_array1 = self.__Ocrtext(hexstr_2,scx_rgb,x1, y1, x2, y2)
+            new_X_t = self.matchTemplate(image_array1,image_array,0.1)
+            print(new_X_t)
+            if new_X_t !=(-1,-1):
+                print("当前识字为:{0}".format(word))
+
+
 def robot_fire(blRobot):
     #tql = blRobot.Print_screen()
     while True:
         bfire = blRobot.check_fire()
     print("check_fire:{0}".format(bfire))
     if bfire:
-        blRobot.fire()             
+        blRobot.fire()    
+                 
         
 def main():
-    state = None
-    new_target = None
     blRobot = Robot(class_name="subWin",title_name="sub",zoom_count=1.5)
     blRobot.Get_GameHwnd()
     start = time.time()
-    x,y = blRobot.findMultiColorInRegionFuzzy( "0xee9607", "18|14|0xe31314", 90, 0, 0, 1919, 1079)
-    print("posx:{0} posy:{1}".format(x,y))
+    blRobot.Ocrtext("0003c0000000f00000003c0000000f00000003c0000000f80007fffffff9ffffffff7fffffffcffffffff0003c0078000f003e003fc00f000ff003c003fc00e001ef801000f3fc00003cff80001e3ff000078fbe0003c3c7c001f0f0f800f83c0f003c0f03e01f03c03c0f80f00f83c03c01f0e00f003c1003c00f0000f001e0003c00380006000400000000000000000000000000000000000ff30003c3fce000f0ff38003c3e0e000f0e038f03c300ffc0f0c03ff838300ffe0e0c03fbc78301fcf1c0c3fc1cf079ff03bc3eff80ff1fbfe03fcfc0380fe1f00e03f83c03807c0f00e01f01c0380fc0300e07f00c0387fc0300f3ff00c03ff1e0300ffc3c0c03f80f0300f803c0c03800f0380e001e0ff38007c3fce000f0ff38003c1f8400070000000000000000000100010000c000c000300070001f003c03ffffff01ffffffc07fffffe00ffffff00007803c7c00c00fbf001003ff000e03ff807fffff001fffff800f9f80e003e3c03800f0e00f383c3c03ce0f0f9fff03c3fffbc0f0fffcf03e3fff7c3ffe003e1fffc00f07ffffffc1ffffffe00f007ff803c01fff0ff01ffff1fc3ffffe3f3ff80fcfc7f803f0f0000ffc1c0003fe0000007c@00$长安城$1493$34$105","303137,2F3036",173, 40, 285, 76)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     
-          
-    
 if __name__ == "__main__":
     main()
+    
     
     
