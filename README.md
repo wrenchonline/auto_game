@@ -13,12 +13,12 @@ blRobot.Get_GameHwnd()
 ```
 接下来可以使用部分功能了，还有很多其他方式的实现就不一一说明
 
-## 识字函数:
+### 识字函数:
 ```python
 xstr = blRobot.Ocrtext(tab,"303137,2F3036",173, 40, 285, 76)
 ```
 
-## 找色函数:
+### 找色函数:
 ```python
 x,y = blRobot.findMultiColorInRegionFuzzy( 0xef6fdc, "24|5|0xffeecb,-7|30|0x2fb7ff", 90, 0, 0, 1919, 1079)
 ```
