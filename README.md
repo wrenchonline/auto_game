@@ -26,5 +26,5 @@ x,y = blRobot.findMultiColorInRegionFuzzy( 0xef6fdc, "24|5|0xffeecb,-7|30|0x2fb7
 ### 模拟鼠标点击:
 
 ```python
-blRobot.click(self,x:int=None,y:int=None):
+blRobot.click(125,33)
 ```
