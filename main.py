@@ -484,11 +484,10 @@ def main():
     start = time.time()
     #xstr = blRobot.Ocrtext("0003c0000000f00000003c0000000f00000003c0000000f80007fffffff9ffffffff7fffffffcffffffff0003c0078000f003e003fc00f000ff003c003fc00e001ef801000f3fc00003cff80001e3ff000078fbe0003c3c7c001f0f0f800f83c0f003c0f03e01f03c03c0f80f00f83c03c01f0e00f003c1003c00f0000f001e0003c00380006000400000000000000000000000000000000000ff30003c3fce000f0ff38003c3e0e000f0e038f03c300ffc0f0c03ff838300ffe0e0c03fbc78301fcf1c0c3fc1cf079ff03bc3eff80ff1fbfe03fcfc0380fe1f00e03f83c03807c0f00e01f01c0380fc0300e07f00c0387fc0300f3ff00c03ff1e0300ffc3c0c03f80f0300f803c0c03800f0380e001e0ff38007c3fce000f0ff38003c1f8400070000000000000000000100010000c000c000300070001f003c03ffffff01ffffffc07fffffe00ffffff00007803c7c00c00fbf001003ff000e03ff807fffff001fffff800f9f80e003e3c03800f0e00f383c3c03ce0f0f9fff03c3fffbc0f0fffcf03e3fff7c3ffe003e1fffc00f07ffffffc1ffffffe00f007ff803c01fff0ff01ffff1fc3ffffe3f3ff80fcfc7f803f0f0000ffc1c0003fe0000007c@00$长安城$1493$34$105","303137,2F3036",173, 40, 285, 76)
     while True:
-        x,y = blRobot.findMultiColorInRegionFuzzy("0x202020","6|4|0x202020", 90, 0, 966, 1075, 1435)
+        x,y = blRobot.findMultiColorInRegionFuzzy("0x202020","2|2|0x202020", 90, 52, 1131, 1024 ,1406)
         if x!=-1:
             print("posx:{0},posy:{1}".format(x,y))
-            blRobot.click(x,y)
-            time.sleep(0.5)
+            blRobot.click(x+1,y+1)
         else:
             print("not found")
         
