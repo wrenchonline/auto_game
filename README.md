@@ -5,13 +5,16 @@
 
 两个函数的关键使用与触动精灵差别不大，如果你有什么更好的想法或者问题，请联系我的邮箱ljl260435988@gmail.com
 
-
+## 运行环境:
+    windows10(150%放大倍数)
+    夜神模拟器6.6.1.2(分辨率1920x1080)
 # 使用说明
 
 首先初始化对象并获取窗口句柄
 
 ```python
-blRobot = Robot(class_name="subWin",title_name="sub",zoom_count=1.5)
+blRobot=Robot(class_name="subWin",title_name="sub",zoom_count=1.5)
+
 blRobot.Get_GameHwnd()
 ```
 接下来可以使用部分功能了，还有很多其他方式的实现就不一一说明
@@ -29,7 +32,6 @@ x,y = blRobot.findMultiColorInRegionFuzzy( "0xef6fdc", "24|5|0xffeecb,-7|30|0x2f
 ### 模拟虚拟机鼠标点击:
 
 ```python
-
 blRobot.click(125,33)
 ```
 

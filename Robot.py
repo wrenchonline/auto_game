@@ -14,7 +14,7 @@ import time
 import ctypes
 from ctypes import *
 from PIL import ImageGrab,Image
-
+import pytesseract as pytes
 from utils import * 
 import re 
 import random
@@ -244,7 +244,10 @@ class Robot:
         windll.user32.SetCursorPos(x2, y2)
         
     
-
+    def show(self,tpl):
+        cv2.namedWindow("Image")
+        cv2.imshow("Image", tpl)
+        cv2.waitKey (0)
 
     def animateMoveAndClick(self,curPos, targetPos, durTime=0.5, fps=30, waitTime=0.5):
         x1 = curPos[0]
@@ -331,7 +334,29 @@ class Robot:
         self.click(x,y)
         time.sleep(1) 
         
-            
+        
+    def tsOcrText(self,text_features,x1,y1,x2,y2,config=('--oem 1 -l chi_sim --psm 7')):
+        econfig = ('--oem 1 -l eng --psm 6 digits')
+        cconfig = ('--oem 1 -l chi_sim --psm 6')
+        tpl = self.Print_screen()[y1:y2,x1:x2]
+        tpl = cv2.cvtColor(tpl,cv2.COLOR_RGB2GRAY)
+        #tpl = cv2.imread('C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\tu_screen.png',0)[163:877,249:1611]#灰度处理
+       
+        th2 = cv2.adaptiveThreshold(tpl,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2) #经过测试高斯识别效果好
+        #self.show(th2)
+        #cv2.imwrite("C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\tu_screen.png",th2)
+        data = pytes.image_to_data(th2,config=config,output_type=pytes.Output.DICT)
+        print(data)
+        xz = list()
+        for idx,i in enumerate(data["text"]):
+            for text in text_features:
+                if text in i:
+                    x =  data["left"][idx] + x1
+                    y =  data["top"][idx] + y1
+                    xz.append((i,x,y))            
+        #print("识别结果:{0}".format(xz))
+        return xz
+    
     def clike_y_map(self,number:str):
         global numbers_images
         tpl = self.Print_screen() 
