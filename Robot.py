@@ -171,19 +171,25 @@ class Robot:
     def findMultiColorInRegionFuzzyByTable(self,t_Set,degree=90,x1=None,y1=None,x2=None,y2=None):
         tolerance = 100 - degree
         #目前用不上x1,y1,x2,y2
-        tpl = self.Print_screen()[y1:y2,x1:x2]
-        state = State.OK
+        #tpl = self.Print_screen()[y1:y2,x1:x2]
+        tpl = self.Print_screen()
+        state = State.NOTMATCH
         for x,y,rgb_16_hex in t_Set:
             #str_rgb = str(rgb_16_hex)
             exR = int(rgb_16_hex[2:4],16)
             exG = int(rgb_16_hex[4:6],16)
             exB = int(rgb_16_hex[6:8],16)
+            
+            if y > y1:
+               continue
+            if x > x1:
+               continue
             b,g,r = tpl[y,x]
             if (pixelMatchesColor((r, g, b),(exR,exG,exB),tolerance)):
                 state = State.OK
-                break
             else:
                 state = State.NOTMATCH
+                break
         if state == State.OK:
             return State.OK,t_Set[0]
         else:

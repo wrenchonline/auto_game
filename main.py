@@ -17,7 +17,7 @@ from utils import *
             print("not found")
 '''
 tu_text_features = ['图','T']
-shop_emty = (0,0,"0x3f4a53"),
+shop_emty = (727,651,"0x3f4a53"),(663,644,"0x3f4a53"),(623,645,"0x3f4a53"),(720,616,"0x3f4a53"),(718,683,"0x3f4a53"),(797,679,"0x3f4a53"),(855,675,"0x3f4a53"),(852,637,"0x3f4a53")
 
 
 class action(rb.Robot):
