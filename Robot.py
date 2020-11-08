@@ -165,11 +165,33 @@ class Robot:
                         state = State.NOTMATCH
                         break
                 if state == State.OK:
-                    return x,y
-        return (-1,-1)
+                    return State.OK,(x,y)
+        return State.NOTMATCH,(-1,-1)
+    
+    def findMultiColorInRegionFuzzyByTable(self,t_Set,degree=90,x1=None,y1=None,x2=None,y2=None):
+        tolerance = 100 - degree
+        #目前用不上x1,y1,x2,y2
+        tpl = self.Print_screen()[y1:y2,x1:x2]
+        state = State.OK
+        for x,y,rgb_16_hex in t_Set:
+            #str_rgb = str(rgb_16_hex)
+            exR = int(rgb_16_hex[2:4],16)
+            exG = int(rgb_16_hex[4:6],16)
+            exB = int(rgb_16_hex[6:8],16)
+            b,g,r = tpl[y,x]
+            if (pixelMatchesColor((r, g, b),(exR,exG,exB),tolerance)):
+                state = State.OK
+                break
+            else:
+                state = State.NOTMATCH
+        if state == State.OK:
+            return State.OK,t_Set[0]
+        else:
+            return State.NOTMATCH,t_Set[0]
         
-        
-        
+    def FC_Clicke(t_Set,x1,y1,x2,y2,R,bool,sim):
+        pass
+
             
     def Print_screen(self):
         
@@ -335,10 +357,10 @@ class Robot:
         time.sleep(1) 
         
         
-    def tsOcrText(self,text_features,x1,y1,x2,y2,config=('--oem 1 -l chi_sim --psm 7')):
+    def tsOcrText(self,tpl,text_features,x1,y1,x2,y2,config=('--oem 1 -l chi_sim --psm 7')):
         econfig = ('--oem 1 -l eng --psm 6 digits')
         cconfig = ('--oem 1 -l chi_sim --psm 6')
-        tpl = self.Print_screen()[y1:y2,x1:x2]
+        tpl = tpl[y1:y2,x1:x2]
         tpl = cv2.cvtColor(tpl,cv2.COLOR_RGB2GRAY)
         #tpl = cv2.imread('C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\tu_screen.png',0)[163:877,249:1611]#灰度处理
        
@@ -346,7 +368,7 @@ class Robot:
         #self.show(th2)
         #cv2.imwrite("C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\tu_screen.png",th2)
         data = pytes.image_to_data(th2,config=config,output_type=pytes.Output.DICT)
-        print(data)
+        #print(data)
         xz = list()
         for idx,i in enumerate(data["text"]):
             for text in text_features:

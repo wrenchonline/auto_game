@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from os import error
 import Robot as rb
-import Robot
 import time
 import pytesseract as pytes
-import cv2
+from utils import *
+ 
 
 '''
     
@@ -17,6 +17,7 @@ import cv2
             print("not found")
 '''
 tu_text_features = ['图','T']
+shop_emty = (0,0,"0x3f4a53"),
 
 
 class action(rb.Robot):
@@ -28,23 +29,38 @@ class action(rb.Robot):
         self.error = list()
         
     def find_map_by_shop(self):
-        #tpl = self.Print_screen()
+        tpl = self.Print_screen()
         start_pos = [285,196,532,244] #第一个摊位
         conversion = [285,196,532,244]
         tu_shop = list()
+        ret = list()
         jump = False
-        for i in range(0,4):
+        for i in range(0,5):
+            if jump:
+                break
             conversion[1] = start_pos[1] + i*144
             conversion[3] = start_pos[3] + i*144
-            for j in range(0,3):
+            for j in range(0,4):
                 conversion[0] = start_pos[0] + j*341
                 conversion[2] = start_pos[2] + j*341
-                print("conversion{0}".format(conversion))
-                ret = self.tsOcrText(tu_text_features,conversion[0],conversion[1],conversion[2],conversion[3],config=('--oem 1 -l chi_sim --psm 7')) 
-                if len(ret):
-                    print("OK")
-                
-            
+                #print("conversion{0}".format(conversion))
+                e_shop_emty = self.findMultiColorInRegionFuzzyByTable(shop_emty,90,conversion[0],conversion[1],conversion[2],conversion[3])                
+                if e_shop_emty[0] == State.OK:
+                    print("发现空摊位")
+                    jump = True
+                    break
+                tu_shop = self.tsOcrText(tpl,tu_text_features,conversion[0],conversion[1],conversion[2],conversion[3],config=('--oem 1 -l chi_sim --psm 7')) 
+                if len(tu_shop):
+                    #print("ret:{0}".format(tu_shop))
+                    ret.append(tu_shop[0])
+        return ret
+    
+    def buy_map(self):
+        pass
+        
+        
+    
+    
     def run_with_callback(self,fun,fun_param,pre_fun1,fun1_param,post_fun2,fun2_param):
         try:
             print("start pre_fun1")
@@ -60,12 +76,12 @@ class action(rb.Robot):
         
 
 def main():
-
-
     #blRobot.Get_GameHwnd()
     start = time.time()
     Robot = action()
-    Robot.find_map_by_shop()
+    shop_pos_list = Robot.find_map_by_shop()
+    if len(shop_pos_list):
+        print("发现摊位坐标:{0}".format(shop_pos_list))
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     

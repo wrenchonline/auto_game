@@ -51,6 +51,7 @@ def pixelMatchesColor(pix,expectedRGBColor,tolerance=0):
         assert False, 'Color mode was expected to be length 3 (RGB) or 4 (RGBA), but pixel is length %s and expectedRGBColor is length %s' % (len(pix), len(expectedRGBColor))
 
 
+
 def encode(s):
     return ' '.join([bin(ord(c)).replace('0b', '') for c in s])
  
