@@ -21,7 +21,7 @@
     opencv-python==4.4.0.46
 ## conda安装tesserocr:
     conda install -c conda-forge tesserocr
-识字函数比较喜欢基于采用tesseract-ocr来进行识字需要安装conda以及其环境tesserocr,（采用conda安装的tesserocr自带tesseract-ocr环境）并把chi_sim.traineddata模型包放入tessdata文件夹中（此文件夹是程序tesseract识别的路径） 
+识字函数比较喜欢基于采用tesseract-ocr来进行识字需要安装conda以及其环境tesserocr,（采用conda安装的tesserocr自带tesseract-ocr环境）并把chi_sim.traineddata模型包放入tessdata文件夹中（此文件夹是程序tesseract字库的路径） 
  C:\\Users\(用户名)\\.conda\\envs\\(你的环境名)\\Library\\bin\\tessdata
  
 ### 复制成功后以管理员cmd启动验证方式
@@ -58,7 +58,7 @@ tpl = self.Print_screen()
 xstr = blRobot.Ocrtext(tpl,173, 40, 285, 76)
 ```
 
-### 识字函数2(tesseract版,提供字体坐标):
+### 识字函数2(tesseract版,查找关键字并返回坐标):
 ```python
 tu_text_features = ['图','T']
 tpl = self.Print_screen() 
