@@ -4,7 +4,6 @@ import Robot as rb
 import time
 import pytesseract as pytes
 from utils import *
- 
 
 '''
     
@@ -16,6 +15,7 @@ from utils import *
         else:
             print("not found")
 '''
+
 tu_text_features = ['图','T']
 shop_emty = (727,651,"0x3f4a53"),(663,644,"0x3f4a53"),(623,645,"0x3f4a53"),(720,616,"0x3f4a53"),(718,683,"0x3f4a53"),(797,679,"0x3f4a53"),(855,675,"0x3f4a53"),(852,637,"0x3f4a53")
 tu_money = 27999
@@ -51,7 +51,7 @@ class action(rb.Robot):
                     print("发现空摊位")
                     jump = True
                     break
-                tu_shop = self.tsOcrText(tpl,tu_text_features,conversion[0],conversion[1],conversion[2],conversion[3],config=('--oem 1 -l chi_sim --psm 7')) 
+                tu_shop = self.tsOcrText(tpl,tu_text_features,conversion[0],conversion[1],conversion[2],conversion[3]) 
                 if len(tu_shop):
                     print("ret:{0}".format(tu_shop))
                     xret.append(tu_shop[0])
@@ -79,12 +79,12 @@ class action(rb.Robot):
                 self.click(1700,82)
                 time.sleep(2)
           if i >= max_page:
-              continue
+                continue
           else:
                 print("点击下一页")   
                 self.click(1549,937) 
-                time.sleep(2)  
-    
+                time.sleep(2)
+                
     
     def run_with_callback(self,fun,fun_param,pre_fun1,fun1_param,post_fun2,fun2_param):
         try:
@@ -95,9 +95,6 @@ class action(rb.Robot):
             self.cx = ret
         except Exception as identifier:
             self.error.append(identifier)
-            
-
-        
         
 
 def main():
@@ -105,12 +102,8 @@ def main():
     start = time.time()
     Robot = action()
     Robot.buy_map()
-        
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     
 if __name__ == "__main__":
     main()
-    
-    
-    

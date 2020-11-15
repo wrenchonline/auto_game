@@ -21,6 +21,12 @@ import random
 import string
 #jit是进行numpy运算
 from numba import jit
+import tesserocr
+from tesserocr import PyTessBaseAPI, PSM, OEM,RIL,iterate_level
+from PIL import Image
+
+
+
 
 aperture = (180,180,150)
 
@@ -363,27 +369,43 @@ class Robot:
         time.sleep(1) 
         
         
-    def tsOcrText(self,tpl,text_features,x1,y1,x2,y2,config=('--oem 1 -l chi_sim --psm 7')):
-        econfig = ('--oem 1 -l eng --psm 6 digits')
-        cconfig = ('--oem 1 -l chi_sim --psm 6')
+    def tsOcrText(self,tpl,text_features,x1,y1,x2,y2,lang='chi_sim',psm=7, oem=1):
+        _data_list = list()
         tpl = tpl[y1:y2,x1:x2]
         tpl = cv2.cvtColor(tpl,cv2.COLOR_RGB2GRAY)
-        #tpl = cv2.imread('C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\tu_screen.png',0)[163:877,249:1611]#灰度处理
-       
-        th2 = cv2.adaptiveThreshold(tpl,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2) #经过测试高斯识别效果好
-        #self.show(th2)
-        #cv2.imwrite("C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\tu_screen.png",th2)
-        data = pytes.image_to_data(th2,config=config,output_type=pytes.Output.DICT)
-        #print(data)
+        img = cv2.adaptiveThreshold(tpl,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2) #经过测试高斯识别效果好
+        #numpy转换成PIL格式
+        img = Image.fromarray(img)
+        #img.show()
+        with PyTessBaseAPI(lang='chi_sim',psm=7, oem=1) as api:
+                level = RIL.TEXTLINE #以标题为主
+                #img = Image.open("C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\12121.png")
+                api.SetImage(img)
+                api.Recognize()
+                ri = api.GetIterator()
+                for r in iterate_level(ri, level):
+                    try:
+                        
+                        symbol = r.GetUTF8Text(level)  # r == ri
+                        conf = r.Confidence(level) #相似度
+                        if symbol:
+                            pass
+                            #print('symbol {0}  conf: {1}'.format(symbol, conf))
+                        boxes = r.BoundingBox(level) #xy等等坐标
+                        dict_= {"text":symbol,"left":boxes[0],"top":boxes[1],"weight":boxes[2],"weight":boxes[3]}
+                        _data_list.append(dict_)
+                    except Exception as e:
+                        print("没有字符")
         xz = list()
-        for idx,i in enumerate(data["text"]):
-            for text in text_features:
-                if text in i:
-                    x =  data["left"][idx] + x1
-                    y =  data["top"][idx] + y1
-                    xz.append((i,x,y))            
+        for idx, data in enumerate(_data_list):
+            for text in  text_features:
+                if text in data["text"]:
+                    x =  data["left"] + x1
+                    y =  data["top"] + y1
+                    xz.append((data["text"],x,y))            
         #print("识别结果:{0}".format(xz))
         return xz
+    
     def OcrText(self,tpl,x1,y1,x2,y2,config=('--oem 1 -l chi_sim --psm 7')):
         econfig = ('--oem 1 -l eng --psm 6 digits')
         cconfig = ('--oem 1 -l chi_sim --psm 6')
@@ -519,7 +541,7 @@ class Robot:
                 
         return bin_2_
     
-    def Ocrtext(self,tab,scx_rgb,x1,y1,x2,y2):
+    def x_Ocrtext(self,tab,scx_rgb,x1,y1,x2,y2):
         
         #ret = re.findall(r"@(.*?)\$",tab,re.I|re.M)
         data_tuple = tab.split("@")[1]
