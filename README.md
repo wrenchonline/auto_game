@@ -54,14 +54,14 @@ xstr = blRobot.x_Ocrtext(tab,"303137,2F3036",173, 40, 285, 76)
 tesseract版本识字效果识别图片只有一行字的效果比较理想
 ### 识字函数1(tesseract版):
 ```python
-tpl = self.Print_screen() 
+tpl = blRobot.Print_screen() 
 xstr = blRobot.Ocrtext(tpl,173, 40, 285, 76)
 ```
 
 ### 识字函数2(tesseract版,查找关键字并返回坐标):
 ```python
 tu_text_features = ['图','T']
-tpl = self.Print_screen() 
+tpl = blRobot.Print_screen() 
 xstr = blRobot.tsOcrtext(tpl,tu_text_features,173, 40, 285, 76，lang='chi_sim',psm=7, oem=1)
 ```
 

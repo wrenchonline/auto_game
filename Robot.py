@@ -157,6 +157,7 @@ class Robot:
                 _tmp = {"px":int(px),"py":int(py),"rgb_hex":rgb_hex}
                 posandcolor_list.append(_tmp)
             for x,y in pos_x_y_list:
+                
                 for p in posandcolor_list:
                     __px = p["px"]
                     __py = p["py"]
@@ -342,31 +343,7 @@ class Robot:
         tpl = self.Print_screen() 
         target = cv2.imread("./images/map.jpg")  
         new_target = self.matchTemplate(tpl,target)    
-        self.click(new_target) 
-        
-    
-    def clike_x_map(self,number:str):
-        global numbers_images
-        tpl = self.Print_screen() 
-        target = cv2.imread("./images/map_x.jpg") 
-        x,y = self.matchTemplate(tpl,target)
-        self.click(x,y)
-        time.sleep(1)
-        
-        number_list = [n for n in number]
-        for n in number_list:
-            tpl = self.Print_screen() 
-            number_images = "./images/"+ numbers_images[n] + ".jpg"
-            X_t = cv2.imread(number_images) 
-            x,y = self.matchTemplate(tpl,X_t)
-            self.click(x,y)
-            
-            
-        tpl = self.Print_screen() 
-        target = cv2.imread("./images/ok.jpg")
-        x,y = self.matchTemplate(tpl,target)
-        self.click(x,y)
-        time.sleep(1) 
+        self.click(new_target)  
         
         
     def tsOcrText(self,tpl,text_features,x1,y1,x2,y2,lang='chi_sim',psm=7, oem=1):
@@ -385,7 +362,6 @@ class Robot:
                 ri = api.GetIterator()
                 for r in iterate_level(ri, level):
                     try:
-                        
                         symbol = r.GetUTF8Text(level)  # r == ri
                         conf = r.Confidence(level) #相似度
                         if symbol:
@@ -427,25 +403,7 @@ class Robot:
         #print("识别结果:{0}".format(xz))
         return xz
     
-    def clike_y_map(self,number:str):
-        global numbers_images
-        tpl = self.Print_screen() 
-        target = cv2.imread("./images/map_y.jpg") 
-        x,y = self.matchTemplate(tpl,target)
-        self.click(x,y)
-        time.sleep(1)
-        number_list = [n for n in number]
-        for n in number_list:
-            tpl = self.Print_screen() 
-            number_images = "./images/"+ numbers_images[n] + ".jpg"
-            X_t = cv2.imread(number_images) 
-            new_X_t = self.matchTemplate(tpl,X_t)
-            self.animateMoveAndClick(self.getCurPos(),new_X_t)
-        tpl = self.Print_screen() 
-        target = cv2.imread("./images/ok.jpg")
-        x,y = self.matchTemplate(tpl,target)
-        self.click(x,y)
-        time.sleep(1)    
+ 
         
     def clike_expr_tool(self):
         tpl = self.Print_screen() 

@@ -21,7 +21,7 @@ shop_emty = (727,651,"0x3f4a53"),(663,644,"0x3f4a53"),(623,645,"0x3f4a53"),(720,
 tu_money = 27999
 
 class action(rb.Robot):
-    
+
     def __init__(self,class_name="subWin",title_name="sub",zoom_count=1.5):
         rb.Robot.__init__(self,class_name=class_name,title_name=title_name,zoom_count=zoom_count)
         self.Get_GameHwnd()
