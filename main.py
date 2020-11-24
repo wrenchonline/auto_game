@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from os import error
+
+from numba.cuda.decorators import convert_types
 import Robot as rb
 import time
 import pytesseract as pytes
@@ -95,13 +97,59 @@ class action(rb.Robot):
             self.cx = ret
         except Exception as identifier:
             self.error.append(identifier)
+    '''
+    在各主城增加了仓库管理员NPC，坐标分别为：长安城（346，244）、长安城（224，141）、建邺城（54，32)、傲来国（143，101）、长寿村（111，62）、朱紫国（126，90）
+    '''
+    #打开道具栏遍历宝图
+    def check_map(self):
+        n,nn,nnn,nnnn=None,None,None,None
+        #打开道具栏
+        self.click(1695,1015)
+        time.sleep(1)
+        tpl = self.Print_screen()
+        target = cv2.imread("./images/tu.png")
+        start_pos = (902,269,1013,378)
+        convert_pos = [902,269,1013,378]
+        tu_list = list()
+        for i in range(0,5):
+            time.sleep(0.5)
+            print(i)
+            convert_pos[0] = start_pos[0] + i*139
+            convert_pos[2] = start_pos[2] + i*139
+            tpl = self.Print_screen()
+            self.click(convert_pos[0]+5,convert_pos[1]+5)
+            # width = abs(convert_pos[2]-convert_pos[0])
+            # height = abs(convert_pos[3]-convert_pos[1])
+            #self.show(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]])
+            x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target)
+            if x != -1:
+                print("找到宝图")
+            for j in range(0,4):
+                time.sleep(0.5)
+                print(j)
+                convert_pos[1] = start_pos[1] + j*134
+                convert_pos[3] = start_pos[3] + j*134
+                self.click(convert_pos[0]+5,convert_pos[1]+5)
+                tpl = self.Print_screen()
+                # _width = abs(convert_pos[2]-convert_pos[0])
+                # _height = abs(convert_pos[3]-convert_pos[1])
+                #self.show(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]])
+                x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target)
+                if x != -1:
+                    print("找到宝图")
+
+            
+        
+            
+            
+    
         
 
 def main():
     #blRobot.Get_GameHwnd()
     start = time.time()
     Robot = action()
-    Robot.buy_map()
+    Robot.check_map()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     
