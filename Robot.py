@@ -101,16 +101,24 @@ class Robot:
     #像素转换成二值化点阵，返回二进制字符串
     @staticmethod
     @jit
-    def rgb_to_hexstr_2(image_arrays,binary,scx_rgb,__mean_s_r,__mean_s_g,__mean_s_b,__mean_e_r,__mean_e_g,__mean_e_b,x1,y1,x2,y2):
+    def rgb_to_hexstr_2(image_arrays,binary,MeanRgb,x1,y1,x2,y2):
         for idx ,x in enumerate (range(x1,x2)):
             for idy, y in enumerate (range(y1,y2)):
                 b,g,r = image_arrays[y,x]
-                if  (r<__mean_s_r*2) and (g<(__mean_s_g*2)) and (b<(__mean_s_b*2)):
-                    binary[idy,idx] = 255
-                else:
-                    binary[idy,idx] = 0
+                for m in MeanRgb:
+                    __mean_s_r = m[0]
+                    __mean_s_g = m[1]
+                    __mean_s_b = m[2]
+                    __mean_m_r = m[3]
+                    __mean_m_g = m[4]
+                    __mean_m_b = m[5]
+                    if  r <= (__mean_s_r+__mean_m_r) and  r >= (__mean_s_r-__mean_m_r)  and  g <= (__mean_s_g+__mean_m_g) and g >= (__mean_s_g-__mean_m_g)   and  b <= (__mean_s_b+__mean_m_b) and b >= (__mean_s_b-__mean_m_b):
+                        binary[idy,idx] = 255
+                        break
+                    else:
+                        binary[idy,idx] = 0
         return binary
-        
+            
     
     def Get_GameHwnd(self):
         self.hwnd= win32gui.FindWindow('Qt5QWindowIcon','夜神模拟器')
@@ -321,7 +329,7 @@ class Robot:
             
             min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
             if min_val > tolerance:
-                print("not match")
+                #print("not match")
                 return (-1,-1)
             else:
                 pass
@@ -338,6 +346,7 @@ class Robot:
             # cv2.imshow('t',tpl)  
             # cv2.waitKey(0)  
             return a,b     
+        return (-1,-1)
         
     def clike_map(self):
         tpl = self.Print_screen() 
@@ -382,26 +391,35 @@ class Robot:
         #print("识别结果:{0}".format(xz))
         return xz
     
-    def OcrText(self,tpl,x1,y1,x2,y2,config=('--oem 1 -l chi_sim --psm 7')):
-        econfig = ('--oem 1 -l eng --psm 6 digits')
-        cconfig = ('--oem 1 -l chi_sim --psm 6')
-        tpl = tpl[y1:y2,x1:x2]
-        tpl = cv2.cvtColor(tpl,cv2.COLOR_RGB2GRAY)
-        #tpl = cv2.imread('C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\tu_screen.png',0)[163:877,249:1611]#灰度处理
-       
-        th2 = cv2.adaptiveThreshold(tpl,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2) #经过测试高斯识别效果好
-        #self.show(th2)
-        #cv2.imwrite("C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\tu_screen.png",th2)
-        data = pytes.image_to_data(th2,config=config,output_type=pytes.Output.DICT)
-        #print(data)
-        xz = list()
-        for idx,i in enumerate(data["text"]):
-            if i != "":
-                x =  data["left"][idx] + x1
-                y =  data["top"][idx] + y1
-                xz.append((i,x,y))            
-        #print("识别结果:{0}".format(xz))
-        return xz
+    # def OcrText(self,tpl,x1,y1,x2,y2,config=('--oem 1 -l chi_sim --psm 7')):
+    #     econfig = ('--oem 1 -l eng --psm 6 digits')
+    #     cconfig = ('--oem 1 -l chi_sim --psm 6')
+    #     _data_list = list()
+    #     tpl = tpl[y1:y2,x1:x2]
+    #     tpl = cv2.cvtColor(tpl,cv2.COLOR_RGB2GRAY)
+    #     img = cv2.adaptiveThreshold(tpl,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2) #经过测试高斯识别效果好
+    #     #numpy转换成PIL格式
+    #     img = Image.fromarray(img)
+    #     #img.show()
+    #     with PyTessBaseAPI(lang='chi_sim',psm=7, oem=1) as api:
+    #             level = RIL.TEXTLINE #以标题为主
+    #             #img = Image.open("C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\12121.png")
+    #             api.SetImage(img)
+    #             api.Recognize()
+    #             ri = api.GetIterator()
+    #             for r in iterate_level(ri, level):
+    #                 try:
+    #                     symbol = r.GetUTF8Text(level)  # r == ri
+    #                     conf = r.Confidence(level) #相似度
+    #                     if symbol:
+    #                         pass
+    #                         #print('symbol {0}  conf: {1}'.format(symbol, conf))
+    #                     boxes = r.BoundingBox(level) #xy等等坐标
+    #                     dict_= {"text":symbol,"left":boxes[0],"top":boxes[1],"weight":boxes[2],"weight":boxes[3]}
+    #                     _data_list.append(dict_)
+    #                 except Exception as e:
+    #                     print("没有字符")
+    #     return _data_list
     
  
         
@@ -452,8 +470,8 @@ class Robot:
     
     def click(self,x:int=None,y:int=None):
             """Click at pixel xy."""
-            x = int(x/1.5)#1.5是缩放比例
-            y = int(y/1.5)
+            x = int(x/self.zoom_count)#1.5是缩放比例
+            y = int(y/self.zoom_count)
             lParam = win32api.MAKELONG(x, y)
             win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,wcon.MK_LBUTTON, lParam)
             win32gui.SendMessage(self.ScreenBoardhwnd,  wcon.WM_SETCURSOR, self.ScreenBoardhwnd, win32api.MAKELONG(wcon.HTCLIENT, wcon.WM_LBUTTONDOWN))
@@ -480,45 +498,86 @@ class Robot:
 
 
                     
-    def __Ocrtext(self,tab,scx_rgb,x1,y1,x2,y2):
+    def __Ocr(self,scx_rgb,x1,y1,x2,y2):
         tpl = self.Print_screen()
-        se_rgb_tupe = scx_rgb.split(",")
-        
-        __mean_s_r = int(se_rgb_tupe[0][0:2],16)
-        __mean_s_g = int(se_rgb_tupe[0][2:4],16)
-        __mean_s_b = int(se_rgb_tupe[0][4:6],16)
-        
-        
-        __mean_e_r = int(se_rgb_tupe[1][0:2],16)
-        __mean_e_g = int(se_rgb_tupe[1][2:4],16)
-        __mean_e_b = int(se_rgb_tupe[1][4:6],16)
-        
+        MeanRgb = list()
+        if "#" in  scx_rgb:
+            __scx_rgb =  scx_rgb.split("#")
+            for i in __scx_rgb:
+                se_rgb_tupe =  i.split(",")
+                __mean_s_r = int(se_rgb_tupe[0][0:2],16)
+                __mean_s_g = int(se_rgb_tupe[0][2:4],16)
+                __mean_s_b = int(se_rgb_tupe[0][4:6],16)
+                __mean_m_r = int(se_rgb_tupe[1][0:2],16)
+                __mean_m_g = int(se_rgb_tupe[1][2:4],16)
+                __mean_m_b = int(se_rgb_tupe[1][4:6],16)
+                MeanRgb.append([__mean_s_r,__mean_s_g,__mean_s_b,__mean_m_r,__mean_m_g,__mean_m_b])
+        else:
+            se_rgb_tupe = scx_rgb.split(",")
+            __mean_s_r = int(se_rgb_tupe[0][0:2],16)
+            __mean_s_g = int(se_rgb_tupe[0][2:4],16)
+            __mean_s_b = int(se_rgb_tupe[0][4:6],16)
+            __mean_m_r = int(se_rgb_tupe[1][0:2],16)
+            __mean_m_g = int(se_rgb_tupe[1][2:4],16)
+            __mean_m_b = int(se_rgb_tupe[1][4:6],16)            
+            MeanRgb.append([__mean_s_r,__mean_s_g,__mean_s_b,__mean_m_r,__mean_m_g,__mean_m_b])
+            
         binary = np.zeros((abs(y2-y1),abs(x2-x1)), dtype=np.uint8)
-        
-        bin_2_ = self.rgb_to_hexstr_2(tpl,binary,scx_rgb,__mean_s_r,__mean_s_g,__mean_s_b,__mean_e_r,__mean_e_g,__mean_e_b,x1,y1,x2,y2)
-                
+        bin_2_ = self.rgb_to_hexstr_2(tpl,binary,np.array(MeanRgb),x1,y1,x2,y2)
         return bin_2_
     
-    def x_Ocrtext(self,tab,scx_rgb,x1,y1,x2,y2):
-        
+    def Ocrtext(self,scx_rgb,x1,y1,x2,y2):
+        image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
+        #self.show(image_array1)
+        _data_list = list()
+        with PyTessBaseAPI(lang='chi_sim',psm=7, oem=1) as api:
+                level = RIL.TEXTLINE #以标题为主
+                #img = Image.open("C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\12121.png")
+                img = Image.fromarray(image_array1)
+                #img.show()
+                api.SetImage(img)
+                api.Recognize()
+                ri = api.GetIterator()
+                for r in iterate_level(ri, level):
+                    try:
+                        symbol = r.GetUTF8Text(level)  # r == ri
+                        r.Confidence(level) #相似度
+                        if symbol:
+                            pass
+                            #print('symbol {0}  conf: {1}'.format(symbol, conf))
+                        boxes = r.BoundingBox(level) #xy等等坐标
+                        dict_= {"text":symbol,"left":boxes[0],"top":boxes[1],"weight":boxes[2],"weight":boxes[3]}
+                        _data_list.append(dict_)
+                    except Exception as e:
+                        print("没有字符")
+        return _data_list
+    
+    def x_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2):
         #ret = re.findall(r"@(.*?)\$",tab,re.I|re.M)
-        data_tuple = tab.split("@")[1]
-        data_tuple = data_tuple.split("$")
-        if len(data_tuple):
-            p_hexstr_2 = data_tuple[0]
-            hex_str_16 = tab.split("@")[0]
-            hexstr_2 = hexstr_16_to_hexstr_2(hex_str_16)
-            hexstr_2 += p_hexstr_2
-            word = data_tuple[1]
-            x =  int(data_tuple[4])
-            y = int(data_tuple[3])
-            image_array = binstr_to_nparray(hexstr_2,x,y)
-            image_array1 = self.__Ocrtext(hexstr_2,scx_rgb,x1, y1, x2, y2)
-            new_X_t = self.matchTemplate(image_array1,image_array,0.1)
-            print(new_X_t)
-            if new_X_t !=(-1,-1):
-                print("当前识字为:{0}".format(word))
-                return word
+        for tab in tabs:
+            if "@" in tab:
+                data_tuple = tab.split("@")[1]
+                hex_str_16 = tab.split("@")[0]
+            else:
+                data_tuple = tab
+                hex_str_16 = tab.split("$")[0]
+            data_tuple = data_tuple.split("$")
+            if len(data_tuple):
+                    p_hexstr_2 = data_tuple[0]
+                    hexstr_2 = hexstr_16_to_hexstr_2(hex_str_16)
+                    hexstr_2 += p_hexstr_2
+                    word = data_tuple[1]
+                    x =  int(data_tuple[4])
+                    y = int(data_tuple[3])
+                    image_array = binstr_to_nparray(hexstr_2,x,y)
+                    #self.show(image_array)
+                    image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
+                    #self.show(image_array1)
+                    new_X_t = self.matchTemplate(image_array1,image_array,0.4)
+                    #print(new_X_t)
+                    if new_X_t !=(-1,-1):
+                        print("当前识字为:{0}".format(word))
+                        return word
 
 def robot_fire(blRobot):
     #tql = blRobot.Print_screen()
