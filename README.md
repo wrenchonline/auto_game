@@ -55,7 +55,7 @@ tesseract版本识字效果识别图片只有一行字的效果比较理想
 ### 识字函数1(tesseract版):
 ```python
 tpl = blRobot.Print_screen() 
-xstr = self.Ocrtext("06BE0B,06420B#00E804,011805#03DC07,032006#08DD0B,072009",
+xstr = blRobot.Ocrtext("06BE0B,06420B#00E804,011805#03DC07,032006#08DD0B,072009",
                     591,511,732,547,ril=RIL.TEXTLINE,
                     lang='eng',oem=1,
                     attribute=["tessedit_char_whitelist", 
