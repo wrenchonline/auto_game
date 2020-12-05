@@ -6,6 +6,7 @@ import Robot as rb
 import time
 import pytesseract as pytes
 from utils import *
+from tesserocr import RIL
 
 '''
     
@@ -37,6 +38,8 @@ ditu = (
 tu_text_features = ['图','T']
 shop_emty = (727,651,"0x3f4a53"),(663,644,"0x3f4a53"),(623,645,"0x3f4a53"),(720,616,"0x3f4a53"),(718,683,"0x3f4a53"),(797,679,"0x3f4a53"),(855,675,"0x3f4a53"),(852,637,"0x3f4a53")
 tu_money = 27999
+
+feixingfu_jiemian = (1309,382, '0x0c5a9b'),(839,272, '0x1064a7'),(689,370, '0x1367a9'),(814,536, '0x166baa'),(927,669, '0x1160a0'),(1138,597, '0x196ca6'),(1432,674, '0x0c4e95'),(755,423, '0xe879aa'),(1165,550, '0xf0ce08'),(770,292, '0xebf200')
 
 class action(rb.Robot):
 
@@ -116,7 +119,7 @@ class action(rb.Robot):
     '''
     在各主城增加了仓库管理员NPC，坐标分别为：长安城（346，244）、长安城（224，141）、建邺城（54，32)、傲来国（143，101）、长寿村（111，62）、朱紫国（126，90）
     '''
-    #打开道具栏遍历宝图
+    #check_map 打开道具栏遍历宝图
     def check_map(self):
         n,nn,nnn,nnnn=None,None,None,None
         #打开道具栏
@@ -140,14 +143,50 @@ class action(rb.Robot):
                 time.sleep(0.5)
                 tpl = self.Print_screen()
                 #self.show(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]])
-                x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target,0.16)
+                x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target,0.15)
                 if x != -1:
                     print("找到宝图")
                     data = self.x_Ocrtext(ditu,"00E804,011805#03DC07,032006#08DD0B,072009",444,506,589,560)
                     print(data)
-                    
-
+                    if data:
+                        if len(data)>3:
+                            pos = self.Ocrtext("06BE0B,06420B#00E804,011805#03DC07,032006#08DD0B,072009",
+                                               591,511,732,547,ril=RIL.TEXTLINE,
+                                               lang='eng',oem=1,
+                                               attribute=["tessedit_char_whitelist", 
+                                                "0123456789,"])
+                            print(pos)
+                            _x = int(pos['text'].split(',')[0])
+                            _y = int(pos['text'].split(',')[1])
+                            tu_list.append((data,_x,_y))
+                        else:
+                            pos = self.Ocrtext("06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                               ,555,513,693,548,ril=RIL.TEXTLINE,
+                                               lang='eng',oem=1,
+                                               attribute=["tessedit_char_whitelist",
+                                                "0123456789,"])
+                            print(pos)
+                            _x = int(pos['text'].split(',')[0])
+                            _y = int(pos['text'].split(',')[1])
+                            tu_list.append((data,_x,_y))
+        return  tu_list  
+    
+    
+    def go_to_CSC(self):
+        status,ag= self.findMultiColorInRegionFuzzyByTable(feixingfu_jiemian)
+        if status.OK:
+            pass
+            
+    #前往长寿郊外
+    def go_to_CSJW(self):
+        pass
         
+    def go_to_map_by_f():
+        pass
+        
+    def Tothecountryside(self):
+        self.click(1695,1015)
+        time.sleep(1)
             
             
     
@@ -156,8 +195,8 @@ class action(rb.Robot):
 def main():
     #blRobot.Get_GameHwnd()
     start = time.time()
-    Robot = action(zoom_count=1.5)
-    Robot.check_map()
+    Robot = action(zoom_count=1.0)
+    map_list = Robot.check_map()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     

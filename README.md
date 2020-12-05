@@ -47,7 +47,7 @@ blRobot.Get_GameHwnd()
 ```
 接下来可以使用部分功能了，还有很多其他方式的实现就不一一说明
 
-### 识字函数(可以和触动精灵字库使用,目前用得比较少，等待完善):
+### 识字函数(可以和触动精灵字库使用):
 ```python
 xstr = blRobot.x_Ocrtext(ditu,"00E804,011805#03DC07,032006#08DD0B,072009",444,506,589,560)
 ```
@@ -55,7 +55,11 @@ tesseract版本识字效果识别图片只有一行字的效果比较理想
 ### 识字函数1(tesseract版):
 ```python
 tpl = blRobot.Print_screen() 
-xstr = blRobot.Ocrtext("00E804,011805#03DC07,032006#08DD0B,072009",173, 40, 285, 76)
+xstr = self.Ocrtext("06BE0B,06420B#00E804,011805#03DC07,032006#08DD0B,072009",
+                    591,511,732,547,ril=RIL.TEXTLINE,
+                    lang='eng',oem=1,
+                    attribute=["tessedit_char_whitelist", 
+                    "0123456789,")
 ```
 
 ### 识字函数2(tesseract版,查找关键字并返回坐标):

@@ -370,7 +370,7 @@ class Robot:
                 api.Recognize()
                 ri = api.GetIterator()
                 for r in iterate_level(ri, level):
-                    try:
+                    try: 
                         symbol = r.GetUTF8Text(level)  # r == ri
                         conf = r.Confidence(level) #相似度
                         if symbol:
@@ -526,14 +526,16 @@ class Robot:
         bin_2_ = self.rgb_to_hexstr_2(tpl,binary,np.array(MeanRgb),x1,y1,x2,y2)
         return bin_2_
     
-    def Ocrtext(self,scx_rgb,x1,y1,x2,y2):
+    def Ocrtext(self,scx_rgb,x1,y1,x2,y2,ril=RIL.TEXTLINE,lang='chi_sim',psm=7, oem=1,attribute=None,):
         image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
         #self.show(image_array1)
         _data_list = list()
-        with PyTessBaseAPI(lang='chi_sim',psm=7, oem=1) as api:
-                level = RIL.TEXTLINE #以标题为主
+        with PyTessBaseAPI(lang=lang,psm=psm, oem=oem) as api:
+                level = ril#以标题为主
                 #img = Image.open("C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\12121.png")
                 img = Image.fromarray(image_array1)
+                if attribute:
+                    api.SetVariable(attribute[0], attribute[1])
                 #img.show()
                 api.SetImage(img)
                 api.Recognize()
