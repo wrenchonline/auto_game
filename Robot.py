@@ -185,20 +185,26 @@ class Robot:
     
     def findMultiColorInRegionFuzzyByTable(self,t_Set,degree=90,x1=None,y1=None,x2=None,y2=None):
         tolerance = 100 - degree
+        tpl = None
         #目前用不上x1,y1,x2,y2
         #tpl = self.Print_screen()[y1:y2,x1:x2]
-        tpl = self.Print_screen()
+        if x1 and y1 and x2 and y2:
+            tpl = self.Print_screen()[y1:y2,x1:x2]
+        else:
+            tpl = self.Print_screen()
         state = State.NOTMATCH
         for x,y,rgb_16_hex in t_Set:
             #str_rgb = str(rgb_16_hex)
+            if isinstance(rgb_16_hex,int):
+                rgb_16_hex = '0x{:06X}'.format(rgb_16_hex)
             exR = int(rgb_16_hex[2:4],16)
             exG = int(rgb_16_hex[4:6],16)
             exB = int(rgb_16_hex[6:8],16)
-            
-            if y > y1:
-               continue
-            if x > x1:
-               continue
+            if y1 and x1:
+                if y > y1:
+                    continue
+                if x > x1:
+                    continue
             b,g,r = tpl[y,x]
             if (pixelMatchesColor((r, g, b),(exR,exG,exB),tolerance)):
                 state = State.OK
@@ -458,14 +464,14 @@ class Robot:
             ret = State.ROLLBACK
         return ret
     
-    def check_fire(self):
-        tpl = self.Print_screen()
-        target = cv2.imread("./images/check_fire.jpg")
-        x,y = self.matchTemplate(tpl,target)
-        if x == -1:
-            return False
-        else:
-            return True
+    # def check_fire(self):
+    #     tpl = self.Print_screen()
+    #     target = cv2.imread("./images/check_fire.jpg")
+    #     x,y = self.matchTemplate(tpl,target)
+    #     if x == -1:
+    #         return False
+    #     else:
+    #         return True
         
     
     def click(self,x:int=None,y:int=None):

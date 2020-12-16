@@ -1,4 +1,4 @@
-# auto_game
+# pyAutomated
 项目设计目的是在windows系统上模拟键鼠点击安卓虚拟机(我使用夜神模拟器6.6.1.2)实现自动化.  
 
 此代码重新实现了触动精灵核心功能,分别是找色函数findMultiColorInRegionFuzzy与识字函数Ocrtext,可以和官网上的找色工具与识字工具配合开发  
