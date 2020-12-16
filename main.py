@@ -257,18 +257,20 @@ class action(rb.Robot):
     
     def go_to_CSC(self):
         status,ag= self.findMultiColorInRegionFuzzyByTable(feixingfu_jiemian)
-        if status.OK:
+        if status==status.OK:
             self.click(762,309)
             time.sleep(0.7)
         while True:
             status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
-            time.sleep(1)
-            if status.OK:
+            time.sleep(0.5)
+            if status==status.NOTMATCH:
                 print("前往长寿村")
                 status,ag= self.findMultiColorInRegionFuzzyByTable(fanhui)
-                if status.OK:
+                if status==status.OK:
                     self.click(ag[0],ag[1])
-                time.sleep(1)
+                time.sleep(0.5)
+            elif status==status.OK:
+                print("抵达长寿村")
                 break
         return True
     #TAPP 计算坐标 
@@ -293,8 +295,8 @@ class action(rb.Robot):
         y1 =  table_name["范围参数"][2]
         x2 =  table_name["范围参数"][3]
         y2 =  table_name["范围参数"][4]
-        status,ag= self.findMultiColorInRegionFuzzyByTable(table_name["坐标"],x1,y1,x2,y2)
-        if status.OK:
+        status,ag= self.findMultiColorInRegionFuzzyByTable(table_name["坐标"],ddegree,x1,y1,x2,y2)
+        if status==status.OK:
             return status.OK
         else:
             return status.NOTMATCH
@@ -307,11 +309,11 @@ class action(rb.Robot):
     def tap_(self,D,X,Y):
         while True:
             status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
-            if status.OK:
+            if status==status.OK:
                 self.click(start_map[0],start_map[1])
                 time.sleep(1)
                 status,ag= self.findMultiColorInRegionFuzzyByTable(ditujiemian)
-                if status.OK:
+                if status==status.OK:
                     self.click(self.TAPP(D,X,Y))
                     time.sleep(1)
                 self.click(Table_梦幻[D]["返回"])
@@ -345,7 +347,8 @@ def main():
     #blRobot.Get_GameHwnd()
     start = time.time()
     Robot = action(zoom_count=1.5)
-    Robot.rgb_array(map_feature["长寿村"])
+    ok = Robot.rgb_array(map_feature["长寿村"])
+    print(ok)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     

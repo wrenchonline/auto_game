@@ -188,10 +188,10 @@ class Robot:
         tpl = None
         #目前用不上x1,y1,x2,y2
         #tpl = self.Print_screen()[y1:y2,x1:x2]
-        if x1 and y1 and x2 and y2:
-            tpl = self.Print_screen()[y1:y2,x1:x2]
-        else:
-            tpl = self.Print_screen()
+        # if x1 and y1 and x2 and y2:
+        #     tpl = self.Print_screen()[y1:y2,x1:x2]
+        # else:
+        tpl = self.Print_screen()
         state = State.NOTMATCH
         for x,y,rgb_16_hex in t_Set:
             #str_rgb = str(rgb_16_hex)
@@ -201,9 +201,9 @@ class Robot:
             exG = int(rgb_16_hex[4:6],16)
             exB = int(rgb_16_hex[6:8],16)
             if y1 and x1:
-                if y > y1:
+                if y > y2:
                     continue
-                if x > x1:
+                if x > x2:
                     continue
             b,g,r = tpl[y,x]
             if (pixelMatchesColor((r, g, b),(exR,exG,exB),tolerance)):
