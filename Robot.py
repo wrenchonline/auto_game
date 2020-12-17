@@ -205,6 +205,7 @@ class Robot:
                     continue
                 if x > x2:
                     continue
+
             b,g,r = tpl[y,x]
             if (pixelMatchesColor((r, g, b),(exR,exG,exB),tolerance)):
                 state = State.OK
