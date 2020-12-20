@@ -42,7 +42,7 @@ tu_money = 27999
 feixingfu_jiemian = (1309,382, '0x0c5a9b'),(839,272, '0x1064a7'),(689,370, '0x1367a9'),(814,536, '0x166baa'),(927,669, '0x1160a0'),(1138,597, '0x196ca6'),(1432,674, '0x0c4e95'),(755,423, '0xe879aa'),(1165,550, '0xf0ce08'),(770,292, '0xebf200')
 zhujiemian = (667,1015,'0xefc250'),(782,1024,'0xd89825'),(907,1022,'0xea8f4f'),(1022,1017,'0xf8cf48'),(1124,1020,'0xb75715')
 fanhui = (1600,80, '0x183850'),(1586,67, '0x204057'),(1585,97, '0x18324a'),(1617,65, '0x183a4f'),(1616,95, '0x18324c'),(1620,82, '0x305b80'),(1603,63, '0x497fa3'),(1586,81, '0x305c80'),(1600,95, '0x32638c'),(1601,83,'0x183850')
-ditujiemian = (253, 74, '0x20a9c0'),(219, 75,'0x37cddf'),(266, 61, '0xab5694'),(264, 90, '0xa5558d'),(250, 105,'0xa55293'),(216, 103, '0xb05498'),(275, 83, '0xe0a03d'),(206, 82,'0xe0a748'),(238, 46, '0xf8e078'),(236, 82, '0x000000')
+ditujiemian = (253, 74, '0x20a9c0'),(219, 75,'0x37cddf'),(266, 61, '0xab5694'),(264, 90, '0xa5558d')
 start_map = (143,79)
 
 
@@ -73,18 +73,18 @@ Table_梦幻 = {
 	"朱紫国" : { "坐标计算" :(382,175,1537,901,192,120), "返回":(1565,72)},
 	"江南野外" : { "坐标计算":(601,221,1556,938,160,120), "返回":(1582,118)},
 	"长寿郊外" : { "坐标计算":(677,227,1480,930,192,168), "返回" :(1505,124)},
-	"长寿村" : { "坐标计算" :(727,78,1430,1000,160,210), "返回":(1454,51)},
+	"长寿村" : { "坐标计算" :(797,210,1362,950,160,210), "返回":(1400,101)},
 	"麒麟山" : { "坐标计算" :(597,227,1561,930,191,143), "返回":(1586,127)},
 }
 
-
+#(727,78,1430,1000,160,210)
 
 map_feature = {
 	"装备收购商" : { "坐标":((800,501,0xe2d132),(812,496,0xdccc32),(801,491,0xdfce32),(800,497,0xbfb830),(800,501,0xe2d132),(798,503,0xd1c02e),(812,506,0xe3d132),(804,513,0xdcca31),(797,515,0x242a0e),(790,514,0xd4c731)), "范围参数":(90,514,216,1162,712)},
 	"长寿村": {"坐标":((1158,901,0x000cf8),(1206,900,0x000cf8),(1246,901,0x0611f8 ),(1290,901,0x0612f8)),"范围参数":(90,1175,926,1226,974)},
 	"朱紫国":{"坐标":((511,224,0xeef6f0),(521,223,0x4a68f0),(521,227,0x2e50f0),(519,232,0x0028f0),(513,232,0x0028f0),(506,233,0x0f35f0),(503,229,0xa5b7f0),(511,224,0xeef6f0),(512,230,0x0028f0),(514,223,0x0028f0)), "范围参数": (90,485,204,528,252)},
 	"傲来国":{"坐标":((532,379,0x0f1ef8),(544,379,0x0010f8),(544,390,0x1322f8),(534,390,0xd8ddf8),(544,391,0x0e1df8),(546,378,0x1b2af8),(544,387,0x0e1df8),(537,390,0xd8ddf8),(542,390,0x0010f8),(545,390,0x7e88f8)),"范围参数": (90,501,352,563,417)},
-	"长安城":{"坐标":((994,714,0xbab4ab),(994,719,0xbab4ab),(996,723,0x664b44),(1006,714,0x7c675f),(1010,714,0x684e46),(1005,721,0x442018),(1004,724,0x7d6860),(999,728,0xdfe3db)),"范围参数":(90,946,676,1099,779)},
+	"长安城A":{"坐标":((994,714,0xbab4ab),(994,719,0xbab4ab),(996,723,0x664b44),(1006,714,0x7c675f),(1010,714,0x684e46),(1005,721,0x442018),(1004,724,0x7d6860),(999,728,0xdfe3db)),"范围参数":(90,946,676,1099,779)},
 	"选择我要做的事情":{"坐标":((1600,640,0xd2d9dd),(1602,636,0x597081),(1612,632,0x385468),(1614,634,0x798c9a),(1601,654,0x698392),(1589,654,0xbbc6cd),(1615,669,0x305068),(1635,653,0xbdc8ce),(1644,649,0x305468),(1653,638,0x385468)),"范围参数":(90,1358,565,1870,719)},
 	"颜如玉": { "坐标":((699,296,0xd7cb40),(699,302,0xd8c732),(699,309,0xcdbe31),(706,309,0xe6d537),(710,309,0xdfcf37),(717,309,0xe2d032),(717,300,0xe2d032),(711,294,0xcebf2f)),"范围参数":(90,355,5,1334,728)},
 	"长安城": { "坐标":((1478,610,0x6b524a),(1486,613,0xb3aca4),(1494,614,0x371103),(1480,622,0x6d554d),(1476,623,0x6e564e),(1491,620,0xd7d9d1),(1498,616,0x8e7e73),(1492,614,0xb4ada5),(1494,615,0x381304)),"范围参数":(90,1327,506,1576,688)},
@@ -257,10 +257,13 @@ class action(rb.Robot):
     
     
     def go_to_CSC(self):
-        status,ag= self.findMultiColorInRegionFuzzyByTable(feixingfu_jiemian)
-        if status==status.OK:
-            self.click(762,309)
-            time.sleep(0.7)
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(feixingfu_jiemian)
+            if status==status.OK:
+                time.sleep(0.7)
+                self.click(762,309)
+                time.sleep(0.7)
+                break
         while True:
             status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
             time.sleep(0.5)
@@ -276,18 +279,18 @@ class action(rb.Robot):
         return True
     #TAPP 计算坐标
     def TAPP(self,D,xx,yy):
-        rx = Table_梦幻[D]["坐标计算"][1] +  (((Table_梦幻[D]["坐标计算"][3] - Table_梦幻[D]["坐标计算"][1]) / Table_梦幻[D]["坐标计算"][5]) * xx+0)
-        ry = Table_梦幻[D]["坐标计算"][4] - (((Table_梦幻[D]["坐标计算"][4] - Table_梦幻[D]["坐标计算"][2]) / Table_梦幻[D]["坐标计算"][6]) * yy+0)
-        _max,_min = math.modf(rx)
+        rx = Table_梦幻[D]["坐标计算"][0] +  (((Table_梦幻[D]["坐标计算"][2] - Table_梦幻[D]["坐标计算"][0]) / Table_梦幻[D]["坐标计算"][4]) * xx+0)
+        ry = Table_梦幻[D]["坐标计算"][3] - (((Table_梦幻[D]["坐标计算"][3] - Table_梦幻[D]["坐标计算"][1]) / Table_梦幻[D]["坐标计算"][5]) * yy+0)
+        _min,_max = math.modf(rx)
         if _min>=0.5:
             rx = _max+1
         else:
-            rx = _max
-        _maxy,_miny = math.modf(ry) 
+            rx = _max                                                                                                                                                                                                                        
+        _miny,_maxy = math.modf(ry) 
         if _miny>=0.5:
             ry = _maxy+1
         else:
-            ry = _maxy        
+            ry = _maxy
         return rx,ry
         
     def rgb_array(self,table_name):
@@ -310,46 +313,75 @@ class action(rb.Robot):
     def tap_(self,D,X,Y):
         while True:
             status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
-            if status==status.OK:
-                self.click(start_map[0],start_map[1])
+            if status==status.NOTMATCH:
+                x,y=self.TAPP(D,X,Y)
+                self.click(x,y)
                 time.sleep(1)
-                status,ag= self.findMultiColorInRegionFuzzyByTable(ditujiemian)
-                if status==status.OK:
-                    self.click(self.TAPP(D,X,Y))
-                    time.sleep(1)
-                self.click(Table_梦幻[D]["返回"])
+                self.click(Table_梦幻[D]["返回"][0],Table_梦幻[D]["返回"][1])
+                time.sleep(2)
                 break
-        
+        print("监控坐标")
+        while True:
+            pos = self.Ocrtext("B5C1C5,4B3F3A",160, 90, 306, 125,
+                                lang='eng',oem=1,
+                                attribute=["tessedit_char_whitelist", 
+                                "0123456789,"],THRESH_GAUSSIAN=False)
+            if len(pos):
+                postr = pos[0]['text'].replace("\n","")
+                _x = int(postr.split(',')[0])
+                _y = int(postr.split(',')[1])
+                time.sleep(1)
+                print("当前坐标(x:{0},y:{1})----实际坐标(x:{2},y:{3})".format(str(_x),str(_y),str(X),str(Y)))
+                if (abs(X-_x)<3) and (abs(Y-_y)<3):
+                    break
+                
+                
     def go_to_map_by_f(self):
         pass
         
     
     def discover_feixingfu(self):
         tpl = self.Print_screen()
-        pass
-        #x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target,0.15)
+        status = State.NOTMATCH
+        target = cv2.imread("./images/feixingfu.png")
+        x,y = self.matchTemplate(tpl,target,0.15)
+        if x != -1:
+            print("发现飞行符")
+            return State.OK,x,y
+        return State.NOTMATCH,x,y
         
         
     def Tothecountryside(self):
         self.click(1695,1015)
         time.sleep(1)
-        self.click(963,312)
+        status,x,y= self.discover_feixingfu()
+        if status == status.OK:
+            print(x,y)
+        self.click(x,y)
         time.sleep(1)
-        self.click(646,681)
+        self.click(654,669)
         time.sleep(1)
         self.go_to_CSC()
-        
-            
-            
-    
-        
+        #打开地图
+        time.sleep(1)
+        self.click(60,81)
+        time.sleep(1)        
+        if self.rgb_array(map_feature["长寿村"])==State.OK:
+            self.tap_("长寿村",144,6)   
+            time.sleep(0.5)    
+            while True:
+                status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+                if status==status.NOTMATCH:
+                    time.sleep(0.5)        
+                else:
+                    print("抵达目的地")
+                    break
 
 def main():
     #blRobot.Get_GameHwnd()
     start = time.time()
     Robot = action(zoom_count=1.5)
-    ok = Robot.rgb_array(map_feature["长寿村"])
-    print(ok)
+    Robot.Tothecountryside()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     

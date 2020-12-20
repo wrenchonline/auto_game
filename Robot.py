@@ -105,6 +105,9 @@ class Robot:
         for idx ,x in enumerate (range(x1,x2)):
             for idy, y in enumerate (range(y1,y2)):
                 b,g,r = image_arrays[y,x]
+                # print("r:",r)
+                # print("g:",g)
+                # print("b:",b)
                 for m in MeanRgb:
                     __mean_s_r = m[0]
                     __mean_s_g = m[1]
@@ -117,6 +120,7 @@ class Robot:
                         break
                     else:
                         binary[idy,idx] = 0
+
         return binary
             
     
@@ -507,6 +511,8 @@ class Robot:
                     
     def __Ocr(self,scx_rgb,x1,y1,x2,y2):
         tpl = self.Print_screen()
+        #self.show(tpl[y1:y2,x1:x2])
+        
         MeanRgb = list()
         if "#" in  scx_rgb:
             __scx_rgb =  scx_rgb.split("#")
@@ -533,8 +539,15 @@ class Robot:
         bin_2_ = self.rgb_to_hexstr_2(tpl,binary,np.array(MeanRgb),x1,y1,x2,y2)
         return bin_2_
     
-    def Ocrtext(self,scx_rgb,x1,y1,x2,y2,ril=RIL.TEXTLINE,lang='chi_sim',psm=7, oem=1,attribute=None,):
-        image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
+    def Ocrtext(self,scx_rgb,x1,y1,x2,y2,ril=RIL.TEXTLINE,lang='chi_sim',psm=7, oem=1,attribute=None,THRESH_GAUSSIAN =False):
+        
+        if THRESH_GAUSSIAN:
+            tpl = self.Print_screen()
+            tpl = tpl[y1:y2,x1:x2]
+            tpl = cv2.cvtColor(tpl,cv2.COLOR_RGB2GRAY)
+            image_array1 = cv2.adaptiveThreshold(tpl,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
+        else:
+            image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
         #self.show(image_array1)
         _data_list = list()
         with PyTessBaseAPI(lang=lang,psm=psm, oem=oem) as api:
