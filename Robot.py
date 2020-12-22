@@ -28,17 +28,17 @@ from PIL import Image
 
 
 
-aperture = (180,180,150)
+# aperture = (180,180,150)
 
-#大雁塔入口 在坐标442，242位置
-pls = (( 1059,  268, 0x4e3011),(1059,  269, 0x4f310e),)
+# #大雁塔入口 在坐标442，242位置
+# pls = (( 1059,  268, 0x4e3011),(1059,  269, 0x4f310e),)
 
 #jit模式下调试有限
 
 
 
-numbers_images = {'0':"num_0",'1':"num_1",'2':"num_2",'3':"num_3",'4':"num_4",'5':"num_5",'6':"num_6",
-           '7':"num_7",'8':"num_8",'9':"num_9"}
+# numbers_images = {'0':"num_0",'1':"num_1",'2':"num_2",'3':"num_3",'4':"num_4",'5':"num_5",'6':"num_6",
+#            '7':"num_7",'8':"num_8",'9':"num_9"}
 
 def binstr_to_nparray(hex_2_str,abs_x,abs_y):
     binary = np.zeros((abs_y,abs_x), dtype=np.uint8)

@@ -368,7 +368,7 @@ class action(rb.Robot):
         time.sleep(1)        
         if self.rgb_array(map_feature["长寿村"])==State.OK:
             self.tap_("长寿村",144,6)   
-            time.sleep(0.5)    
+            time.sleep(0.5)
             while True:
                 status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
                 if status==status.NOTMATCH:
@@ -376,7 +376,108 @@ class action(rb.Robot):
                 else:
                     print("抵达目的地")
                     break
-
+                
+    def map_pos_conversion(self,_map,x,y):
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+            if status==status.OK:
+                self.click(143,79)
+                break
+        qx = None,qy = None
+        if _map in "长安城":
+            qx = 267,qy = 891
+            x = qx + math.ceil(x * 2.52)
+            y = qy - math.ceil(y * 2.51)
+            self.tap_(x,y)
+        elif _map in "建邺城":
+            qx = 267,qy = 893
+            x = qx + math.ceil(x * 4.92)
+            y = qy - math.ceil(y * 4.88)
+            self.tap_(x+5,y-5)  
+        elif _map in "朱紫国":
+            qx = 382,qy = 901
+            x = qx + math.ceil(x * 6.05)
+            y = qy - math.ceil(y * 6.04)
+            self.tap_(x,y)
+        elif _map in "傲来国":
+            qx = 431,qy = 894
+            x = qx + math.ceil(x * 4.731)
+            y = qy - math.ceil(y * 4.74)
+            self.tap_(x,y)        
+        elif _map in "大唐境外":
+            qx = 191,qy = 683
+            x = qx + math.ceil(x * 2.3984)
+            y = qy - math.ceil(y * 2.4)
+            self.tap_(x,y)
+        elif _map in "大唐国境":
+            qx = 624,qy = 1013
+            x = qx + math.ceil(x * 2.5824)
+            y = qy - math.ceil(y * 2.6)
+            self.tap_(x,y+3)
+        elif _map in "墨家村":
+            qx = 850,qy = 982
+            x = qx + math.ceil(x * 4.832)
+            y = qy - math.ceil(y * 4.8)
+            self.tap_(x,y+3)
+        elif _map in "狮驼岭":
+            qx = 602,qy = 937
+            x = qx + math.ceil(x * 7.3)
+            y = qy - math.ceil(y * 7.25)
+            self.tap_(x+3,y-3)
+        elif _map in "长寿郊外":
+            qx = 678,qy = 929
+            x = qx + math.ceil(x * 4.216)
+            y = qy - math.ceil(y * 4.18)
+            self.tap_(x,y)            
+        elif _map in "北俱芦洲":
+            qx = 608,qy = 935
+            x = qx + math.ceil(x * 4.19)
+            y = qy - math.ceil(y * 4.2)
+            self.tap_(x,y)   
+        elif _map in "花果山":
+            qx = 612,qy = 932
+            x = qx + math.ceil(x * 5.83125)
+            y = qy - math.ceil(y * 5.859)
+            self.tap_(x+5,y) 
+        elif _map in "女儿村":
+            qx = 802,qy = 891
+            x = qx + math.ceil(x * 4.33594)
+            y = qy - math.ceil(y * 4.32639)
+            self.tap_(x+4,y+4)
+        elif _map in "东海湾":
+            qx = 728,qy = 932
+            x = qx + math.ceil(x * 5.87)
+            y = qy - math.ceil(y * 5.87)
+            self.tap_(x+5,y)
+        elif _map in "麒麟山":
+            qx = 598,qy = 929
+            x = qx + math.ceil(x * 5.0632)
+            y = qy - math.ceil(y * 4.944)
+            self.tap_(x,y)
+        elif _map in "江南野外":
+            qx = 602,qy = 938
+            x = qx + math.ceil(x * 5.9625)
+            y = qy - math.ceil(y * 5.967)
+            self.tap_(x+5,y)
+        elif _map in "五庄观":
+            qx = 606,qy = 934
+            x = qx + math.ceil(x * 9.46)
+            y = qy - math.ceil(y * 9.467)
+            self.tap_(x+9,y)
+        elif _map in "普陀山":
+            qx = 606,qy = 934
+            x = qx + math.ceil(x * 9.9579)
+            y = qy - math.ceil(y * 9.861)
+            self.tap_(x,y)
+        time.sleep(0.5)
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+            if status==status.NOTMATCH:
+                time.sleep(0.5)        
+            else:
+                print("抵达目的地")
+                break
+                                                            
 def main():
     #blRobot.Get_GameHwnd()
     start = time.time()

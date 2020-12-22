@@ -1,7 +1,9 @@
 # pyAutomated
-项目设计目的是在windows系统上模拟键鼠点击安卓虚拟机(我使用夜神模拟器6.6.1.2)实现自动化.  
+项目设计目的是在windows系统上模拟键鼠点击安卓虚拟机(我使用夜神模拟器6.6.1.2)实现自动化.
 
-此代码重新实现了触动精灵核心功能,分别是找色函数findMultiColorInRegionFuzzy与识字函数Ocrtext,可以和官网上的找色工具与识字工具配合开发  
+演示视频:[python重写触动精灵核心引擎演示](https://www.bilibili.com/video/BV1Ev411t7B1/)
+
+此代码重新实现了触动精灵核心功能,分别是找色函数findMultiColorInRegionFuzzy,findMultiColorInRegionFuzzyByTable与识字函数Ocrtext,可以和官网上的找色工具与识字工具配合开发  
 
 
 
@@ -69,9 +71,15 @@ tpl = blRobot.Print_screen()
 xstr = blRobot.tsOcrtext(tpl,tu_text_features,173, 40, 285, 76，lang='chi_sim',psm=7, oem=1)
 ```
 
-### 找色函数（可以和触动精灵官网的找色工具配合）:
+### 找色函数1（可以和触动精灵官网的找色工具配合）:
 ```python
 x,y = blRobot.findMultiColorInRegionFuzzy( "0xef6fdc", "24|5|0xffeecb,-7|30|0x2fb7ff", 90, 0, 0, 1919, 1079)
+```
+
+### 找色函数2（可以和触动精灵官网的找色工具配合）:
+```python
+zhujiemian = (667,1015,'0xefc250'),(782,1024,'0xd89825'),(907,1022,'0xea8f4f'),(1022,1017,'0xf8cf48'),(1124,1020,'0xb75715')
+status,ag=self.findMultiColorInRegionFuzzyByTable(zhujiemian)
 ```
 
 ### 模拟虚拟机鼠标点击:
