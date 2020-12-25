@@ -44,3 +44,123 @@ chang_an_cheng = ""
     "超级巫医A":{ {true,49,-147},{{770,613,0xcbba2d},{774,609,0xd8c730},{785,616,0xbbac2a},{783,614,0xebd834},{783,602,0xe0ce32},{789,621,0xe0ce32},{795,612,0xebd834},{739,617,0xe6d433},{750,629,0xd3c32f},{771,611,0xe6d433}},90,350,3,1397,820},
     "提示框":{ {false},{{568,58,0xf0f427},{570,51,0xf8f830},{568,78,0xe8eb00},{549,59,0xf0f22f},{584,59,0xf0f423},{581,52,0x385157},{565,53,0xa3ad54},{565,64,0x9da830},{574,64,0x304549},{574,66,0x304850}},90,0,0,1920,1080},
 }
+
+    # def map_pos_conversion(self,_map,x,y):
+    #     while True:
+    #         status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+    #         if status==status.OK:
+    #             self.click(143,79)
+    #             break
+    #         else:
+    #             qx = None
+    #             qy = None
+    #             if _map in "长安城":
+    #                 qx = 267
+    #                 qy = 891
+    #                 x = qx + math.ceil(x * 2.52)
+    #                 y = qy - math.ceil(y * 2.51)
+    #                 self.tap_(_map,x,y)
+    #             elif _map in "建邺城":
+    #                 qx = 267
+    #                 qy = 893
+    #                 x = qx + math.ceil(x * 4.92)
+    #                 y = qy - math.ceil(y * 4.88)
+    #                 self.tap_(_map,x+5,y-5)  
+    #             elif _map in "朱紫国":
+    #                 qx = 382
+    #                 qy = 901
+    #                 x = qx + math.ceil(x * 6.05)
+    #                 y = qy - math.ceil(y * 6.04)
+    #                 self.tap_(_map,x,y)
+    #             elif _map in "傲来国":
+    #                 qx = 431
+    #                 qy = 894
+    #                 x = qx + math.ceil(x * 4.731)
+    #                 y = qy - math.ceil(y * 4.74)
+    #                 self.tap_(_map,x,y)        
+    #             elif _map in "大唐境外":
+    #                 qx = 191
+    #                 qy = 683
+    #                 x = qx + math.ceil(x * 2.3984)
+    #                 y = qy - math.ceil(y * 2.4)
+    #                 self.tap_(_map,x,y)
+    #             elif _map in "大唐国境":
+    #                 qx = 624
+    #                 qy = 1013
+    #                 x = qx + math.ceil(x * 2.5824)
+    #                 y = qy - math.ceil(y * 2.6)
+    #                 self.tap_(_map,x,y+3)
+    #             elif _map in "墨家村":
+    #                 qx = 850
+    #                 qy = 982
+    #                 x = qx + math.ceil(x * 4.832)
+    #                 y = qy - math.ceil(y * 4.8)
+    #                 self.tap_(_map,x,y+3)
+    #             elif _map in "狮驼岭":
+    #                 qx = 602
+    #                 qy = 937
+    #                 x = qx + math.ceil(x * 7.3)
+    #                 y = qy - math.ceil(y * 7.25)
+    #                 self.tap_(_map,x+3,y-3)
+    #             elif _map in "长寿郊外":
+    #                 qx = 678
+    #                 qy = 929
+    #                 x = qx + math.ceil(x * 4.216)
+    #                 y = qy - math.ceil(y * 4.18)
+    #                 self.tap_(_map,x,y)            
+    #             elif _map in "北俱芦洲":
+    #                 qx = 608
+    #                 qy = 935
+    #                 x = qx + math.ceil(x * 4.19)
+    #                 y = qy - math.ceil(y * 4.2)
+    #                 self.tap_(_map,x,y)   
+    #             elif _map in "花果山":
+    #                 qx = 612
+    #                 qy = 932
+    #                 x = qx + math.ceil(x * 5.83125)
+    #                 y = qy - math.ceil(y * 5.859)
+    #                 self.tap_(_map,x+5,y) 
+    #             elif _map in "女儿村":
+    #                 qx = 802
+    #                 qy = 891
+    #                 x = qx + math.ceil(x * 4.33594)
+    #                 y = qy - math.ceil(y * 4.32639)
+    #                 self.tap_(_map,x+4,y+4)
+    #             elif _map in "东海湾":
+    #                 qx = 728
+    #                 qy = 932
+    #                 x = qx + math.ceil(x * 5.87)
+    #                 y = qy - math.ceil(y * 5.87)
+    #                 self.tap_(_map,x+5,y)
+    #             elif _map in "麒麟山":
+    #                 qx = 598
+    #                 qy = 929
+    #                 x = qx + math.ceil(x * 5.0632)
+    #                 y = qy - math.ceil(y * 4.944)
+    #                 self.tap_(_map,x,y)
+    #             elif _map in "江南野外":
+    #                 qx = 602
+    #                 qy = 938
+    #                 x = qx + math.ceil(x * 5.9625)
+    #                 y = qy - math.ceil(y * 5.967)
+    #                 self.tap_(_map,x+5,y)
+    #             elif _map in "五庄观":
+    #                 qx = 606
+    #                 qy = 934
+    #                 x = qx + math.ceil(x * 9.46)
+    #                 y = qy - math.ceil(y * 9.467)
+    #                 self.tap_(_map,x+9,y)
+    #             elif _map in "普陀山":
+    #                 qx = 606
+    #                 qy = 934
+    #                 x = qx + math.ceil(x * 9.9579)
+    #                 y = qy - math.ceil(y * 9.861)
+    #                 self.tap_(_map,x,y)
+    #             time.sleep(0.5)
+    #     while True:
+    #         status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+    #         if status==status.NOTMATCH:
+    #             time.sleep(0.5)        
+    #         else:
+    #             print("抵达目的地")
+    #             break

@@ -468,15 +468,7 @@ class Robot:
             print ("Not Found! Rollback it")
             ret = State.ROLLBACK
         return ret
-    
-    # def check_fire(self):
-    #     tpl = self.Print_screen()
-    #     target = cv2.imread("./images/check_fire.jpg")
-    #     x,y = self.matchTemplate(tpl,target)
-    #     if x == -1:
-    #         return False
-    #     else:
-    #         return True
+
         
     
     def click(self,x:int=None,y:int=None):
@@ -495,8 +487,17 @@ class Robot:
                                  wcon.MK_LBUTTON, lParam)
             win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONUP, 0, lParam)
             
+    def check_fire(self):
+        tpl = self.Print_screen()
+        target = cv2.imread("./images/check_fire.jpg")
+        x,y = self.matchTemplate(tpl,target)
+        if x == -1:
+            return False
+        else:
+            return True                
+
+
     def fire(self):
-        #check autofire
         tpl = self.Print_screen()
         target = cv2.imread("./images/auto.jpg")
         x,y = self.matchTemplate(tpl,target)
@@ -505,7 +506,6 @@ class Robot:
         else:
             print("点击自动战斗 posx:{0} posy:{1}".format(x,y))
             self.click(x,y)
-            
 
 
                     
@@ -539,7 +539,7 @@ class Robot:
         bin_2_ = self.rgb_to_hexstr_2(tpl,binary,np.array(MeanRgb),x1,y1,x2,y2)
         return bin_2_
     
-    def Ocrtext(self,scx_rgb,x1,y1,x2,y2,ril=RIL.TEXTLINE,lang='chi_sim',psm=7, oem=1,attribute=None,THRESH_GAUSSIAN =False):
+    def Ocrtext(self,scx_rgb,x1,y1,x2,y2,Debug=False,ril=RIL.TEXTLINE,lang='chi_sim',psm=7, oem=1,attribute=None,THRESH_GAUSSIAN =False):
         
         if THRESH_GAUSSIAN:
             tpl = self.Print_screen()
@@ -548,7 +548,8 @@ class Robot:
             image_array1 = cv2.adaptiveThreshold(tpl,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
         else:
             image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
-        #self.show(image_array1)
+        if Debug:
+            self.show(image_array1)
         _data_list = list()
         with PyTessBaseAPI(lang=lang,psm=psm, oem=oem) as api:
                 level = ril#以标题为主
@@ -601,10 +602,3 @@ class Robot:
                         print("当前识字为:{0}".format(word))
                         return word
 
-def robot_fire(blRobot):
-    #tql = blRobot.Print_screen()
-    while True:
-        bfire = blRobot.check_fire()
-    print("check_fire:{0}".format(bfire))
-    if bfire:
-        blRobot.fire()    

@@ -328,18 +328,19 @@ class action(rb.Robot):
                                 "0123456789,"],THRESH_GAUSSIAN=False)
             if len(pos):
                 postr = pos[0]['text'].replace("\n","")
-                _x = int(postr.split(',')[0])
-                _y = int(postr.split(',')[1])
-                time.sleep(1)
-                print("当前坐标(x:{0},y:{1})----实际坐标(x:{2},y:{3})".format(str(_x),str(_y),str(X),str(Y)))
-                if (abs(X-_x)<3) and (abs(Y-_y)<3):
-                    break
-                
-                
-    def go_to_map_by_f(self):
-        pass
-        
-    
+                try:
+                    
+                    _x = int(postr.split(',')[0])
+                    _y = int(postr.split(',')[1])
+                    time.sleep(1)
+                    print("当前坐标(x:{0},y:{1})----实际坐标(x:{2},y:{3})".format(str(_x),str(_y),str(X),str(Y)))
+                    if (abs(X-_x)<3) and (abs(Y-_y)<3):
+                        break
+                except Exception as e:
+                    print(postr)
+                    tpl = self.Print_screen()
+                    self.show(tpl[90:125,160:306])
+                    
     def discover_feixingfu(self):
         tpl = self.Print_screen()
         status = State.NOTMATCH
@@ -376,113 +377,69 @@ class action(rb.Robot):
                 else:
                     print("抵达目的地")
                     break
-                
-    def map_pos_conversion(self,_map,x,y):
+    def go_to_ZZG(self):
         while True:
-            status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+            status,ag= self.findMultiColorInRegionFuzzyByTable(feixingfu_jiemian)
             if status==status.OK:
-                self.click(143,79)
+                time.sleep(0.7)
+                self.click(860,729)
+                time.sleep(0.7)
                 break
-        qx = None,qy = None
-        if _map in "长安城":
-            qx = 267,qy = 891
-            x = qx + math.ceil(x * 2.52)
-            y = qy - math.ceil(y * 2.51)
-            self.tap_(x,y)
-        elif _map in "建邺城":
-            qx = 267,qy = 893
-            x = qx + math.ceil(x * 4.92)
-            y = qy - math.ceil(y * 4.88)
-            self.tap_(x+5,y-5)  
-        elif _map in "朱紫国":
-            qx = 382,qy = 901
-            x = qx + math.ceil(x * 6.05)
-            y = qy - math.ceil(y * 6.04)
-            self.tap_(x,y)
-        elif _map in "傲来国":
-            qx = 431,qy = 894
-            x = qx + math.ceil(x * 4.731)
-            y = qy - math.ceil(y * 4.74)
-            self.tap_(x,y)        
-        elif _map in "大唐境外":
-            qx = 191,qy = 683
-            x = qx + math.ceil(x * 2.3984)
-            y = qy - math.ceil(y * 2.4)
-            self.tap_(x,y)
-        elif _map in "大唐国境":
-            qx = 624,qy = 1013
-            x = qx + math.ceil(x * 2.5824)
-            y = qy - math.ceil(y * 2.6)
-            self.tap_(x,y+3)
-        elif _map in "墨家村":
-            qx = 850,qy = 982
-            x = qx + math.ceil(x * 4.832)
-            y = qy - math.ceil(y * 4.8)
-            self.tap_(x,y+3)
-        elif _map in "狮驼岭":
-            qx = 602,qy = 937
-            x = qx + math.ceil(x * 7.3)
-            y = qy - math.ceil(y * 7.25)
-            self.tap_(x+3,y-3)
-        elif _map in "长寿郊外":
-            qx = 678,qy = 929
-            x = qx + math.ceil(x * 4.216)
-            y = qy - math.ceil(y * 4.18)
-            self.tap_(x,y)            
-        elif _map in "北俱芦洲":
-            qx = 608,qy = 935
-            x = qx + math.ceil(x * 4.19)
-            y = qy - math.ceil(y * 4.2)
-            self.tap_(x,y)   
-        elif _map in "花果山":
-            qx = 612,qy = 932
-            x = qx + math.ceil(x * 5.83125)
-            y = qy - math.ceil(y * 5.859)
-            self.tap_(x+5,y) 
-        elif _map in "女儿村":
-            qx = 802,qy = 891
-            x = qx + math.ceil(x * 4.33594)
-            y = qy - math.ceil(y * 4.32639)
-            self.tap_(x+4,y+4)
-        elif _map in "东海湾":
-            qx = 728,qy = 932
-            x = qx + math.ceil(x * 5.87)
-            y = qy - math.ceil(y * 5.87)
-            self.tap_(x+5,y)
-        elif _map in "麒麟山":
-            qx = 598,qy = 929
-            x = qx + math.ceil(x * 5.0632)
-            y = qy - math.ceil(y * 4.944)
-            self.tap_(x,y)
-        elif _map in "江南野外":
-            qx = 602,qy = 938
-            x = qx + math.ceil(x * 5.9625)
-            y = qy - math.ceil(y * 5.967)
-            self.tap_(x+5,y)
-        elif _map in "五庄观":
-            qx = 606,qy = 934
-            x = qx + math.ceil(x * 9.46)
-            y = qy - math.ceil(y * 9.467)
-            self.tap_(x+9,y)
-        elif _map in "普陀山":
-            qx = 606,qy = 934
-            x = qx + math.ceil(x * 9.9579)
-            y = qy - math.ceil(y * 9.861)
-            self.tap_(x,y)
-        time.sleep(0.5)
         while True:
             status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+            time.sleep(0.5)
             if status==status.NOTMATCH:
-                time.sleep(0.5)        
-            else:
-                print("抵达目的地")
+                print("前往朱紫国")
+                status,ag= self.findMultiColorInRegionFuzzyByTable(fanhui)
+                if status==status.OK:
+                    self.click(ag[0],ag[1])
+                time.sleep(0.5)
+            elif status==status.OK:
+                print("抵达朱紫国")
                 break
-                                                            
+        return True
+    
+    def TotheDaTangJingWai(self):
+        self.click(1695,1015)
+        time.sleep(1)
+        status,x,y= self.discover_feixingfu()
+        if status == status.OK:
+            print(x,y)
+        self.click(x,y)
+        time.sleep(1)
+        tpl = self.Print_screen()
+        target = cv2.imread("./images/shiyong.png")
+        x,y = self.matchTemplate(tpl,target)
+        if x != -1:
+            self.click(x,y)
+        else:
+            print("飞行符没有使用")
+            return
+        #self.click(654,669)
+        time.sleep(1)
+        self.go_to_ZZG()
+        #打开地图
+        time.sleep(1)
+        self.click(60,81)
+        time.sleep(1)        
+        if self.rgb_array(map_feature["朱紫国"])==State.OK:
+            self.tap_("朱紫国",6,4)   
+            time.sleep(0.5)
+            while True:
+                status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+                if status==status.NOTMATCH:
+                    time.sleep(0.5)        
+                else:
+                    print("抵达目的地")
+                    break
+                
 def main():
     #blRobot.Get_GameHwnd()
     start = time.time()
     Robot = action(zoom_count=1.5)
-    Robot.Tothecountryside()
+    Robot.TotheDaTangJingWai()
+
+    
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     
