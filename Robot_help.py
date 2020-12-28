@@ -36,6 +36,9 @@ class MyThread (threading.Thread,rb.Robot):
                         bfire = self.check_fire()
                         if bfire:
                             self.fire()
+                    if data in "exit":
+                        print("退出监控员")
+                        break
                 time.sleep(5)
         except BaseException as e: 
             self.exc = e 

@@ -1,9 +1,15 @@
 # pyAutomated
-项目设计目的是在windows系统上模拟键鼠点击安卓虚拟机(我使用夜神模拟器6.6.1.2)实现自动化.
+项目设计目的是在windows系统上模拟键鼠点击安卓虚拟机(我使用夜神模拟器6.6.1.2)实现自动化,我开发这个项目的目的是能够
+此项目的优势有:
+1.基于图片的提供数据给机器学习有很好的调试接口点
+2.不需要触动精灵的年费授权，您可以免费的使用本代码
+3.此项目是不调用Guest系统的api,具有极强的隐蔽性
+
 
 演示视频:[python重写触动精灵核心引擎演示](https://www.bilibili.com/video/BV1Ev411t7B1/)
 
-此代码重新实现了触动精灵核心功能,分别是找色函数findMultiColorInRegionFuzzy,findMultiColorInRegionFuzzyByTable与识字函数Ocrtext,可以和官网上的找色工具与识字工具配合开发  
+此代码重新实现了触动精灵核心功能,分别是找色函数findMultiColorInRegionFuzzy,findMultiColorInRegionFuzzyByTable与识字函数Ocrtext,可以和官网上的找色工具与识字工具配合开发。(代码原理说不尽，等有空更新文档)
+
 
 
 

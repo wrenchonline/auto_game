@@ -357,9 +357,30 @@ class action(rb.Robot):
             print("发现飞行符")
             return State.OK,x,y
         return State.NOTMATCH,x,y
+    
+    def no_prop(self):
+        tpl = self.Print_screen()
+        target = cv2.imread("./images/daojulanzhankai.png")
+        x,y = self.matchTemplate(tpl,target,tolerance=0.1)
+        if x != -1:
+            return True
+        else:
+            return False  
+    def quit(self):
+        self.queue.put("exit")
         
     #去往长寿郊外    
     def Tothecountryside(self):
+        #确保道具栏没有被收起来
+        while True:
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+            time.sleep(2)
         self.click(1695,1015)
         time.sleep(1)
         status,x,y= self.discover_feixingfu()
@@ -367,7 +388,14 @@ class action(rb.Robot):
             print(x,y)
         self.click(x,y)
         time.sleep(1)
-        self.click(654,669)
+        tpl = self.Print_screen()
+        target = cv2.imread("./images/shiyong.png")
+        x,y = self.matchTemplate(tpl,target)
+        if x != -1:
+            self.click(x,y)
+        else:
+            print("飞行符没有使用")
+            return
         time.sleep(1)
         self.go_to_CSC()
         #打开地图
@@ -382,8 +410,25 @@ class action(rb.Robot):
                 if status==status.NOTMATCH:
                     time.sleep(0.5)        
                 else:
-                    print("抵达目的地")
-                    break
+                    time.sleep(1)
+                    self.click(61,378) #屏蔽玩家
+                    time.sleep(1)
+                    self.click(64,844) #屏蔽界面
+                    time.sleep(1)
+                    self.click(1849,1018) 
+                    time.sleep(1)
+                    self.click(64,844) 
+                    time.sleep(1)
+                    while True:
+                        reponse = self.Ocrtext("1C1D21,1B1C20",151, 36, 307, 77,THRESH_GAUSSIAN=False)[0]
+                        reponse = reponse["text"].replace("\n","")
+                        reponse = reponse.replace(" ","")
+                        if  reponse in "长寿郊外":
+                            print("抵达目的地")
+                            return
+                    
+                
+                
     def go_to_ZZG(self):
         while True:
             status,ag= self.findMultiColorInRegionFuzzyByTable(feixingfu_jiemian)
@@ -408,6 +453,15 @@ class action(rb.Robot):
     
     #去往大唐境外
     def TotheDaTangJingWai(self):
+        while True:
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+            time.sleep(2)        
         self.click(1695,1015)
         time.sleep(1)
         status,x,y= self.discover_feixingfu()
@@ -446,17 +500,15 @@ def main():
     #blRobot.Get_GameHwnd()
     zoom_count = 1.5
     start = time.time()
-    
     q = queue.Queue()
     m1 = rh.MyThread(q,zoom_count=zoom_count)
     m1.start()
-    
     Robot = action(q,zoom_count=zoom_count)
-    
-    Robot.TotheDaTangJingWai()
-    
+    Robot.Tothecountryside()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+    
     
 if __name__ == "__main__":
     main()
