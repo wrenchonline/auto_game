@@ -7,9 +7,12 @@ import time
 import pytesseract as pytes
 from utils import *
 from tesserocr import RIL
+import Robot_help as rh
 import math
+import queue 
 
 '''
+
     while True:
         x,y = blRobot.findMultiColorInRegionFuzzy("0x202020","2|2|0x202020", 90, 52, 1131, 1024 ,1406)
         if x!=-1:
@@ -126,11 +129,15 @@ map_feature = {
 
 class action(rb.Robot):
 
-    def __init__(self,class_name="subWin",title_name="sub",zoom_count=1.5):
+    def __init__(self,q,class_name="subWin",title_name="sub",zoom_count=1.5):
         rb.Robot.__init__(self,class_name=class_name,title_name=title_name,zoom_count=zoom_count)
         self.Get_GameHwnd()
         self.cx = None
         self.error = list()
+        if isinstance(q,queue.Queue):
+            self.queue = q
+        else:
+            raise("参数2不是队列")
         
     def find_map_by_shop(self):
         tpl = self.Print_screen()
@@ -351,7 +358,7 @@ class action(rb.Robot):
             return State.OK,x,y
         return State.NOTMATCH,x,y
         
-        
+    #去往长寿郊外    
     def Tothecountryside(self):
         self.click(1695,1015)
         time.sleep(1)
@@ -399,6 +406,7 @@ class action(rb.Robot):
                 break
         return True
     
+    #去往大唐境外
     def TotheDaTangJingWai(self):
         self.click(1695,1015)
         time.sleep(1)
@@ -432,13 +440,20 @@ class action(rb.Robot):
                 else:
                     print("抵达目的地")
                     break
-                
+
+
 def main():
     #blRobot.Get_GameHwnd()
+    zoom_count = 1.5
     start = time.time()
-    Robot = action(zoom_count=1.5)
+    
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    
+    Robot = action(q,zoom_count=zoom_count)
+    
     Robot.TotheDaTangJingWai()
-
     
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
