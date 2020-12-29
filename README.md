@@ -1,5 +1,5 @@
 # pyAutomated
-项目设计目的是在windows系统上模拟键鼠点击安卓虚拟机(我使用夜神模拟器6.6.1.2)实现自动化。  
+项目设计目的是在windows系统上模拟键鼠点击安卓虚拟机(我使用夜神模拟器7.0.0.6)实现自动化。  
 ### 此项目的优势有:  
 1.基于图片的提供数据给机器学习有很好的调试接口点  
 2.不需要触动精灵的年费授权，您可以免费的使用本代码  
@@ -17,7 +17,7 @@
 
 ## 运行环境:
     windows10(150%放大倍数)
-    夜神模拟器6.6.1.2(分辨率1920x1080)
+    夜神模拟器7.0.0.6(分辨率1920x1080)
     conda python3.7.9
 ## python运行环境：
     numpy==1.18.5
@@ -46,11 +46,10 @@
 
 # 使用说明
 
-首先初始化对象并获取窗口句柄
+首先初始化对象并获取窗口句柄,目前只自持夜神模拟器的窗口句柄，7.0.0.6真正的窗口句柄名称是"sub",获得窗口句柄才能截图和发送键鼠信息。目前此代码仅支持这种控制安卓模拟器的方式,后续会添加vbox控制方式。
 
 ```python
 blRobot=Robot(class_name="subWin",title_name="sub",zoom_count=1.5)
-
 blRobot.Get_GameHwnd()
 ```
 接下来可以使用部分功能了，还有很多其他方式的实现就不一一说明
@@ -58,6 +57,10 @@ blRobot.Get_GameHwnd()
 ### 识字函数(可以和触动精灵字库使用):
 ```python
 xstr = blRobot.x_Ocrtext(ditu,"00E804,011805#03DC07,032006#08DD0B,072009",444,506,589,560)
+--------------------------------------------------------------
+pirnt("xstr=",xstr)
+xstr="helloWorld"
+
 ```
 tesseract版本识字效果识别图片只有一行字的效果比较理想
 ### 识字函数1(tesseract版):
@@ -68,6 +71,10 @@ xstr = blRobot.Ocrtext("06BE0B,06420B#00E804,011805#03DC07,032006#08DD0B,072009"
                     lang='eng',oem=1,
                     attribute=["tessedit_char_whitelist", 
                     "0123456789,")
+--------------------------------------------------------------
+pirnt("xstr=",xstr)
+xstr=[{"text":"helloWorld","left":xxx,"top":xxx,"boxes2":xxx,"boxes3":xxx},]
+
 ```
 
 ### 识字函数2(tesseract版,查找关键字并返回坐标):
@@ -75,24 +82,42 @@ xstr = blRobot.Ocrtext("06BE0B,06420B#00E804,011805#03DC07,032006#08DD0B,072009"
 tu_text_features = ['图','T']
 tpl = blRobot.Print_screen() 
 xstr = blRobot.tsOcrtext(tpl,tu_text_features,173, 40, 285, 76，lang='chi_sim',psm=7, oem=1)
+--------------------------------------------------
+pirnt("xstr=",xstr)
+xstr=["图图图图",179,56]
+
 ```
 
 ### 找色函数1（可以和触动精灵官网的找色工具配合）:
 ```python
-x,y = blRobot.findMultiColorInRegionFuzzy( "0xef6fdc", "24|5|0xffeecb,-7|30|0x2fb7ff", 90, 0, 0, 1919, 1079)
+status,ag= blRobot.findMultiColorInRegionFuzzy( "0xef6fdc", "24|5|0xffeecb,-7|30|0x2fb7ff", 90, 0, 0, 1919, 1079)
+-------------------------------------------
+pirnt("ag=",ag)
+ag=(667,1015)
 ```
 
 ### 找色函数2（可以和触动精灵官网的找色工具配合）:
 ```python
 zhujiemian = (667,1015,'0xefc250'),(782,1024,'0xd89825'),(907,1022,'0xea8f4f'),(1022,1017,'0xf8cf48'),(1124,1020,'0xb75715')
 status,ag=self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+-------------------------------------------
+pirnt("ag=",ag)
+ag=(667,1015)
 ```
 
-### 模拟虚拟机鼠标点击:
+### 模拟虚拟机鼠标左键点击:
 
 ```python
 blRobot.click(125,33)
 ```
 
-# 已知问题:
-1.findMultiColorInRegionFuzzy 参数2不能为空字符串 "" ,也就是说找色必须要有两个点以上才行,待优化
+### 模拟虚拟机左键点击鼠标移动:
+```python
+blRobot.move_click(125,33,555,555)
+```
+
+### 已知问题:
+1.findMultiColorInRegionFuzzy 参数2不能为空字符串 "" ,也就是说找色必须要有两个点以上才行,待优化  
+## 优化思路:
+1.因为环境搭建比较麻烦,不过都是python包，我会考虑部署到Anaconda环境上,尽量让开发者一键安装环境。  
+2.目前仅能控制夜神模拟器,其他安卓模拟器没有试过,获取窗口句柄代码需要修改,后续会支持控制vbox虚拟机(有接口)。Vmware不支持,我查到的是根据官方说法为了安全没开接口。

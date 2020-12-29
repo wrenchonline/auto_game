@@ -39,7 +39,7 @@ class MyThread (threading.Thread,rb.Robot):
                     if data in "exit":
                         print("退出监控员")
                         break
-                time.sleep(5)
+                time.sleep(2)
         except BaseException as e: 
             self.exc = e 
             self.someFunction()

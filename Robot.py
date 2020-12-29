@@ -25,21 +25,6 @@ import tesserocr
 from tesserocr import PyTessBaseAPI, PSM, OEM,RIL,iterate_level
 from PIL import Image
 
-
-
-
-# aperture = (180,180,150)
-
-# #大雁塔入口 在坐标442，242位置
-# pls = (( 1059,  268, 0x4e3011),(1059,  269, 0x4f310e),)
-
-#jit模式下调试有限
-
-
-
-# numbers_images = {'0':"num_0",'1':"num_1",'2':"num_2",'3':"num_3",'4':"num_4",'5':"num_5",'6':"num_6",
-#            '7':"num_7",'8':"num_8",'9':"num_9"}
-
 def binstr_to_nparray(hex_2_str,abs_x,abs_y):
     binary = np.zeros((abs_y,abs_x), dtype=np.uint8)
     i = 0
@@ -472,21 +457,44 @@ class Robot:
         
     
     def click(self,x:int=None,y:int=None):
-            """Click at pixel xy."""
-            x = int(x/self.zoom_count)#1.5是缩放比例
-            y = int(y/self.zoom_count)
-            lParam = win32api.MAKELONG(x, y)
-            win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,wcon.MK_LBUTTON, lParam)
-            win32gui.SendMessage(self.ScreenBoardhwnd,  wcon.WM_SETCURSOR, self.ScreenBoardhwnd, win32api.MAKELONG(wcon.HTCLIENT, wcon.WM_LBUTTONDOWN))
-            # win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_SETCURSOR, 0, 0)
-            while (win32api.GetKeyState(wcon.VK_CONTROL) < 0 or
-                 win32api.GetKeyState(wcon.VK_SHIFT) < 0 or
-                 win32api.GetKeyState(wcon.VK_MENU) < 0):
-                 time.sleep(0.005)
-            win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONDOWN,
-                                 wcon.MK_LBUTTON, lParam)
-            win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONUP, 0, lParam)
-            
+        """Click at pixel xy."""
+        x = int(x/self.zoom_count)#1.5是缩放比例
+        y = int(y/self.zoom_count)
+        lParam = win32api.MAKELONG(x, y)
+        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,wcon.MK_LBUTTON, lParam)
+        win32gui.SendMessage(self.ScreenBoardhwnd,  wcon.WM_SETCURSOR, self.ScreenBoardhwnd, win32api.MAKELONG(wcon.HTCLIENT, wcon.WM_LBUTTONDOWN))
+        # win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_SETCURSOR, 0, 0)
+        while (win32api.GetKeyState(wcon.VK_CONTROL) < 0 or
+                win32api.GetKeyState(wcon.VK_SHIFT) < 0 or
+                win32api.GetKeyState(wcon.VK_MENU) < 0):
+                time.sleep(0.005)
+        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONDOWN,
+                                wcon.MK_LBUTTON, lParam)
+        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONUP, 0, lParam)
+        
+    
+    def move_click(self,x:int=None,y:int=None,x1:int=None,y1:int=None):
+        x = int(x/self.zoom_count)#1.5是缩放比例
+        y = int(y/self.zoom_count)
+        x1 = int(x1/self.zoom_count)
+        y1 = int(y1/self.zoom_count)
+        lParam1 = win32api.MAKELONG(x, y)
+        lParam2 = win32api.MAKELONG(x1, y1)
+        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,wcon.MK_LBUTTON, lParam1)
+        # win32gui.SendMessage(self.ScreenBoardhwnd,  wcon.WM_SETCURSOR, self.ScreenBoardhwnd, win32api.MAKELONG(wcon.HTCLIENT, wcon.WM_LBUTTONDOWN))
+        while (win32api.GetKeyState(wcon.VK_CONTROL) < 0 or
+                win32api.GetKeyState(wcon.VK_SHIFT) < 0 or
+                win32api.GetKeyState(wcon.VK_MENU) < 0):
+                time.sleep(0.005)
+        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONDOWN,
+                             wcon.MK_LBUTTON, lParam1)
+        time.sleep(0.5)
+        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE, 0, lParam2)
+        time.sleep(0.5)
+        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONUP,
+                             wcon.MK_LBUTTON, lParam2) 
+        
+        
     def check_fire(self):
         tpl = self.Print_screen()
         target = cv2.imread("./images/check_fire.jpg")
@@ -569,7 +577,7 @@ class Robot:
                             pass
                             #print('symbol {0}  conf: {1}'.format(symbol, conf))
                         boxes = r.BoundingBox(level) #xy等等坐标
-                        dict_= {"text":symbol,"left":boxes[0],"top":boxes[1],"weight":boxes[2],"weight":boxes[3]}
+                        dict_= {"text":symbol,"left":boxes[0],"top":boxes[1],"boxes2":boxes[2],"boxes3":boxes[3]}
                         _data_list.append(dict_)
                     except Exception as e:
                         print("没有字符")

@@ -50,7 +50,7 @@ start_map = (143,79)
 
 
 
-
+#"坐标计算": (609,226,1550,932,192,144)  609,226 是实际地图左上角的坐标 1550,932是实际地图右下角的坐标   192,144 是长和宽
 Table_梦幻 = {
 	"无名鬼蜮":{ "坐标计算":(712,304,1445,855,192,144),"返回":(1473,195)},
 	"大唐国境":{ "坐标计算" : (624,146,1533,1013,352,336), "返回" :(1560,37)},
@@ -64,7 +64,7 @@ Table_梦幻 = {
     "北俱芦洲": {"坐标计算":(604,218,1554,938,228,170),"返回" :(1579,118)},
 	"女娲神迹" : {"坐标计算": (609,226,1550,932,192,144), "返回" :(1583,128)},
 	"大雁塔六层":{"坐标计算":(296,169,1623,908,138,77),"返回":(1647,68)},
-	"大唐境外" : {"坐标计算":(187,392,1727,684,640,120), "返回":(1753,296)},
+	"大唐境外" : {"坐标计算":(187,393,1750,684,640,120), "返回":(1753,296)},
     "墨家村" : { "坐标计算" :(849,177,1310,982,96,168), "返回" :(1329,77)},
 	"狮驼岭" : { "坐标计算" :(598,216,1558,938,132,99), "返回":(1575,117)},
 	"普陀山" : { "坐标计算" :(605,223,1553,935,96,72), "返回" :(1577,120)},
@@ -113,7 +113,7 @@ map_feature = {
 	"体力不足": {"坐标":((184,810,0x182c38),(201,811,0x253844),(201,811,0x253844),(197,811,0xfdfdfd),(194,826,0x6e7b82),(196,826,0xffffff),(194,836,0x6e7b82),(194,836,0x6e7b82),(210,823,0xd8dbdd),(181,825,0xf4f5f6)),"范围参数":(90,1,684,512,917)},
 	"大雁塔六层" :{"坐标":((864,569,0xbeae66),(861,572,0xb8a45e),(848,561,0x917c32),(878,560,0xb6a556)),"范围参数":(90,753,436,1180,706)},
 	"火焰山土地" :{ "坐标":((1115,361,0xa99a27),(1114,363,0xc9b92c),(1117,371,0x4a4311),(1118,375,0x90672b),(1127,373,0x978a22),(1133,373,0xe5cb35),(1127,363,0xdbc931),(1124,363,0xd8c233),(1118,368,0x9e9123),(1118,375,0x90672b)),"范围参数":(90,884,50,1494,637)},
-	"送我进墨家村" : {"坐标":((1560,356,0xf6f7f8),(1571,354,0xeaedef),(1574,354,0xeaedef),(1577,356,0xd8dde1),(1572,364,0xffffff),(1563,364,0xf2f4f5),(1573,365,0xffffff),(1579,365,0xf7f8f9),(1581,362,0xf3f5f6),(1582,357,0xc0c9cf)),"范围参数":(90,1415,316,1868,434)},
+	"送我进墨家村" : {"坐标":((1442,370,0xf6f7f8),(1483,374,0xffffff),(1514,373,0xf3f5f6),(1560,373,0xfdfdfd),(1598,364,0xffffff)),"范围参数":(90,1415,316,1868,434)},
 	"传送仙女":{ "坐标":((695,564,0x686619),(695,572,0x878723),(698,578,0xe4d533),(700,579,0xe6d433),(690,582,0xead637),(689,572,0xabb540),(690,560,0xb0a82b),(705,566,0x32350f),(704,576,0xe3d434),(706,585,0xe8d534)),"范围参数":(85,494,128,1116,808)},
 	"我要去": {"坐标": ((1603,507,0x9eacb5),(1602,500,0xd6dce0),(1607,499,0xe0e4e8),(1616,498,0xc5cdd3),(1621,506,0x7f919e),(1609,513,0xf9fafb),(1604,516,0xffffff),(1615,523,0xffffff),(1621,512,0x8495a1),(1611,498,0x8797a4)),"范围参数":(90,1425,459,1791,567)},
 	"大唐境外A":{"坐标": ((1384,406,0xe7ece4),(1381,427,0xf85555),(1388,423,0xf80000),(1391,422,0xf8bdba),(1396,422,0xf8d4d1),(1398,412,0xf88381),(1397,405,0x94967c),(1394,402,0x8f946c),(1380,404,0x36452d),(1387,417,0xf8e2df)),"范围参数":(90,1371,382,1548,480)},
@@ -265,6 +265,7 @@ class action(rb.Robot):
     
     def go_to_CSC(self):
         while True:
+            self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(feixingfu_jiemian)
             if status==status.OK:
                 time.sleep(0.7)
@@ -272,6 +273,7 @@ class action(rb.Robot):
                 time.sleep(0.7)
                 break
         while True:
+            self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
             time.sleep(0.5)
             if status==status.NOTMATCH:
@@ -319,6 +321,7 @@ class action(rb.Robot):
             pass
     def tap_(self,D,X,Y):
         while True:
+            self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
             if status==status.NOTMATCH:
                 x,y=self.TAPP(D,X,Y)
@@ -329,6 +332,7 @@ class action(rb.Robot):
                 break
         print("监控坐标")
         while True:
+            self.queue.put("check")
             pos = self.Ocrtext("B5C1C5,4B3F3A",160, 90, 306, 125,
                                 lang='eng',oem=1,
                                 attribute=["tessedit_char_whitelist", 
@@ -336,7 +340,6 @@ class action(rb.Robot):
             if len(pos):
                 postr = pos[0]['text'].replace("\n","")
                 try:
-                    
                     _x = int(postr.split(',')[0])
                     _y = int(postr.split(',')[1])
                     time.sleep(1)
@@ -345,8 +348,8 @@ class action(rb.Robot):
                         break
                 except Exception as e:
                     print(postr)
-                    tpl = self.Print_screen()
-                    self.show(tpl[90:125,160:306])
+                    #tpl = self.Print_screen()
+                    #self.show(tpl[90:125,160:306])
                     
     def discover_feixingfu(self):
         tpl = self.Print_screen()
@@ -373,6 +376,7 @@ class action(rb.Robot):
     def Tothecountryside(self):
         #确保道具栏没有被收起来
         while True:
+            self.queue.put("check")
             if self.no_prop():
                 self.click(1828,1020)
                 time.sleep(0.5)
@@ -406,6 +410,7 @@ class action(rb.Robot):
             self.tap_("长寿村",144,6)   
             time.sleep(0.5)
             while True:
+                self.queue.put("check")
                 status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
                 if status==status.NOTMATCH:
                     time.sleep(0.5)        
@@ -420,6 +425,7 @@ class action(rb.Robot):
                     self.click(64,844) 
                     time.sleep(1)
                     while True:
+                        self.queue.put("check")
                         reponse = self.Ocrtext("1C1D21,1B1C20",151, 36, 307, 77,THRESH_GAUSSIAN=False)[0]
                         reponse = reponse["text"].replace("\n","")
                         reponse = reponse.replace(" ","")
@@ -431,6 +437,7 @@ class action(rb.Robot):
                 
     def go_to_ZZG(self):
         while True:
+            self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(feixingfu_jiemian)
             if status==status.OK:
                 time.sleep(0.7)
@@ -438,6 +445,7 @@ class action(rb.Robot):
                 time.sleep(0.7)
                 break
         while True:
+            self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
             time.sleep(0.5)
             if status==status.NOTMATCH:
@@ -454,6 +462,7 @@ class action(rb.Robot):
     #去往大唐境外
     def TotheDaTangJingWai(self):
         while True:
+            self.queue.put("check")
             if self.no_prop():
                 self.click(1828,1020)
                 time.sleep(0.5)
@@ -488,13 +497,52 @@ class action(rb.Robot):
             self.tap_("朱紫国",6,4)   
             time.sleep(0.5)
             while True:
+                self.queue.put("check")
                 status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
                 if status==status.NOTMATCH:
                     time.sleep(0.5)        
                 else:
-                    print("抵达目的地")
-                    break
-
+                    time.sleep(1)
+                    self.click(61,378) #屏蔽玩家
+                    time.sleep(1)
+                    self.click(64,844) #屏蔽界面
+                    time.sleep(1)
+                    self.click(104,1000) 
+                    time.sleep(1)
+                    self.click(104,1000)
+                    time.sleep(1)
+                    while True:
+                        self.queue.put("check")
+                        reponse = self.Ocrtext("1C1D21,1B1C20",151, 36, 307, 77,THRESH_GAUSSIAN=False)[0]
+                        reponse = reponse["text"].replace("\n","")
+                        reponse = reponse.replace(" ","")
+                        if  reponse in "大唐境外":
+                            print("抵达目的地")
+                            return
+    #前往墨家村
+    def TotheMJC(self):
+        self.TotheDaTangJingWai()
+        self.click(60,81)
+        self.tap_("大唐境外",233,109)
+        self.click(1136,220)
+        while True:
+            self.queue.put("check")
+            status,ag= self.findMultiColorInRegionFuzzyByTable(map_feature["送我进墨家村"]["坐标"])
+            if status == status.NOTMATCH:
+                time.sleep(0.5)
+            else:
+                self.click(1562,376)
+                time.sleep(0.5)
+                break
+        while True:
+            self.queue.put("check")
+            reponse = self.Ocrtext("1C1D21,1B1C20",151, 36, 307, 77,THRESH_GAUSSIAN=False)[0]
+            reponse = reponse["text"].replace("\n","")
+            reponse = reponse.replace(" ","")
+            if  "家村"  in reponse:
+                print("抵达目的地")
+                return
+                
 
 def main():
     #blRobot.Get_GameHwnd()
@@ -504,7 +552,8 @@ def main():
     m1 = rh.MyThread(q,zoom_count=zoom_count)
     m1.start()
     Robot = action(q,zoom_count=zoom_count)
-    Robot.Tothecountryside()
+    #Robot.TotheMJC()
+    Robot.move_click(668,525,950,538)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
