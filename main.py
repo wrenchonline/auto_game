@@ -9,7 +9,8 @@ from utils import *
 from tesserocr import RIL
 import Robot_help as rh
 import math
-import queue 
+import queue
+from goto import with_goto
 
 '''
 
@@ -48,6 +49,7 @@ fanhui = (1600,80, '0x183850'),(1586,67, '0x204057'),(1585,97, '0x18324a'),(1617
 ditujiemian = (253, 74, '0x20a9c0'),(219, 75,'0x37cddf'),(266, 61, '0xab5694'),(264, 90, '0xa5558d')
 start_map = (143,79)
 
+flag_jiemian = (554,83,0x111830),(720,146,0x182428),(720,146,0x182428),(1411,93,0x11182f)
 
 
 #"坐标计算": (609,226,1550,932,192,144)  609,226 是实际地图左上角的坐标 1550,932是实际地图右下角的坐标   192,144 是长和宽
@@ -138,6 +140,106 @@ class action(rb.Robot):
             self.queue = q
         else:
             raise("参数2不是队列")
+        
+    @with_goto    
+    def flag_transfer(self,color):
+        while True:
+            time.sleep(0.5)
+            self.click(973,205)
+            time.sleep(0.5)
+            tpl = self.Print_screen()
+            if color == "red":
+                target = cv2.imread("./images/red_flag.png")
+                x,y = self.matchTemplate(tpl,target,0.13)
+                if x != -1:
+                    self.click(x,y)
+                    self.click(x,y)
+                    break
+                else:
+                    goto .end
+            elif color == "yellow":
+                target = cv2.imread("./images/yellow_flag.png")
+                x,y = self.matchTemplate(tpl,target,0.13)
+                if x != -1:
+                    self.click(x,y)
+                    self.click(x,y)
+                    break
+                else:
+                    goto .end
+            elif color == "blue":
+                target = cv2.imread("./images/blue_flag.png")
+                x,y = self.matchTemplate(tpl,target,0.13)
+                if x != -1:
+                    self.click(x,y)
+                    self.click(x,y)
+                    break
+                else:
+                    goto .end
+            elif color == "green":
+                target = cv2.imread("./images/green_flag.png")
+                x,y = self.matchTemplate(tpl,target,0.13)
+                if x != -1:
+                    self.click(x,y)
+                    self.click(x,y)
+                    break
+                else:
+                    goto .end
+            elif color == "white":
+                target = cv2.imread("./images/white_flag.png")
+                x,y = self.matchTemplate(tpl,target,0.13)
+                if x != -1:
+                    self.click(x,y)
+                    self.click(x,y)
+                    break
+                else:
+                    goto .end
+            else:
+                label .end
+                #没找到，去行囊里面找
+                self.click(1252,203)
+                time.sleep(0.5)
+                tpl = self.Print_screen()
+                while True:
+                    if color == "red":
+                        target = cv2.imread("./images/red_flag.png")
+                        x,y = self.matchTemplate(tpl,target,0.05)
+                        if x != -1:
+                            self.click(x,y)
+                            self.click(x,y)
+                            break
+                    elif color == "yellow":
+                        target = cv2.imread("./images/yellow_flag.png")
+                        x,y = self.matchTemplate(tpl,target,0.05)
+                        if x != -1:
+                            self.click(x,y)
+                            self.click(x,y)
+                            break
+                    elif color == "blue":
+                        target = cv2.imread("./images/blue_flag.png")
+                        x,y = self.matchTemplate(tpl,target,0.05)
+                        if x != -1:
+                            self.click(x,y)
+                            self.click(x,y)
+                            break
+                    elif color == "green":
+                        target = cv2.imread("./images/green_flag.png")
+                        x,y = self.matchTemplate(tpl,target,0.05)
+                        if x != -1:
+                            self.click(x,y)
+                            self.click(x,y)
+                            break
+                    elif color == "white":
+                        target = cv2.imread("./images/white_flag.png")
+                        x,y = self.matchTemplate(tpl,target,0.05)
+                        if x != -1:
+                            self.click(x,y)
+                            self.click(x,y)
+                            break
+                    else:
+                        print("not found flags")
+                        return State.NOTMATCH
+        return State.OK
+        
         
     def find_map_by_shop(self):
         tpl = self.Print_screen()
@@ -470,7 +572,7 @@ class action(rb.Robot):
                     break
             else:
                 break
-            time.sleep(2)        
+            time.sleep(2)
         self.click(1695,1015)
         time.sleep(1)
         status,x,y= self.discover_feixingfu()
@@ -542,7 +644,57 @@ class action(rb.Robot):
             if  "家村"  in reponse:
                 print("抵达目的地")
                 return
-                
+    def ToDTGJ(self):
+        while True:
+            self.queue.put("check")
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+            time.sleep(2)
+        self.click(1695,1015)
+        time.sleep(0.2)        
+        self.flag_transfer("red")
+        time.sleep(0.5)
+        q = False
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(flag_jiemian)
+            if status==status.NOTMATCH:
+                if q:
+                    self.click(1609,85)
+                    time.sleep(0.5)
+                    status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+                    if status==status.NOTMATCH:
+                        time.sleep(0.5)        
+                    else:
+                        break
+            else:
+                q = True
+                self.click(271,900)
+                time.sleep(0.2)
+        time.sleep(1)
+        self.click(61,378) #屏蔽玩家
+        time.sleep(1)
+        self.click(64,844) #屏蔽界面
+        time.sleep(1)
+        self.click(104,1000) 
+        time.sleep(1)
+        self.click(104,1000)
+        time.sleep(1)
+        while True:
+            self.queue.put("check")
+            reponse = self.Ocrtext("1C1D21,1B1C20",151, 36, 307, 77,THRESH_GAUSSIAN=False)[0]
+            reponse = reponse["text"].replace("\n","")
+            reponse = reponse.replace(" ","")
+            if  "唐国境"  in reponse:
+                print("抵达目的地")
+                return
+            
+        
+
 
 def main():
     #blRobot.Get_GameHwnd()
@@ -552,8 +704,11 @@ def main():
     m1 = rh.MyThread(q,zoom_count=zoom_count)
     m1.start()
     Robot = action(q,zoom_count=zoom_count)
+    Robot.ToDTGJ()
+    
+    
     #Robot.TotheMJC()
-    Robot.move_click(668,525,950,538)
+    #Robot.move_click(668,525,950,538)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()

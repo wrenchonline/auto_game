@@ -14,15 +14,16 @@ class MyThread (threading.Thread,rb.Robot):
     def __init__(self,q,class_name="subWin",title_name="sub",zoom_count=1.5):
         threading.Thread.__init__(self)
         rb.Robot.__init__(self,class_name=class_name,title_name=title_name,zoom_count=zoom_count)
+        self.Get_GameHwnd()
         if isinstance(q,queue.Queue):
             self.queue = q
         else:
             raise("参数2不是队列")
             
   # Function that raises the custom exception 
-    def someFunction(self): 
+    def someFunction(self,): 
         name = threading.current_thread().name 
-        raise MyException("An error in thread "+ name) 
+        raise MyException(self.exc) 
 
 
     def run(self): 

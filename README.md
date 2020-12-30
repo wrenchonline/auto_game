@@ -26,6 +26,7 @@
     Pillow==8.0.1
     pynput==1.7.1
     pytesseract==0.3.6
+    goto-statement==1.2
     opencv-python==4.4.0.46
 ## conda安装tesserocr:
     conda install -c conda-forge tesserocr

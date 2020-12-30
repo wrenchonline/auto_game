@@ -456,7 +456,7 @@ class Robot:
 
         
     
-    def click(self,x:int=None,y:int=None):
+    def click(self,x:int=None,y:int=None,DOUBLE=False):
         """Click at pixel xy."""
         x = int(x/self.zoom_count)#1.5是缩放比例
         y = int(y/self.zoom_count)
