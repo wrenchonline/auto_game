@@ -11,9 +11,9 @@ import Robot_help as rh
 import math
 import queue
 from goto import with_goto
+import json
 
 '''
-
     while True:
         x,y = blRobot.findMultiColorInRegionFuzzy("0x202020","2|2|0x202020", 90, 52, 1131, 1024 ,1406)
         if x!=-1:
@@ -38,6 +38,41 @@ ditu = (
         "00010000000f0000003f800000fffffe1fffffffff81c000fe0000001c0100061801800f1c61803e1c6187fc1c61ffe01ee3ff803fff9e00ffff8e073fff8e071ee38e071e618f3e1c6187fe1803800408070000007e000600fe001e07ff003e7fffc07c3e03f8f00e01ffe006007fe006003fe00701f87007fff07c07f8001e0700000e000000000000000000000000000000000000000c0001801c00018018180180181c0180381c0180701f8180e01fe181e01c7981c0187f838018018700180186001801fc001c01fc003e03fe007ffffffe7ffffffe7ffffffe1c01fe001801fc001801ce0018018700180183801c3f81c01e7981c01ff180e01f8180701e0180381c018018080180180001801c0000800c00000000000000000000000000000000000000007ffffffe7ffffffe7ffffffe600000066000000660000086638001c6638101c6678381c6678381c6678381c6678381c6678381c6678781c667ffffc667ffffc667ffffc6678781c6638381c6638381c66383f1c66383f9c6638399c6638389c6630101c66000008660000006600001c67ffffffe7ffffffe3ffffffc$傲来国$1286$32$105",
         "2060000078e038061fe070071fe070063ffffc3e7ffffffcf801ffc0f000fe00001ffe0007fffc0003fff80003fff01f03fffe7c3ffffff8ffffff80ffffff006000000060000000603ffff060fffff860e0000061e000007bf000007ffffffe7ffffffe7ffffffe71e0003861e0001860e0007860fffff8607ffff0207fffe00000000000000000000000000000000000000000600f038060ff838067ff87806001870060018706600187066001860760078607607f86077fff80077fffc01e3c01fffe0000fffc0f0000000fc000001fe000001e1ffff81c1ffffc181ffffe180070061800600638006006f800e0067800c0063801c00618038006180780061c07000e1e06003e1fc001fc0fc001f8000000000000000000000000000000000000000007fffff00000fff00000007803fffff87ffffff87ffffff87ffffff8000000780000007803fffff807fffff001e0000001c000000180000003806000070060000e0060e01c0060603800607070006070e0606078e0706078e038607c701860fe381861fe1c0063870e00678307007e0003807e000180700001c00000$狮驼岭$1261$32$104",
 )
+
+scenario = (
+        "0000000607ffffff87fffffe07fffff003fffffe01cf3ffff1ffdf3ff9ffff0e0efde7860678c1c3031e70e1c187ffffffc3fffcf0e18e1c3030c39e080861ff0404003c0200000001000200008003c000e0f3fffff0f3fffffbf079e79df0186106e00c30830006184180030c30c0038f38ec01e79e7783fffff9f0fc003c3838000e0e000000000000000000000000000000000000000031fffffffcfffffff87f8fff803fcfffe01fffffff1fffe1c19ff8f0404ffcf86063fffc7ff0ffff7ff8670ffffc21c78f0610ffc303083f80808001c0706000e078210c7bfc30c63bfe387b30e3f8019871f800f01ff800fc0ff81fffc7f807ffe3fc003fc1ffc03fe0ffe03ff070701f9878781ec4ffff88631fff0031870700000301000000000000000000000000000000000000fffffc00ffffff007fffffc0000001e000000030000000180000000c00000006000000030000000180000000c00000006000000030000000387ffffffc7ffffffe3fffffff0000000f80000000c00000006000000030000000180000000c00000006000000030000000180000000c0000000e01ffffff00ffffff803fffff8$麒麟山$1398$33$104",
+        "006300180073801c0078c00e0078600f01f8300701f8180701fc0c03800c06038006030380010183c00080c3c0004073c000203fc000383ff0007f3ffc10fffffffeffffffff87c3fe0001c0fe0000407f00002039e00010187000080c1e0004060700020301c0010180f00080c0380040601c0020300780101801c0000c00e000040030000000000000000000000000000000000000e0002000f00030fff002181ff8031c0018378e000c3fcf00061fe700071ff30fff8fff83ffcfffc079ffff9838ffff0e0c7f7f83863f3fc3c21f9ff1e1000ffff00007fff000033e03ffc38e003ff1c6000c38c300041c41800206209c030300cf0181826380c0c1f0c0e060783060701c1c2078078e007801c300380060c000000000000000000000000000000000000000003ffffffc1fffffff1fffffff8e000019c600000023000000118e000308c7020184638380c231c1c06118e0e0308c7070184638380c231c1c0e118fffff08c7ffff8463ffffc231e7e1e118e0e0708c70701846383c0c231c1fce118e0f6708c7073b84638189c2300000e1180000208c000010c7f800ffe3fffffff0fffffff@100$朱紫国$1199$33$103",
+        "000300000001c0000000e000000070000000380000003c0001fffffff8fffffffe7fffffff0003e00f8000e0018000f001c003f800e001fc0060019e006000cf000000e3f0000061fc000060ff80007071c00038387800381c1c00380e07803c0701c01c0380781c01c01c0e00e0070400700380003800e0001c0070000e001800000000000000000000000000000000000000000000600e0000700e0062380e00311c0f0018ce0f000c670f0006338f000319cf00018cff8000c7ffc00063ffe00033fe3b007ffe1d807fff0ce03ff786380739c31c019ce18760c670c0306338600c319c300618ce18038c670c01c6338600e319c300f18cfffff0c67ffff06339ffc0311c7000188e180000070c000003860000000000000000000000000000000000000000030003800f8001c00f8000e01f8000701f000038fe00003eff0003fffffffffffffffe0fffc00003c3e00000e0f80000201e000000078000000000000000000007000000038e000001c7800300e0f80380701f00c03807e0601c0070300e00000c070000060380000303c00003bfffffff9fffffffc3ffffff803c0000000e00000006000000$长寿村$1029$33$104",
+        "000300000001c0000000e000000070000000380000003c0001fffffff8fffffffe7fffffff0003e00f8000e0018000f001c003f800e001fc0060019e006000cf000000e3f0000061fc000060ff80007071c00038387800381c1c00380e07803c0701c01c0380781c01c01c0e00e0070400700380003800e0001c0070000e0018000000000000000000000000000000000000000000fe2000307e1000187e08000e380c000618060e030c030f018601ff818300ffc0c1807e3060c03e1c7060fc063830fe031c19fe009e3c47007e3e01803e1f00c01f0780600781c03003c0601803c0300c03f0180607f80c0387bc0601ff860300fe0381807e00e0c03c007060180038300c001c1f86000707e1000183f08000e0000000000000000000000000000000000000004000200060003000700ffffff80ffffff807fffff8000fc07c0001801c1c0040071c000007fe000003f800fffff000fffef000e1c0180070e00400382003081c18038c0e0e03ce0707bfc70383ffe381c1f00383f0000383fe0003c1ffffe3c07e0fffc00e003fe007001ff83f807fff9fc07f87c7e3fe00f1f1c00078380003f8080001f8$长安城$1074$33$104",
+        "00018000000fc000000fe00000fffffff1fffffff7f8000000f80000003003000e0821800f0630c0ff031873fc01cc3ff801ff3ff007fffc7018fffe380c3fe71c0f1e618e070630c3ff0308e0ff8100f0000000f0002003f0007803f800787fff807c3f0fe0781f00fff801801ff800c007fc006007ff003fffc3e01ffc00f80f80003e0200000600000000000000000000000000000000000004007000020030100100300c0080180600401c0300201c01fc101c00ff181e0063fc0e0030060e0018010e000c00ce0006007e0007007f800fffffffc7fffffff3fffffff07807fc001801fc000c00fe0006006380030060e00183f03000c3981c007fc407003f0201801e0100700c0080380600400c0000200300001001c000000040000000000000000000000000000000001ffffffe0fffffff8fffffffc700000ce30000001180000008c7000184638100c231c1c06118e0e0308c7070184638380c231c1c06118e0e0708c7ffff8463ffffc231ffffe118f3f0f08c7070384638380c231c1e06118e0fe708c707b38463839dc231c0c4e1180000708c0000104600000863fc007ff1fffffff87ffffffc$傲来国$1210$33$104",
+        "18000e000c000e0006000f0003000f0001801fc000c01ffff060fffffe78780000fff000003f0000000e00000003000000018000e000c00070006000300030003c00183ffffe0c1fffff0607ffff83003e00cff00e0037f0070019f803800c70030006180380030c03800186018000c300c000c1800001e0c00007f0600007f0000000000000000000000000000000000000000000000180600001c070ffe0e0387ff870387ffe38183bef1c1c18618e0e0c30c70e06186386030c31c7018618e300c30c730061863f8031c31fc01fffffffeffffffff7ffffffe33c73fc018618fe00c30c7f00618639c030c31c7018618e380c30c70c06186383831c31c1c1fff8e0e07ff870303ff8381e00001c0700000e0380000001800000000000000000000000000000000001fffff801fffffe00ffffff80000003c00000006000000030000000180000000c00000006000000030000000180000000c00000006000000070fffffff8fffffffc7ffffffe0000001f0000000180000000c00000006000000030000000180000000c00000006000000030000000180000001c03fffffe01ffffff007fffff@000$花果山$1036$33$103",
+        "02000000030000000180000600c0000700600c0380300f0380183f83800c3fc38007ffe38003f8f18007f838808fe01c004fe00e0030700700181803800e0c03c00f0601e0078307ffff8187ffff80c03e0000600e000030070000180380000c01c0000600e380030070c00180387800c01c1c00600e0780300001c018000060000000000000000000000000000000000000000000038001e301c001e1c07007e0701c0fc0380e0f800c0000000000000000301c0000380e3e003c07bf007c07ff80780ff0c0f8ffe0607c78f0101e383808071c1c04038c0f0201c707c110e3e3f99871fbccce38ffe2679c7ff033ce38f809e7183c06f38c0e03f9c70703f8e387fff871c3fff838fffe601c3ff8300e0038080000180000000000000000000000000000000000000030000f301c001f0c0f00ff070380fc0180e3f8000001e000000000000000000000208f82003047e30e7823f0873013f8438009fc31c004ee18f006770c7ff33b863fff9dc33e00cee1be006770df0013b8778009dc3bc00cee1cfffe770e7ffb3b873c019dc39c00cee1ce002770e70013bce3fc0fdff1cf07c7f003c083f000200040$东海湾$1117$33$104",
+        "0180000300c0000180600000c030000060180000300c020030061f8018031fe00c01ff780e01fc0c071ff806031ff801838ff800e1800c0071c006001fe0030007e0018003e000c003f0006001f0003001f800180ffe000c0f870007ff818003f800e001e0003800e0001c006000060030000380180000e00c0000700600001801000004000000000000000000000000000000000000000020000000380000003c0000003c0000003e0000003c0000007e0000007c03fffff803fffff001ffffe0000000000000000000000000000000000000000000000000000000000001ffffffe0fffffff87ffffffe0000000f0000000180000000c00000006000000030000000180000000c0000001e0000000f000000ff80000038000000000000000000000000000000030003800f8001c00f8000e01f8000701f000038fe00003eff0003fffffffffffffffe0fffc00003c3e00000e0f80000201e000000078000000000000000000007000000038e000001c7800300e0f80380701f00c03807e0601c0070300e00000c070000060380000303c00003bfffffff9fffffffc3ffffff803c0000000e00000006000000$女儿村$820$33$104",
+        "0080000600c00007006000078030000380180003800c0003c0060003c0030003c0018003c000c003c0006007c00030078000180f80000e0f0001ffff0000ffff8000ffff800001f3e00000607e0000300f00001803e0000c00780006001e0003000780018001e000c000780060001e0030000700180001e00c000070060000380000000400000000000000000000000000000000000003ffe07fffffc07fffff80783c0000380800001c0400000e2318ff87318c7fc398c63ce1cc631c38e6318c0c7318c606398c63031cc63181be67f8c0dff3fce06ffffff033fffff818fe7f9c0c733fc606398c63031cc631818e6318c0c7318c606398c63031ccff1c38e7ff8f3c73ffc7fc38ffc3fe1c0f80000e0300000000000000000000000000000000000000000000003ffffffc1fffffff1fffffff8e000018c600000023000000118e000308c7020184638380c231c1c06118e0e0308c7070184638380c231c1c0e118fffff08c7ffff8463ffffc231e3e1e118e0e0308c70701846383d0c231c1fce118e0f6708c7073b84638189c2300000e1180000208c000010c7fc0fffe3fffffff0fffffff80000000000000000000000000000000000000000000c00030007000380ffffff80ffffffc07fffffe000f803e0003801e0c0080060700000003000000018438ff81871cffc0c38f7fe0e1cfff38f0fff98ff07ffcc7f03ffe63e01eff31e03e3f98c01f1fcc60078fe63c01cff31fc0fff98ff87ffcc7fc3ffe63071fffb3018e3fff80c71effc0638e7fe0708703c038030000f@100$大唐国境$1679$33$139",
+        "00180007100c00070c0700078601c0078380e00f80c0300f8038081f801c001e0000001e00000000010000000180000001c1800000e1c0000070e00000387000001c3800000e1c0000070e00000387800003c3ffffffe1fffffff0e00000787000001c3800000e1c0000030e00000187000000c380000060c00000306000001800000004000000000000000000000000000000000180000001c1fffff0e3fffffc71e00f0038e000001c7000000e3820e0071c1870038f1e3801c7cf1c00e3ff8e0071efc70038e3e3801cf0f3c03ff83fff9ffc1fffcffe0fffe3ef0fbe00e3878e0071c7c70038ffe3801c7ff1c00e3e78e0871c3c70438e0c3831c7001818e380000e71c0000e38ffffff1c3fffff0e0fffff0200000000000000000000000000000000000000003fff00033fffc1019fffe0c0cc3c3060660c1830230f0c3c31fffffff8fffffffc7ffffffe38f9f7ef183060c38c3c3061c7bf7830e3fffc1860fffe0820601e00000006000000010001084080008c30c000661e60003307b0003d81fffffec0fffffe60fffffe30ff83c018e180000ee0c00007e061f801e019f800c00ff000000300000000000000000000000000000000000000002000200030003000f8003800f8001c1ff8001c1fe0000c1fc0c00e07c0700e01c01c0e0040070e002003fe001001fe000801fc000601f80003fff00001ff800000780000000000000000000000000000001ffffffc3fffffff1fffffff807fc0ff800f80000001c0000000780000001e00000003e0000000780000000e00@000$江南野外$1475$33$139",
+        "000300000001c0000000e000000070000000380000003c0001fffffff8fffffffe7fffffff8003e00f8000e0018000f001c003f800e001fc0060019e006000cf000000e3f00000e1fc000060ff80007071c00038387800381c1c00380e07803c0701c01c0380781c01c01c0e00e00704007003c0003800e0001c0070000e001800000000000000000000000000000000000000000000600e0000700e0062380e00311c0f0018ce0f000c670f0006338f000319cf00018cff8000c7ffc00063ffe00033fe3b007ffe1d807fff0ce03ff786380739c31c019ce18760c670c0306338600c319c300618ce18038c670c01c6338600e319c300f18cfffff0c67ffff06339ffc0311c7000188e180000070c00000386000000000000000000000000000000000000000000000800e0020400e0030203f0038107f003809fc00380cf0003806001c38070007380f8003f801c001fc006000fe003000ff0009e7e3e0047fe070021fc01e0103e0070080780000000c000000000000000000003ffffffe1fffffff8fffffff8600000e0600000303000001c180f000e0c0fc00707fff80781f81f0380f003ff8000007f800000000000000000000000000000000000002000200030003000f8003800f8001c1ff8001c1fe0000c1fc0c00e07c0700e01c01c0e0040070e002003fe001001fe000801fc000601f80003fff00001ff800000780000000000000000000000000000001ffffffc3fffffff1fffffff807fc0ff800f80000001c0000000780000001e00000003e0000000780000000e00@000$长寿郊外$1318$33$139",
+        "386018021c701c0387f81e01c3fe0f01c3ffffffe3e03fff83c001fe000003fc0007fffe0001fffe0000fffe03c07fff83c03fffffc3ffffff03fffffe00e07ffc002000000010000000081ffffe041e0000020e0000018f000000fffffff87ffffffc3ffffffe1cf8003e08380006041c0007020fffff8107ffffc081ffffc00000000000000000000000000000000000000000020070180100fc1c019ffe0e00c70f0700600183823000c18118006080cc0030c06601f8603983fc0038ffff003c7e07c07c1801fffe04003fc003f0000001fc000000fffffe0070ffffc0307ffff81001f81c080070060c0030013e0018008f001c0063800e0030c00e0010200e00081807000c0e07001e0780007f03f8007f00700000000000000000000000000000000000000003fffff001fffffc0000001e0000001f03ffffff83ffffffc1ffffffe00ffffff0000000780000003c00fffffe007ffff8001e0000000e0000000e0180000700c00007006060070030300700181c07000c0e0f02060387018301c380e180f0e070c0fc381860fe0e0030f3838018e0e0e00fe0603807e0001c03e0000700800@000$狮驼岭$1219$33$103",
+        "00018e020001c7018f83ff80cfffff0067ffff0633bffc07198ffe038cc7ff01c67fff80e33fffc0719dfffff8cc7ffffc663ff8ee331ffc1f39fffe0ffcffff07fe7fff83ff3bffc0fb98ffe038cc7ffc1c67fffffe33fffe0719fffe038cefff01c663ff80e331ffc0719ffff838c7f3ff0c63e03fc030001cf0180006380c000000040000000000000000000000000000000000f80820e0fc0c1070f006183870070c3838838e181c41c71c0e20c38e0710c3860388e18601c4e1c300e360c38871f0c38638f8e3839c7ce1c1fe3fe180ff1ff1c0f7887fe0f1c41ff0f0e207fff07101ffc03880fe001c407f800e2061e0071030700388381e01c4180700e01801e0700c0070380200380fc0000e07e0000380000000000000000000000000000000000000030003800f8001c00f8000e01f8000701f000038fe00003eff0003fffffffffffffffe0fffc00003c3e00000e0f80000201e000000078000000000000000000007000000038e000001c7800300e0f80380701f00c03807e0601c0070300e00000c070000060380000303c00003bfffffff9fffffffc3ffffff803c0000000e00000006000000$墨家村$1343$33$104",   
+)
+
+
+
+pos_feature = (
+    "0f800f1f801f3f003f3e007f7800fff001fff003eff007cff00f8ff01f0ff03e0f787c0f3ff80f3ff00f0fc007$2$185$24$15",
+    "0e00fc1e007e3e003f7c001ff8380ff0380ff03c07f03c07f03c07f07c0ff07c0f78fe1f3ffffe3feffc0fc3fc0701f8$3$201$24$16",
+    "0400001c00003e00003e00007fffffffffff7fffff$1$84$24$7",
+    "700000700000f00000f00000f00000f003fff03ffff0fffffbff00fff800ffc000ff0000fe00007c0000700000$7$131$24$15",
+    "07f8100ffc3c3ffe3e3fff1f780f0ff80f0ff00707f00707f00f0ff80f0f7c0f1f3e3fff3ffffe1ffffc03ffc000ff00$9$223$24$16",
+    "0787f81fcffc3ffffe7fffff78fe0ff07c0ff03c07f03c07f03c07f87c0f78fc0f7ffe1f3ffffe1fcffc0703f80001f0$8$234$24$16",
+    "03ffe00ffff83ffffc3ffffe7c000ff8000ff0000ff00007f0000ff8000f7c001f3e003f3ffffe1ffffc03ffe0$0$195$24$15",
+    "0000c00003e00007e0001fe0003fe000fee001fce007f0e00fe0e03f80e07ffffcffffff7fffff3ffffe0001f00000e0000040$4$178$24$17",
+    "03fff00ffff83ffffe3fffff78780ff8780ff0f00ff0f007f0f00ff0f00ff8f80f7c7c3f3e3ffe1c1ffc000ff0$6$216$24$15",
+    "3ffc387ffc3cfffc3efffc1ff8f80ff0f00ff0f007f0e007f0e00ff0f00ff0f81ff07c3f703ffe701ffc0007e0$5$205$24$15",
+    "700000700000f00000f00000f00000f001fff03ffff0fffffbff00fffc00ffc000ff8000fe00007c0000700000$7$132$24$15",
+    "180fffffffc7f@000$,$39$11$5"
+)
+
+
 
 tu_text_features = ['图','T']
 shop_emty = (727,651,"0x3f4a53"),(663,644,"0x3f4a53"),(623,645,"0x3f4a53"),(720,616,"0x3f4a53"),(718,683,"0x3f4a53"),(797,679,"0x3f4a53"),(855,675,"0x3f4a53"),(852,637,"0x3f4a53")
@@ -117,7 +152,7 @@ map_feature = {
 	"火焰山土地" :{ "坐标":((1115,361,0xa99a27),(1114,363,0xc9b92c),(1117,371,0x4a4311),(1118,375,0x90672b),(1127,373,0x978a22),(1133,373,0xe5cb35),(1127,363,0xdbc931),(1124,363,0xd8c233),(1118,368,0x9e9123),(1118,375,0x90672b)),"范围参数":(90,884,50,1494,637)},
 	"送我进墨家村" : {"坐标":((1442,370,0xf6f7f8),(1483,374,0xffffff),(1514,373,0xf3f5f6),(1560,373,0xfdfdfd),(1598,364,0xffffff)),"范围参数":(90,1415,316,1868,434)},
 	"传送仙女":{ "坐标":((695,564,0x686619),(695,572,0x878723),(698,578,0xe4d533),(700,579,0xe6d433),(690,582,0xead637),(689,572,0xabb540),(690,560,0xb0a82b),(705,566,0x32350f),(704,576,0xe3d434),(706,585,0xe8d534)),"范围参数":(85,494,128,1116,808)},
-	"我要去": {"坐标": ((1603,507,0x9eacb5),(1602,500,0xd6dce0),(1607,499,0xe0e4e8),(1616,498,0xc5cdd3),(1621,506,0x7f919e),(1609,513,0xf9fafb),(1604,516,0xffffff),(1615,523,0xffffff),(1621,512,0x8495a1),(1611,498,0x8797a4)),"范围参数":(90,1425,459,1791,567)},
+	"我要去": {"坐标": ((1449,509,0xfcfcfc),(1470,514,0xeef0f2),(1550,  514, 0xdce1e4),( 1595,  514, 0xf6f7f8)),"范围参数":(90,1425,459,1791,567)},
 	"大唐境外A":{"坐标": ((1384,406,0xe7ece4),(1381,427,0xf85555),(1388,423,0xf80000),(1391,422,0xf8bdba),(1396,422,0xf8d4d1),(1398,412,0xf88381),(1397,405,0x94967c),(1394,402,0x8f946c),(1380,404,0x36452d),(1387,417,0xf8e2df)),"范围参数":(90,1371,382,1548,480)},
 	"驿站老板A":{ "坐标": ((913,649,0xdfcd31),(916,643,0xa49727),(909,640,0xc7d078),(906,647,0xc9b690),(907,650,0xdfcc51),(915,651,0xdbc933),(915,651,0xdbc933),(914,658,0xebd834),(913,665,0xe7d433),(901,664,0xe5d233)),"范围参数":(90,638,237,1335,867)},
 	"大唐境外":{"坐标": ((174,50,0x020202),(180,57,0x858b9d),(197,55,0x080809),(240,50,0x474a54),(255,51,0x202226),(275,43,0x32353b),(284,43,0x858b9e),(267,70,0x2a2e37),(288,69,0x0e0f12),(294,55,0x24262b)),"范围参数":(90,143,30,331,76)},
@@ -315,6 +350,16 @@ class action(rb.Robot):
     def check_map(self):
         n,nn,nnn,nnnn=None,None,None,None
         #打开道具栏
+        while True:
+            #self.queue.put("check")
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+            time.sleep(2)
         self.click(1695,1015)
         time.sleep(1)
         tpl = self.Print_screen()
@@ -346,28 +391,28 @@ class action(rb.Robot):
                                                591,511,732,547,ril=RIL.TEXTLINE,
                                                lang='eng',oem=1,
                                                attribute=["tessedit_char_whitelist", 
-                                                "0123456789,"])
+                                                "0123456789,"])[0]
                             print(pos)
-                            
+                            pos['text'] = pos['text'].replace("\n","")
                             _x = int(pos['text'].split(',')[0])
                             _y = int(pos['text'].split(',')[1])
-                            tu_list.append((data,_x,_y))
+                            tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
                         else:
                             pos = self.Ocrtext("06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
                                                ,555,513,693,548,ril=RIL.TEXTLINE,
                                                lang='eng',oem=1,
                                                attribute=["tessedit_char_whitelist",
-                                                "0123456789,"])
+                                                "0123456789,"])[0]
                             print(pos)
                             _x = int(pos['text'].split(',')[0])
                             _y = int(pos['text'].split(',')[1])
-                            tu_list.append((data,_x,_y))
+                            tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
         return  tu_list  
     
     
     def go_to_CSC(self):
         while True:
-            self.queue.put("check")
+            #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(feixingfu_jiemian)
             if status==status.OK:
                 time.sleep(0.7)
@@ -375,7 +420,7 @@ class action(rb.Robot):
                 time.sleep(0.7)
                 break
         while True:
-            self.queue.put("check")
+            #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
             time.sleep(0.5)
             if status==status.NOTMATCH:
@@ -423,7 +468,7 @@ class action(rb.Robot):
             pass
     def tap_(self,D,X,Y):
         while True:
-            self.queue.put("check")
+            ##self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
             if status==status.NOTMATCH:
                 x,y=self.TAPP(D,X,Y)
@@ -434,13 +479,14 @@ class action(rb.Robot):
                 break
         print("监控坐标")
         while True:
-            self.queue.put("check")
-            pos = self.Ocrtext("B5C1C5,4B3F3A",160, 90, 306, 125,
-                                lang='eng',oem=1,
-                                attribute=["tessedit_char_whitelist", 
-                                "0123456789,"],THRESH_GAUSSIAN=False)
+            #self.queue.put("check")
+            # pos = self.Ocrtext("C4CED1,3C322E",158, 93, 284, 126,
+            #                     lang='eng',oem=1,
+            #                     attribute=["tessedit_char_whitelist", 
+            #                     "0123456789,"],THRESH_GAUSSIAN=False)
+            pos = self.z_Ocrtext(pos_feature,"C4CED1,3C322E",158, 93, 284, 126)
             if len(pos):
-                postr = pos[0]['text'].replace("\n","")
+                postr = pos.replace("\n","")
                 try:
                     _x = int(postr.split(',')[0])
                     _y = int(postr.split(',')[1])
@@ -450,8 +496,7 @@ class action(rb.Robot):
                         break
                 except Exception as e:
                     print(postr)
-                    #tpl = self.Print_screen()
-                    #self.show(tpl[90:125,160:306])
+                    
                     
     def discover_feixingfu(self):
         tpl = self.Print_screen()
@@ -478,7 +523,7 @@ class action(rb.Robot):
     def Tothecountryside(self):
         #确保道具栏没有被收起来
         while True:
-            self.queue.put("check")
+            #self.queue.put("check")
             if self.no_prop():
                 self.click(1828,1020)
                 time.sleep(0.5)
@@ -512,7 +557,7 @@ class action(rb.Robot):
             self.tap_("长寿村",144,6)   
             time.sleep(0.5)
             while True:
-                self.queue.put("check")
+                #self.queue.put("check")
                 status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
                 if status==status.NOTMATCH:
                     time.sleep(0.5)        
@@ -527,7 +572,7 @@ class action(rb.Robot):
                     self.click(64,844) 
                     time.sleep(1)
                     while True:
-                        self.queue.put("check")
+                        #self.queue.put("check")
                         reponse = self.Ocrtext("1C1D21,1B1C20",151, 36, 307, 77,THRESH_GAUSSIAN=False)[0]
                         reponse = reponse["text"].replace("\n","")
                         reponse = reponse.replace(" ","")
@@ -539,7 +584,7 @@ class action(rb.Robot):
                 
     def go_to_ZZG(self):
         while True:
-            self.queue.put("check")
+            #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(feixingfu_jiemian)
             if status==status.OK:
                 time.sleep(0.7)
@@ -547,7 +592,7 @@ class action(rb.Robot):
                 time.sleep(0.7)
                 break
         while True:
-            self.queue.put("check")
+            #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
             time.sleep(0.5)
             if status==status.NOTMATCH:
@@ -564,7 +609,7 @@ class action(rb.Robot):
     #去往大唐境外
     def TotheDaTangJingWai(self):
         while True:
-            self.queue.put("check")
+            #self.queue.put("check")
             if self.no_prop():
                 self.click(1828,1020)
                 time.sleep(0.5)
@@ -599,7 +644,7 @@ class action(rb.Robot):
             self.tap_("朱紫国",6,4)   
             time.sleep(0.5)
             while True:
-                self.queue.put("check")
+                #self.queue.put("check")
                 status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
                 if status==status.NOTMATCH:
                     time.sleep(0.5)        
@@ -614,7 +659,7 @@ class action(rb.Robot):
                     self.click(104,1000)
                     time.sleep(1)
                     while True:
-                        self.queue.put("check")
+                        ##self.queue.put("check")
                         reponse = self.Ocrtext("1C1D21,1B1C20",151, 36, 307, 77,THRESH_GAUSSIAN=False)[0]
                         reponse = reponse["text"].replace("\n","")
                         reponse = reponse.replace(" ","")
@@ -628,7 +673,7 @@ class action(rb.Robot):
         self.tap_("大唐境外",233,109)
         self.click(1136,220)
         while True:
-            self.queue.put("check")
+            #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(map_feature["送我进墨家村"]["坐标"])
             if status == status.NOTMATCH:
                 time.sleep(0.5)
@@ -637,16 +682,15 @@ class action(rb.Robot):
                 time.sleep(0.5)
                 break
         while True:
-            self.queue.put("check")
-            reponse = self.Ocrtext("1C1D21,1B1C20",151, 36, 307, 77,THRESH_GAUSSIAN=False)[0]
-            reponse = reponse["text"].replace("\n","")
-            reponse = reponse.replace(" ","")
-            if  "家村"  in reponse:
+            ##self.queue.put("check")
+            reponse = self.x_Ocrtext(scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            if  "墨家村" in reponse:
                 print("抵达目的地")
                 return
+    #前往大唐国境        
     def ToDTGJ(self):
         while True:
-            self.queue.put("check")
+            #self.queue.put("check")
             if self.no_prop():
                 self.click(1828,1020)
                 time.sleep(0.5)
@@ -685,30 +729,253 @@ class action(rb.Robot):
         self.click(104,1000)
         time.sleep(1)
         while True:
-            self.queue.put("check")
-            reponse = self.Ocrtext("1C1D21,1B1C20",151, 36, 307, 77,THRESH_GAUSSIAN=False)[0]
-            reponse = reponse["text"].replace("\n","")
-            reponse = reponse.replace(" ","")
-            if  "唐国境"  in reponse:
+            #self.queue.put("check")
+            reponse = self.x_Ocrtext(scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            if  "大唐国境" in reponse:
                 print("抵达目的地")
                 return
             
+    #前往麒麟山
+    def TotheQLS(self):
+        while True:
+            #self.queue.put("check")
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+            time.sleep(2)
+        self.click(1695,1015)
+        time.sleep(1)
+        status,x,y= self.discover_feixingfu()
+        if status == status.OK:
+            print(x,y)
+        self.click(x,y)
+        time.sleep(1)
+        tpl = self.Print_screen()
+        target = cv2.imread("./images/shiyong.png")
+        x,y = self.matchTemplate(tpl,target)
+        if x != -1:
+            self.click(x,y)
+        else:
+            print("飞行符没有使用")
+            return
+        #self.click(654,669)
+        time.sleep(1)
+        self.go_to_ZZG()
+        #打开地图
+        time.sleep(1)
+        self.click(60,81)
+        time.sleep(1)        
+        if self.rgb_array(map_feature["朱紫国"])==State.OK:
+            self.tap_("朱紫国",3,111)   
+            time.sleep(0.5)
+            while True:
+                status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+                if status==status.NOTMATCH:
+                    time.sleep(0.5)
+                else:
+                    time.sleep(1)
+                    self.click(61,378) #屏蔽顽疾
+                    time.sleep(1)
+                    self.click(64,844) #屏蔽界面
+                    time.sleep(1)
+                    self.click(83,222) 
+                    time.sleep(1)
+                    self.click(64,844) 
+                    time.sleep(1)
+                    while True:
+                        #self.queue.put("check")
+                        reponse = self.x_Ocrtext(scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+                        if  "麒麟山" in reponse:
+                            print("抵达目的地")
+                            return
+    #前往狮驼岭
+    def TotheSTL(self):
+        self.TotheDaTangJingWai()
+        self.click(60,81)
+        self.tap_("大唐境外",7,49)
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+            if status==status.NOTMATCH:
+                time.sleep(0.5)
+            else:
+                time.sleep(1)
+                self.click(61,378) 
+                time.sleep(1)
+                self.click(64,844) #屏蔽界面
+                time.sleep(1)
+                self.click(104,1000)
+                time.sleep(1)
+                self.click(191,562)
+                time.sleep(1)
+                while True:
+                    #self.queue.put("check")
+                    reponse = self.x_Ocrtext(scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+                    if  "狮驼岭" in reponse:
+                        print("抵达目的地")
+                        return
+    #前往东海湾        
+    def ToTheDHW(self):
+        while True:
+            #self.queue.put("check")
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+            time.sleep(2)
+        self.click(1695,1015)
+        time.sleep(0.2)        
+        self.flag_transfer("yellow")
+        time.sleep(0.5)
+        q = False
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(flag_jiemian)
+            if status==status.NOTMATCH:
+                if q:
+                    self.click(1609,85)
+                    time.sleep(0.5)
+                    status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+                    if status==status.NOTMATCH:
+                        time.sleep(0.5)        
+                    else:
+                        break
+            else:
+                q = True
+                self.click(1224,840)
+                time.sleep(0.2)
+        time.sleep(1)
+        self.click(949,609)
+        time.sleep(1)
+        while True:
+            #self.queue.put("check")
+            status,ag= self.findMultiColorInRegionFuzzyByTable(map_feature["我要去"]["坐标"])
+            if status == status.NOTMATCH:
+                time.sleep(0.5)
+            else:
+                self.click(1449,509)
+                time.sleep(0.5)
+                break        
+        while True:
+            #self.queue.put("check")
+            reponse = self.x_Ocrtext(scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            if  "东海湾" in reponse:
+                print("抵达目的地")
+                return
+    #前往江南野外        
+    def ToTheJNYW(self):
+        while True:
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+            time.sleep(2)
+        self.click(1695,1015)
+        time.sleep(0.2)        
+        self.flag_transfer("red")
+        time.sleep(0.5)
+        q = False
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(flag_jiemian)
+            if status==status.NOTMATCH:
+                if q:
+                    self.click(1609,85)
+                    time.sleep(0.5)
+                    status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+                    if status==status.NOTMATCH:
+                        time.sleep(0.5)        
+                    else:
+                        break
+            else:
+                q = True
+                self.click(1603,907)
+                time.sleep(0.2)
+        time.sleep(1)
+        self.click(949,609)
+        time.sleep(1)
+        self.click(1828,1020)
+        time.sleep(1)
+        self.click(1713,1057)
+        while True:
+            reponse = self.x_Ocrtext(scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            if  "江南野外" in reponse:
+                print("抵达目的地")
+                break            
+        while True:
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+    #前往花果山
+    def ToTheHGS(self):
+        while True:
+            #self.queue.put("check")
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+            time.sleep(2)
+        self.click(1695,1015)
+        time.sleep(0.2)        
+        self.flag_transfer("yellow")
+        time.sleep(0.5)
+        q = False
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(flag_jiemian)
+            if status==status.NOTMATCH:
+                if q:
+                    self.click(1609,85)
+                    time.sleep(0.5)
+                    status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+                    if status==status.NOTMATCH:
+                        time.sleep(0.5)        
+                    else:
+                        break
+            else:
+                q = True
+                #
+                self.click(1448,243)
+                time.sleep(0.2)
+        time.sleep(1)
+        self.click(1658,105)
+        time.sleep(1)      
+        while True:
+            #self.queue.put("check")
+            reponse = self.x_Ocrtext(scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            if  "花果山" in reponse:
+                print("抵达目的地")
+                return
         
-
-
+        
 def main():
-    #blRobot.Get_GameHwnd()
-    zoom_count = 1.5
+    zoom_count = 1.0
     start = time.time()
     q = queue.Queue()
     m1 = rh.MyThread(q,zoom_count=zoom_count)
     m1.start()
     Robot = action(q,zoom_count=zoom_count)
-    Robot.ToDTGJ()
-    
-    
-    #Robot.TotheMJC()
-    #Robot.move_click(668,525,950,538)
+    # tulist = Robot.check_map()
+    # mapInfomation = {"tu":tulist}
+    # with open("./角色信息.json", 'w',encoding="utf-8") as f:
+    #     json.dump(mapInfomation,f,ensure_ascii=False,indent = 4)
+    Robot.ToTheHGS()
+    # pos = Robot.z_Ocrtext(pos_feature,"C4CED1,3C322E",158, 93, 284, 126)
+    # print(pos)
+        
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()

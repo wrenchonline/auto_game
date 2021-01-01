@@ -19,6 +19,7 @@ from utils import *
 import re 
 import random
 import string
+import traceback
 #jit是进行numpy运算
 from numba import jit
 import tesserocr
@@ -107,8 +108,8 @@ class Robot:
                         binary[idy,idx] = 0
 
         return binary
-            
-    
+
+
     def Get_GameHwnd(self):
         self.hwnd= win32gui.FindWindow('Qt5QWindowIcon','夜神模拟器')
         self.ScreenBoardhwnd = win32gui.FindWindowEx(self.hwnd, 0, 'Qt5QWindowIcon', 'ScreenBoardClassWindow')
@@ -309,39 +310,45 @@ class Robot:
         time.sleep(waitTime)
         self.clickLeft()
 
-    def matchTemplate(self,tpl,target,tolerance=0.2):
+    def matchTemplate(self,tpl,target,tolerance=0.2,getone=True):
         methods = [cv2.TM_SQDIFF_NORMED]   #3种模板匹配方法 cv2.TM_CCORR_NORMED, cv2.TM_CCOEFF_NORMED
         th, tw = target.shape[:2]
         
         for md in methods:
             #result = cv2.matchTemplate(tpl,target, md)
-            try:
-                result =cv2.matchTemplate(tpl,target, md)
-                ok = True
-            except cv2.error as e: 
-                ok = False
-                print("匹配错误")
-                return (-1,-1)
-            
-            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
-            if min_val > tolerance:
-                #print("not match")
-                return (-1,-1)
-            else:
-                pass
+            if getone:  
+                try:
+                    res =cv2.matchTemplate(tpl,target, md)
+                    ok = True
+                except cv2.error as e: 
+                    ok = False
+                    print("匹配错误")
+                    return (-1,-1)
                 
-            if md == cv2.TM_SQDIFF_NORMED:
-                tl = min_loc
+                min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+                if min_val > tolerance:
+                    #print("not match")
+                    return (-1,-1)
+                else:
+                    pass
+                    
+                if md == cv2.TM_SQDIFF_NORMED:
+                    tl = min_loc
+                else:
+                    tl = max_loc
+                br = (tl[0]+tw, tl[1]+th)   #br是矩形右下角的点的坐标
+                a=int((tl[0]+int(tw/2)))
+                b=int((tl[1]+int(th/2)))
+                return a,b
             else:
-                tl = max_loc
-            br = (tl[0]+tw, tl[1]+th)   #br是矩形右下角的点的坐标
-            a=int((tl[0]+int(tw/2)))
-            b=int((tl[1]+int(th/2)))
-            #new_target = (a,b)
-            # cv2.rectangle(tpl,tl,br,(0, 0, 255),1)  
-            # cv2.imshow('t',tpl)  
-            # cv2.waitKey(0)  
-            return a,b     
+                res = cv2.matchTemplate(tpl,target,cv2.TM_SQDIFF_NORMED)
+                right_bottom_list = list()
+                loc = np.where(res <= tolerance)
+                for pt in zip(*loc[::-1]):  # *号表示可选参数
+                    right_bottom = (int((pt[0]+int(tw/2))), int((pt[1]+int(th/2))))
+                    right_bottom_list.append(right_bottom)
+                return right_bottom_list
+                    #cv2.rectangle(img_rgb, pt, right_bottom, (0, 0, 255), 2)                
         return (-1,-1)
         
     def clike_map(self):
@@ -498,7 +505,7 @@ class Robot:
     def check_fire(self):
         tpl = self.Print_screen()
         target = cv2.imread("./images/check_fire.jpg")
-        x,y = self.matchTemplate(tpl,target)
+        x,y = self.matchTemplate(tpl,target,0.1)
         if x == -1:
             return False
         else:
@@ -518,9 +525,7 @@ class Robot:
 
                     
     def __Ocr(self,scx_rgb,x1,y1,x2,y2):
-        tpl = self.Print_screen()
-        #self.show(tpl[y1:y2,x1:x2])
-        
+        tpl = self.Print_screen()        
         MeanRgb = list()
         if "#" in  scx_rgb:
             __scx_rgb =  scx_rgb.split("#")
@@ -580,6 +585,7 @@ class Robot:
                         dict_= {"text":symbol,"left":boxes[0],"top":boxes[1],"boxes2":boxes[2],"boxes3":boxes[3]}
                         _data_list.append(dict_)
                     except Exception as e:
+                        print(traceback.print_exc())
                         print("没有字符")
         return _data_list
     
@@ -609,4 +615,53 @@ class Robot:
                     if new_X_t !=(-1,-1):
                         print("当前识字为:{0}".format(word))
                         return word
+        return ""
 
+                    
+                    
+    def z_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2,jiange=3)->str:
+        #ret = re.findall(r"@(.*?)\$",tab,re.I|re.M)
+        textline = list()
+        m_textline = list()
+        z_textline = list()
+        strs = ""
+        for tab in tabs:
+            if "@" in tab:
+                data_tuple = tab.split("@")[1]
+                hex_str_16 = tab.split("@")[0]
+            else:
+                data_tuple = tab
+                hex_str_16 = tab.split("$")[0]
+            data_tuple = data_tuple.split("$")
+            if len(data_tuple):
+                    p_hexstr_2 = data_tuple[0]
+                    hexstr_2 = hexstr_16_to_hexstr_2(hex_str_16)
+                    hexstr_2 += p_hexstr_2
+                    word = data_tuple[1]
+                    x = int(data_tuple[4])
+                    y = int(data_tuple[3])
+                    image_array = binstr_to_nparray(hexstr_2,x,y)
+                    
+                    image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
+                    #self.show(image_array1)
+                    new_X_t = self.matchTemplate(image_array1,image_array,0.1,getone=False)
+                    #print(new_X_t)
+                    if new_X_t !=(-1,-1):
+                        # print("当前识字为:{0}".format(word))
+                        for pos in  new_X_t:
+                            textline.append((pos[0],word))
+        #去除重复元素
+        textline = list(set(textline))
+        z_textline = textline
+        #x坐标间隔不能大于
+        for z in z_textline:
+            for xc in textline:
+                if z[1] == xc[1] and z[0] ==xc[0]:
+                    continue
+                elif abs(z[0]-xc[0]) <= jiange:
+                    textline.remove(xc)
+        #升序
+        m_textline = sorted(textline,key=lambda x:x[0])
+        for m in m_textline:
+            strs += m[1]
+        return strs
