@@ -12,6 +12,8 @@ import math
 import queue
 from goto import with_goto
 import json
+import os
+import data as da
 
 '''
     while True:
@@ -37,7 +39,10 @@ ditu = (
         "0300000000c0000200300001c00c0000700300e03800c0781c00307f0e000fffc70003fff3c001fc3cc001fe0f0031fc03c00c7f00f00380c03c00e0300f00380c03c00e0301f80f80c3ffffc030ffffe00c03c0000300f00000c03c0000300f00000c03c0000300f1c000c03c3800300f0f000c03c1e00300603c00c0000700300000c000000000000000000000000000000000000000000c203c000f0c07000f0380e01fc070181f001c02078000000000000c0200000701c00003c0f3f001e03ffc01f03fff01f1ffc0c07c7ff0300f3c3c0c03cf070300f381c0c03ce0fc300f3c3f8cc3cfcff338f3ffccce3cfff133cf38fc0cf3ce1f033cf383c0ff3ce0f03f8f383e1fc3cf0ffff0f3ffffe03c7ffc3006003c0c0180060100000000000000000000000000000000000000400000303c000f8e07000f83c0e03fc070383f000c063f80000000000000000000000000000038c7e3061c33f8c3fe0cfe30f0033f8c3c00cce30f003338c3ff8cce30fff7338e3fffcce39f003338efc00cce39f003338e3c00cce38f003338e3fffcce38ffe3338e3c00cce38f003338e3c00cce38f003f3cc1fe0fcff001c0e1f80038003c@00$东海湾$1198$34$103",
         "00010000000f0000003f800000fffffe1fffffffff81c000fe0000001c0100061801800f1c61803e1c6187fc1c61ffe01ee3ff803fff9e00ffff8e073fff8e071ee38e071e618f3e1c6187fe1803800408070000007e000600fe001e07ff003e7fffc07c3e03f8f00e01ffe006007fe006003fe00701f87007fff07c07f8001e0700000e000000000000000000000000000000000000000c0001801c00018018180180181c0180381c0180701f8180e01fe181e01c7981c0187f838018018700180186001801fc001c01fc003e03fe007ffffffe7ffffffe7ffffffe1c01fe001801fc001801ce0018018700180183801c3f81c01e7981c01ff180e01f8180701e0180381c018018080180180001801c0000800c00000000000000000000000000000000000000007ffffffe7ffffffe7ffffffe600000066000000660000086638001c6638101c6678381c6678381c6678381c6678381c6678381c6678781c667ffffc667ffffc667ffffc6678781c6638381c6638381c66383f1c66383f9c6638399c6638389c6630101c66000008660000006600001c67ffffffe7ffffffe3ffffffc$傲来国$1286$32$105",
         "2060000078e038061fe070071fe070063ffffc3e7ffffffcf801ffc0f000fe00001ffe0007fffc0003fff80003fff01f03fffe7c3ffffff8ffffff80ffffff006000000060000000603ffff060fffff860e0000061e000007bf000007ffffffe7ffffffe7ffffffe71e0003861e0001860e0007860fffff8607ffff0207fffe00000000000000000000000000000000000000000600f038060ff838067ff87806001870060018706600187066001860760078607607f86077fff80077fffc01e3c01fffe0000fffc0f0000000fc000001fe000001e1ffff81c1ffffc181ffffe180070061800600638006006f800e0067800c0063801c00618038006180780061c07000e1e06003e1fc001fc0fc001f8000000000000000000000000000000000000000007fffff00000fff00000007803fffff87ffffff87ffffff87ffffff8000000780000007803fffff807fffff001e0000001c000000180000003806000070060000e0060e01c0060603800607070006070e0606078e0706078e038607c701860fe381861fe1c0063870e00678307007e0003807e000180700001c00000$狮驼岭$1261$32$104",
+        "0000001801c0001801c0001801c0003801c0003801c0007801c0007001c0007001c0006001c000e03ffffffcffffffff0000000000000000000000000000000000000000000000007ffffff0fffffffe007e001e003c001e0078000e007000060070000600e0000601e0000601c000060380000e0700001e060003fc040003fc0000000000000000000000000001000000070000001f0000007f800003fffffe1ffffffefffffffe6000030000000000000003020000070700000f067fffff0e7fffff8e7fffe79c6798e7f86718e7f06718e7c06718e7806718e7806718e7006718e7006718e7806718e7806718e7c06718e7f06718e7f87fffff987fffff9c7fffff8e3fffff0e000007060000070300000300000000000000000000000000000000003000003f300001fc787ffff8787cf800787878007870780078707000fc707000fc707000787070007870700078707000787070007cf070007ff0700079f0700079f07000787070007870700078707000787070007c707000fc70700078707000787070007870700078787000787cf000383ff000300000003000000000000000000000000000000000000000002000046078003e601c0078781e07f838060f801e061f00000000000000e0000003e00701ffc01f00e0003c000007f803f83fc0ffffff80000000000000000000ff800001ffe00000ffc0000003800001ffe0007ffffffe7ffffffc03ffe00001ffc00001ffc00000ffc00000ffc00001ffe0007ffffffe7ffffffe7ffffffe$北俱芦洲$1492$32$140",
+        "000000023000000730000007380e0007380f0007380f0007380f0007380f000f380f001f380f1fff381fffdf3cffff073fff00073fff00073c0f0007380f0007380f0007380f0007380f0007380f0007380f0007380f0007380f000f380f003f380f83ff380fffff3807fe073803f80738000007100000070000000700000002000000000000000000000000000000000000000e01fffffe07fffff80fffffe00c0000000c0000000c0000030c00c0030c00c0030c00c0030c00c0030c00c0030c00c0030c00c0033c00c003fc00c0037c03e00f3cffffff0cffffff0c7fffff0c01c0030c00c0030c00c0030c00c0030c00c0030c00c0030c00c0030c00c0030c00c0030c0080030c0000030800000200000000000000000000000000000000000000000c08000c0c0e001c0c0f003c0c03c0700c01f1f00c007fc00c003fc00c00ffe00f3ffff00fff80300ffe00380000000000000003000000073ffffc0f3ffff80e3c00003c30000078300003f030000fc030ffff8030007f8030003e0030003ffe30003fff300000033c0000033ffff8031ffff80f0000003f0000003f$五庄观$1005$32$104"
 )
+
 
 scenario = (
         "0000000607ffffff87fffffe07fffff003fffffe01cf3ffff1ffdf3ff9ffff0e0efde7860678c1c3031e70e1c187ffffffc3fffcf0e18e1c3030c39e080861ff0404003c0200000001000200008003c000e0f3fffff0f3fffffbf079e79df0186106e00c30830006184180030c30c0038f38ec01e79e7783fffff9f0fc003c3838000e0e000000000000000000000000000000000000000031fffffffcfffffff87f8fff803fcfffe01fffffff1fffe1c19ff8f0404ffcf86063fffc7ff0ffff7ff8670ffffc21c78f0610ffc303083f80808001c0706000e078210c7bfc30c63bfe387b30e3f8019871f800f01ff800fc0ff81fffc7f807ffe3fc003fc1ffc03fe0ffe03ff070701f9878781ec4ffff88631fff0031870700000301000000000000000000000000000000000000fffffc00ffffff007fffffc0000001e000000030000000180000000c00000006000000030000000180000000c00000006000000030000000387ffffffc7ffffffe3fffffff0000000f80000000c00000006000000030000000180000000c00000006000000030000000180000000c0000000e01ffffff00ffffff803fffff8$麒麟山$1398$33$104",
@@ -360,7 +365,7 @@ class action(rb.Robot):
             else:
                 break
             time.sleep(2)
-        self.click(1695,1015)
+        self.click(1695,1028)
         time.sleep(1)
         tpl = self.Print_screen()
         target = cv2.imread("./images/tu.png")
@@ -383,8 +388,9 @@ class action(rb.Robot):
                 x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target,0.15)
                 if x != -1:
                     print("找到宝图")
+                    time.sleep(0.5)
                     data = self.x_Ocrtext(ditu,"00E804,011805#03DC07,032006#08DD0B,072009",444,506,589,560)
-                    print(data)
+                    print(data)                    
                     if data:
                         if len(data)>3:
                             pos = self.Ocrtext("06BE0B,06420B#00E804,011805#03DC07,032006#08DD0B,072009",
@@ -393,10 +399,24 @@ class action(rb.Robot):
                                                attribute=["tessedit_char_whitelist", 
                                                 "0123456789,"])[0]
                             print(pos)
-                            pos['text'] = pos['text'].replace("\n","")
-                            _x = int(pos['text'].split(',')[0])
-                            _y = int(pos['text'].split(',')[1])
-                            tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
+                            try:
+                                pos['text'] = pos['text'].replace("\n","")
+                                _x = int(pos['text'].split(',')[0])
+                                _y = int(pos['text'].split(',')[1])
+                                tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
+                            except:
+                                print("使用tesseract解析字体异常，正在使用字库")
+                                postr = self.z_Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                                ,555,513,693,548,)
+                                if len(pos):
+                                    postr = pos.replace("\n","")
+                                    try:
+                                        _x = int(postr.split(',')[0])
+                                        _y = int(postr.split(',')[1])
+                                        tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
+                                    except Exception as e:
+                                        print("字库解析异常") 
+                                
                         else:
                             pos = self.Ocrtext("06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
                                                ,555,513,693,548,ril=RIL.TEXTLINE,
@@ -404,10 +424,24 @@ class action(rb.Robot):
                                                attribute=["tessedit_char_whitelist",
                                                 "0123456789,"])[0]
                             print(pos)
-                            _x = int(pos['text'].split(',')[0])
-                            _y = int(pos['text'].split(',')[1])
-                            tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
-        return  tu_list  
+                            try:
+                                _x = int(pos['text'].split(',')[0])
+                                _y = int(pos['text'].split(',')[1])
+                                tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
+                            except:
+                                print("使用tesseract解析字体异常，正在使用字库")
+                                postr = self.z_Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                                ,555,513,693,548,)
+                                if len(pos):
+                                    postr = pos.replace("\n","")
+                                    try:
+                                        _x = int(postr.split(',')[0])
+                                        _y = int(postr.split(',')[1])
+                                        tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
+                                    except Exception as e:
+                                        print("字库解析异常")
+                                
+        return  tu_list
     
     
     def go_to_CSC(self):
@@ -600,14 +634,18 @@ class action(rb.Robot):
                 status,ag= self.findMultiColorInRegionFuzzyByTable(fanhui)
                 if status==status.OK:
                     self.click(ag[0],ag[1])
-                time.sleep(0.5)
+                time.sleep(2)
             elif status==status.OK:
-                print("抵达朱紫国")
+                while True:
+                    reponse = self.x_Ocrtext(scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+                    if  "朱紫国" in reponse:
+                        print("抵达朱紫国")
+                        break
                 break
         return True
     
     #去往大唐境外
-    def TotheDaTangJingWai(self):
+    def TotheDTJW(self):
         while True:
             #self.queue.put("check")
             if self.no_prop():
@@ -959,10 +997,75 @@ class action(rb.Robot):
             if  "花果山" in reponse:
                 print("抵达目的地")
                 return
-        
-        
+            
+    def ToTheALG(self):
+        while True:
+            #self.queue.put("check")
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+            time.sleep(2)
+        self.click(1695,1015)
+        time.sleep(1)
+        status,x,y= self.discover_feixingfu()
+        if status == status.OK:
+            print(x,y)
+        self.click(x,y)
+        time.sleep(1)
+        tpl = self.Print_screen()
+        target = cv2.imread("./images/shiyong.png")
+        x,y = self.matchTemplate(tpl,target)
+        if x != -1:
+            self.click(x,y)
+        else:
+            print("飞行符没有使用")
+            return
+        time.sleep(1)
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(feixingfu_jiemian)
+            if status==status.OK:
+                time.sleep(0.7)
+                self.click(1525,788)
+                time.sleep(0.7)
+                break
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+            time.sleep(0.5)
+            if status==status.NOTMATCH:
+                print("前往傲来国")
+                status,ag= self.findMultiColorInRegionFuzzyByTable(fanhui)
+                if status==status.OK:
+                    self.click(ag[0],ag[1])
+                time.sleep(1)
+            elif status==status.OK:
+                while True:
+                    reponse = self.x_Ocrtext(scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+                    if  "傲来国" in reponse:
+                        print("抵达傲来国")
+                        break
+                break
+            
+        return True
+               
+    def open_prop(self):
+        while True:
+            #self.queue.put("check")
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+            time.sleep(2)
+        self.click(1695,1015)                
+
 def main():
-    zoom_count = 1.0
+    zoom_count = 1.5
     start = time.time()
     q = queue.Queue()
     m1 = rh.MyThread(q,zoom_count=zoom_count)
@@ -972,10 +1075,215 @@ def main():
     # mapInfomation = {"tu":tulist}
     # with open("./角色信息.json", 'w',encoding="utf-8") as f:
     #     json.dump(mapInfomation,f,ensure_ascii=False,indent = 4)
-    Robot.ToTheHGS()
-    # pos = Robot.z_Ocrtext(pos_feature,"C4CED1,3C322E",158, 93, 284, 126)
-    # print(pos)
-        
+    load_dict = None
+    time.sleep(1)
+    with open("./角色信息.json", 'r',encoding="utf-8") as f:
+        load_dict  = json.load(f)
+    maps =  load_dict["tu"]
+    if isinstance(maps,list):
+        for m in maps:
+            place = m[0]
+            place_x = m[1]
+            place_y = m[2]
+            backpack_x = m[3]
+            backpack_y = m[4]
+            if place in "长寿郊外":
+                Robot.Tothecountryside()
+                time.sleep(1)
+                Robot.click(60,81)
+                time.sleep(1)   
+                Robot.tap_("长寿郊外",place_x,place_y)
+                Robot.open_prop()
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(1609,85)
+                time.sleep(0.5)
+                status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                if status==status.NOTMATCH:
+                    pass
+                else:
+                    time.sleep(2)
+                    Robot.queue.put("check")
+                    Robot.queue.join()
+            elif place in "大唐国境":
+                Robot.ToDTGJ()
+                time.sleep(1)
+                Robot.click(60,81)
+                time.sleep(1)   
+                Robot.tap_("大唐国境",place_x,place_y)
+                Robot.open_prop()
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(1609,85)
+                time.sleep(0.5)
+                status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                if status==status.NOTMATCH:
+                    pass
+                else:
+                    time.sleep(2)
+                    Robot.queue.put("check")
+                    Robot.queue.join()
+            elif place in "大唐境外":
+                Robot.TotheDTJW()
+                time.sleep(1)
+                Robot.click(60,81)
+                time.sleep(1)   
+                Robot.tap_("大唐境外",place_x,place_y)
+                Robot.open_prop()
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(1609,85)
+                time.sleep(0.5)
+                status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                if status==status.NOTMATCH:
+                    pass
+                else:
+                    time.sleep(2)
+                    Robot.queue.put("check")
+                    Robot.queue.join()
+            elif place in "麒麟山":
+                Robot.TotheQLS()
+                time.sleep(1)
+                Robot.click(60,81)
+                time.sleep(1)   
+                Robot.tap_("麒麟山",place_x,place_y)
+                Robot.open_prop()
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(1609,85)
+                time.sleep(0.5)
+                status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                if status==status.NOTMATCH:
+                    pass
+                else:
+                    time.sleep(2)
+                    Robot.queue.put("check")
+                    Robot.queue.join()
+            elif place in "狮驼岭":
+                Robot.TotheSTL()
+                time.sleep(1)
+                Robot.click(60,81)
+                time.sleep(1)   
+                Robot.tap_("狮驼岭",place_x,place_y)
+                Robot.open_prop()
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(1609,85)
+                time.sleep(0.5)
+                status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                if status==status.NOTMATCH:
+                    pass
+                else:
+                    time.sleep(2)
+                    Robot.queue.put("check")
+                    Robot.queue.join()
+            elif place in "朱紫国":
+                Robot.go_to_ZZG()
+                time.sleep(1)
+                Robot.click(60,81)
+                time.sleep(1)   
+                Robot.tap_("朱紫国",place_x,place_y)
+                Robot.open_prop()
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(1609,85)
+                time.sleep(0.5)
+                status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                if status==status.NOTMATCH:
+                    pass
+                else:
+                    time.sleep(2)
+                    Robot.queue.put("check")
+                    Robot.queue.join()
+            elif place in "花果山":
+                Robot.ToTheHGS()
+                time.sleep(1)
+                Robot.click(60,81)
+                time.sleep(1)   
+                Robot.tap_("花果山",place_x,place_y)
+                Robot.open_prop()
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(1609,85)
+                time.sleep(0.5)
+                status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                if status==status.NOTMATCH:
+                    pass
+                else:
+                    time.sleep(2)
+                    Robot.queue.put("check")
+                    Robot.queue.join()
+            elif place in "东海湾":
+                Robot.ToTheDHW()
+                time.sleep(1)
+                Robot.click(60,81)
+                time.sleep(1)   
+                Robot.tap_("东海湾",place_x,place_y)
+                Robot.open_prop()
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(1609,85)
+                time.sleep(0.5)
+                status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                if status==status.NOTMATCH:
+                    pass
+                else:
+                    time.sleep(2)
+                    Robot.queue.put("check")
+                    Robot.queue.join()
+            elif place in "江南野外":
+                Robot.ToTheJNYW()
+                time.sleep(1)
+                Robot.click(60,81)
+                time.sleep(1)   
+                Robot.tap_("江南野外",place_x,place_y)
+                Robot.open_prop()
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(backpack_x,backpack_y)
+                Robot.click(1609,85)
+                time.sleep(0.5)
+                status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                if status==status.NOTMATCH:
+                    pass
+                else:
+                    time.sleep(2)
+                    Robot.queue.put("check")
+                    Robot.queue.join()
+            elif place in "傲来国":
+                Robot.ToTheALG()
+                time.sleep(1)
+                Robot.click(60,81)
+                time.sleep(1)   
+                Robot.tap_("傲来国",place_x,place_y)
+                Robot.open_prop()
+                while True:
+                    status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+                    if status == State.NOTMATCH:
+                        Robot.click(backpack_x,backpack_y)
+                        Robot.click(backpack_x,backpack_y)
+                        time.sleep(1)
+                        Robot.click(1609,85)
+                        break
+                    else:
+                        time.sleep(0.5)
+                status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                if status==status.NOTMATCH:
+                    pass
+                else:
+                    time.sleep(2)
+                    Robot.queue.put("check")
+                    Robot.queue.join()
+            else:
+                print("所在地址没找到")
+                os._exit(0)
+
+
+    # pos = Robot.Ocrtext("06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+    #                     ,555,513,693,548,ril=RIL.TEXTLINE,
+    #                     lang='eng',oem=1,
+    #                     attribute=["tessedit_char_whitelist",
+    #                     "0123456789,"],Debug=True)[0]
+    # print(pos)    
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()

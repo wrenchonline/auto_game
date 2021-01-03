@@ -4,6 +4,7 @@ import time
 import sys
 import Robot as rb
 import queue
+import data as da
 exitFlag = 0
 
 # Custom Exception Class 
@@ -37,8 +38,20 @@ class MyThread (threading.Thread,rb.Robot):
                         bfire = self.check_fire()
                         if bfire:
                             self.fire()
+                            while True:
+                                status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+                                if status==status.NOTMATCH:
+                                    time.sleep(0.5)        
+                                else:
+                                    self.click(1581,823)
+                                    time.sleep(0.5)
+                                    break
+                            self.queue.task_done()
+                        else:
+                            self.queue.task_done()
                     if data in "exit":
                         print("退出监控员")
+                        self.queue.task_done()
                         break
                 time.sleep(2)
         except BaseException as e: 

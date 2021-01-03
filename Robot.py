@@ -505,7 +505,7 @@ class Robot:
     def check_fire(self):
         tpl = self.Print_screen()
         target = cv2.imread("./images/check_fire.jpg")
-        x,y = self.matchTemplate(tpl,target,0.1)
+        x,y = self.matchTemplate(tpl,target,0.09)
         if x == -1:
             return False
         else:
@@ -513,17 +513,28 @@ class Robot:
 
 
     def fire(self):
-        tpl = self.Print_screen()
-        target = cv2.imread("./images/auto.jpg")
-        x,y = self.matchTemplate(tpl,target)
-        if x == -1:
-            print("正在自动战斗中")
-        else:
-            print("点击自动战斗 posx:{0} posy:{1}".format(x,y))
-            self.click(x,y)
-
-
-                    
+        while True:
+            time.sleep(1)
+            tpl = self.Print_screen()
+            target = cv2.imread("./images/auto.jpg")
+            target1 = cv2.imread("./images/autoing.png")
+            x,y = self.matchTemplate(tpl,target,0.1)
+            if x == -1:
+                print("正在自动战斗中")
+            else:
+                print("点击自动战斗 posx:{0} posy:{1}".format(x,y))
+                while True:
+                    tpl = self.Print_screen()
+                    _x,_y = self.matchTemplate(tpl,target1,0.1)
+                    if _x == -1:
+                        self.click(x,y)
+                        time.sleep(1)
+                    else:
+                        self.click(1420,829)
+                        time.sleep(3)
+                        break
+                break
+                        
     def __Ocr(self,scx_rgb,x1,y1,x2,y2):
         tpl = self.Print_screen()        
         MeanRgb = list()
@@ -619,7 +630,7 @@ class Robot:
 
                     
                     
-    def z_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2,jiange=3)->str:
+    def z_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2,jiange=3,M=0.05)->str:
         #ret = re.findall(r"@(.*?)\$",tab,re.I|re.M)
         textline = list()
         m_textline = list()
@@ -644,7 +655,7 @@ class Robot:
                     
                     image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
                     #self.show(image_array1)
-                    new_X_t = self.matchTemplate(image_array1,image_array,0.1,getone=False)
+                    new_X_t = self.matchTemplate(image_array1,image_array,M,getone=False)
                     #print(new_X_t)
                     if new_X_t !=(-1,-1):
                         # print("当前识字为:{0}".format(word))

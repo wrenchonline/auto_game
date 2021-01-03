@@ -20,7 +20,6 @@ with PyTessBaseAPI(lang='chi_sim',psm=7, oem=1) as api:
             indent = False
             ci = r.GetChoiceIterator()
             boxes = r.BoundingBox(level)
-            
             print(boxes)
             # for c in ci:
             #     if indent:
