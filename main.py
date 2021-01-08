@@ -15,24 +15,6 @@ import json
 import os
 import data as da
 
-'''
-    while True:
-        x,y = blRobot.findMultiColorInRegionFuzzy("0x202020","2|2|0x202020", 90, 52, 1131, 1024 ,1406)
-        if x!=-1:
-            print("posx:{0},posy:{1}".format(x,y))
-            blRobot.click(x+1,y+1)
-        else:
-            print("not found")
-'''
-
-
-
-
-
-
-
-
-
 
 pos_feature = (
     "0f800f1f801f3f003f3e007f7800fff001fff003eff007cff00f8ff01f0ff03e0f787c0f3ff80f3ff00f0fc007$2$185$24$15",
@@ -1053,8 +1035,47 @@ class action(rb.Robot):
             else:
                 break
             time.sleep(2)
-        self.click(1695,1015)                
-
+        self.click(1695,1015)
+        
+    #前往普陀山
+    def ToThePTS(self):
+        self.ToDTGJ()
+        time.sleep(1)
+        self.click(60,81)
+        time.sleep(1)
+        while True:
+            if self.rgb_array(da.map_feature["大唐国境"])==State.OK:
+                print("OK")
+                break
+            else:        
+                time.sleep(0.5)        
+        time.sleep(1)
+        self.tap_("大唐国境",228,58)
+        time.sleep(0.5)        
+        while True:
+            if self.rgb_array(da.map_feature["传送仙女"])==State.OK:
+                print("OK")
+                self.click(760,392)
+                time.sleep(0.5)
+                break
+            else:        
+                time.sleep(0.5)    
+        while True:
+            if self.rgb_array(da.map_feature["我要去"])==State.OK:
+                print("OK")
+                self.click(1579,509)
+                time.sleep(0.5)
+                break
+            else:        
+                time.sleep(0.5)
+        while True:
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            if  "普陀山" in reponse:
+                print("抵达普陀山")
+                break
+    
+            
+                                      
     def Orb(self):
         tulist = self.check_map()
         mapInfomation = {"tu":tulist}
@@ -1275,7 +1296,8 @@ class action(rb.Robot):
                 else:
                     print("所在地址没找到")
                     os._exit(0)
-        
+                    
+                    
                     
 def main():
     zoom_count = 1.5
@@ -1284,7 +1306,8 @@ def main():
     m1 = rh.MyThread(q,zoom_count=zoom_count)
     m1.start()
     Robot = action(q,zoom_count=zoom_count)
-    
+    Robot.ToThePTS()
+
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
