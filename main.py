@@ -299,7 +299,14 @@ class action(rb.Robot):
                 x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target,0.15)
                 if x != -1:
                     print("找到宝图")
-                    time.sleep(0.5)
+                    while True:
+                       if self.rgb_array(da.ditu_show["道具栏显示地图字体"]) == State.OK:
+                           break
+                       else:
+                           time.sleep(1)
+                    #这里判断下提示框
+                    tpl = self.Print_screen()
+                    #检测字体
                     data = self.x_Ocrtext(da.ditu,"00E804,011805#03DC07,032006#08DD0B,072009",444,506,589,560)
                     print(data)                    
                     if data:
@@ -400,6 +407,7 @@ class action(rb.Robot):
         y1 =  table_name["范围参数"][2]
         x2 =  table_name["范围参数"][3]
         y2 =  table_name["范围参数"][4]
+        
         status,ag= self.findMultiColorInRegionFuzzyByTable(table_name["坐标"],ddegree,x1,y1,x2,y2)
         if status==status.OK:
             return status.OK
@@ -429,7 +437,7 @@ class action(rb.Robot):
             #                     lang='eng',oem=1,
             #                     attribute=["tessedit_char_whitelist", 
             #                     "0123456789,"],THRESH_GAUSSIAN=False)
-            pos = self.z_Ocrtext(pos_feature,"C4CED1,3C322E",158, 93, 284, 126)
+            pos = self.z_Ocrtext(pos_feature,"C4CED1,3C322E",158, 93, 300, 127)
             if len(pos):
                 postr = pos.replace("\n","")
                 try:
@@ -1074,12 +1082,19 @@ class action(rb.Robot):
             if  "普陀山" in reponse:
                 print("抵达普陀山")
                 break
-    
             
-                                      
     def Orb(self):
+        #当前场景
+        scenario = ""
         tulist = self.check_map()
         mapInfomation = {"tu":tulist}
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+            if status==status.NOTMATCH:
+                break
+            else:
+                self.click(1609,85)
+                time.sleep(1)
         with open("./角色信息.json", 'w',encoding="utf-8") as f:
             json.dump(mapInfomation,f,ensure_ascii=False,indent = 4)
         load_dict = None
@@ -1095,215 +1110,377 @@ class action(rb.Robot):
                 backpack_x = m[3]
                 backpack_y = m[4]
                 if place in "长寿郊外":
-                    self.Tothecountryside()
+                    if not place in scenario:
+                        self.Tothecountryside()
+                    scenario = "长寿郊外"
                     time.sleep(1)
                     self.click(60,81)
                     time.sleep(1)   
                     self.tap_("长寿郊外",place_x,place_y)
                     self.open_prop()
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    time.sleep(0.5)
-                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
-                    if status==status.NOTMATCH:
-                        pass
-                    else:
-                        time.sleep(1)
-                        self.click(1600,80)
-                        time.sleep(1)
-                        self.queue.put("check")
-                        self.queue.join()
+                    #判断提示框是否出现
+                    while True:
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.prompt_box)
+                        if status==status.NOTMATCH:
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                        else:
+                            self.click(1609,85)
+                            time.sleep(0.2)                            
+                            status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1600,80)
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break
                 elif place in "大唐国境":
-                    self.ToDTGJ()
+                    if not place in scenario:
+                        self.ToDTGJ()
+                    scenario = "大唐国境"
                     time.sleep(1)
                     self.click(60,81)
                     time.sleep(1)   
                     self.tap_("大唐国境",place_x,place_y)
                     self.open_prop()
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    self.click(1609,85)
-                    time.sleep(0.5)
-                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
-                    if status==status.NOTMATCH:
-                        pass
-                    else:
-                        time.sleep(1)
-                        self.click(1600,80)
-                        time.sleep(1)
-                        self.queue.put("check")
-                        self.queue.join()
+                    #判断提示框是否出现
+                    while True:
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.prompt_box)
+                        if status==status.NOTMATCH:
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                        else:
+                            self.click(1609,85)
+                            time.sleep(0.2)                            
+                            status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1600,80)
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break
                 elif place in "大唐境外":
-                    self.TotheDTJW()
+                    if not place in scenario:
+                        self.TotheDTJW()
+                    scenario = "大唐境外"
                     time.sleep(1)
                     self.click(60,81)
                     time.sleep(1)   
                     self.tap_("大唐境外",place_x,place_y)
                     self.open_prop()
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    time.sleep(0.5)
-                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
-                    if status==status.NOTMATCH:
-                        pass
-                    else:
-                        time.sleep(1)
-                        self.click(1600,80)
-                        time.sleep(1)
-                        self.queue.put("check")
-                        self.queue.join()
+                    #判断提示框是否出现
+                    while True:
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.prompt_box)
+                        if status==status.NOTMATCH:
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                        else:
+                            self.click(1609,85)
+                            time.sleep(0.2)                            
+                            status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1600,80)
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break
                 elif place in "麒麟山":
-                    self.TotheQLS()
+                    if not place in scenario:
+                        self.TotheQLS()
+                    scenario = "麒麟山"
                     time.sleep(1)
                     self.click(60,81)
                     time.sleep(1)   
                     self.tap_("麒麟山",place_x,place_y)
                     self.open_prop()
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    time.sleep(1)   
-                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
-                    if status==status.NOTMATCH:
-                        pass
-                    else:
-                        time.sleep(1)
-                        self.click(1600,80)
-                        time.sleep(1)
-                        self.queue.put("check")
-                        self.queue.join()
+                    #判断提示框是否出现
+                    while True:
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.prompt_box)
+                        if status==status.NOTMATCH:
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                        else:
+                            self.click(1609,85)
+                            time.sleep(0.2)                            
+                            status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1600,80)
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break
                 elif place in "狮驼岭":
-                    self.TotheSTL()
+                    if not place in scenario:
+                        self.TotheSTL()
+                    scenario = "狮驼岭"
                     time.sleep(1)
                     self.click(60,81)
                     time.sleep(1)   
                     self.tap_("狮驼岭",place_x,place_y)
                     self.open_prop()
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    time.sleep(0.5)
-                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
-                    if status==status.NOTMATCH:
-                        pass
-                    else:
-                        time.sleep(1)
-                        self.click(1600,80)
-                        time.sleep(1)
-                        self.queue.put("check")
-                        self.queue.join()
+                    #判断提示框是否出现
+                    while True:
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.prompt_box)
+                        if status==status.NOTMATCH:
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                        else:
+                            self.click(1609,85)
+                            time.sleep(0.2)                            
+                            status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1600,80)
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break    
                 elif place in "朱紫国":
-                    self.go_to_ZZG()
+                    if not place in scenario:
+                        while True:
+                            #self.queue.put("check")
+                            if self.no_prop():
+                                self.click(1828,1020)
+                                time.sleep(0.5)
+                                if not self.no_prop():
+                                    break
+                            else:
+                                break
+                            time.sleep(2)
+                        self.click(1695,1015)
+                        time.sleep(1)
+                        status,x,y= self.discover_feixingfu()
+                        if status == status.OK:
+                            print(x,y)
+                        self.click(x,y)
+                        time.sleep(1)
+                        tpl = self.Print_screen()
+                        target = cv2.imread("./images/shiyong.png")
+                        x,y = self.matchTemplate(tpl,target)
+                        if x != -1:
+                            self.click(x,y)
+                        else:
+                            print("飞行符没有使用")
+                        self.go_to_ZZG()
+                    scenario = "朱紫国"
                     time.sleep(1)
                     self.click(60,81)
                     time.sleep(1)   
                     self.tap_("朱紫国",place_x,place_y)
                     self.open_prop()
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    time.sleep(0.5)
-                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
-                    if status==status.NOTMATCH:
-                        pass
-                    else:
-                        time.sleep(1)
-                        self.click(1600,80)
-                        time.sleep(1)
-                        self.queue.put("check")
-                        self.queue.join()
+                    #判断提示框是否出现
+                    while True:
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.prompt_box)
+                        if status==status.NOTMATCH:
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                        else:
+                            self.click(1609,85)
+                            time.sleep(0.2)                            
+                            status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1600,80)
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break
                 elif place in "花果山":
-                    self.ToTheHGS()
+                    if not place in scenario:
+                        self.ToTheHGS()
+                    scenario = "花果山"
                     time.sleep(1)
                     self.click(60,81)
                     time.sleep(1)   
                     self.tap_("花果山",place_x,place_y)
                     self.open_prop()
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    time.sleep(0.5)
-                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
-                    if status==status.NOTMATCH:
-                        pass
-                    else:
-                        time.sleep(1)
-                        self.click(1600,80)
-                        time.sleep(1)
-                        self.queue.put("check")
-                        self.queue.join()
+                    #判断提示框是否出现
+                    while True:
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.prompt_box)
+                        if status==status.NOTMATCH:
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                        else:
+                            self.click(1609,85)
+                            time.sleep(0.2)                            
+                            status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1600,80)
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break
                 elif place in "东海湾":
-                    self.ToTheDHW()
+                    if not place in scenario:
+                        self.ToTheDHW()
+                    scenario = "东海湾"
                     time.sleep(1)
                     self.click(60,81)
                     time.sleep(1)   
                     self.tap_("东海湾",place_x,place_y)
                     self.open_prop()
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    self.click(1609,85)
-                    time.sleep(0.5)
-                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
-                    if status==status.NOTMATCH:
-                        pass
-                    else:
-                        time.sleep(1)
-                        self.click(1600,80)
-                        time.sleep(1)
-                        self.queue.put("check")
-                        self.queue.join()
+                    #判断提示框是否出现
+                    while True:
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.prompt_box)
+                        if status==status.NOTMATCH:
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                        else:
+                            self.click(1609,85)
+                            time.sleep(0.2)                            
+                            status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1600,80)
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break
                 elif place in "江南野外":
-                    self.ToTheJNYW()
+                    if not place in scenario:
+                        self.ToTheJNYW()
+                    scenario = "江南野外"
                     time.sleep(1)
                     self.click(60,81)
                     time.sleep(1)   
                     self.tap_("江南野外",place_x,place_y)
                     self.open_prop()
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    self.click(backpack_x,backpack_y)
-                    self.click(1609,85)
-                    time.sleep(0.5)
-                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
-                    if status==status.NOTMATCH:
-                        pass
-                    else:
-                        time.sleep(1)
-                        self.click(1600,80)
-                        time.sleep(1)
-                        self.queue.put("check")
-                        self.queue.join()
+                    #判断提示框是否出现
+                    while True:
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.prompt_box)
+                        if status==status.NOTMATCH:
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                        else:
+                            self.click(1609,85)
+                            time.sleep(0.2)                            
+                            status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1600,80)
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break     
                 elif place in "傲来国":
-                    self.ToTheALG()
+                    if not place in scenario:
+                        self.ToTheALG()
+                    scenario = "傲来国"
                     time.sleep(1)
                     self.click(60,81)
                     time.sleep(1)   
                     self.tap_("傲来国",place_x,place_y)
                     self.open_prop()
+                    #判断提示框是否出现
                     while True:
-                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
-                        if status == State.NOTMATCH:
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.prompt_box)
+                        if status==status.NOTMATCH:
                             self.click(backpack_x,backpack_y)
                             self.click(backpack_x,backpack_y)
                             self.click(backpack_x,backpack_y)
-                            time.sleep(1)
-                            self.click(1609,85)
-                            break
                         else:
-                            time.sleep(0.5)
-                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
-                    if status==status.NOTMATCH:
-                        pass
-                    else:
-                        time.sleep(1)
-                        self.click(1600,80)
-                        time.sleep(1)
-                        self.queue.put("check")
-                        self.queue.join()
+                            self.click(1609,85)
+                            time.sleep(0.2)                            
+                            status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1600,80)
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break
+                elif place in "北俱芦洲":
+                    if not place in scenario:
+                        self.TotheBJLZ()
+                    scenario = "北俱芦洲"
+                    time.sleep(1)
+                    self.click(60,81)
+                    time.sleep(1)   
+                    self.tap_("北俱芦洲",place_x,place_y)
+                    self.open_prop()
+                    #判断提示框是否出现
+                    while True:
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.prompt_box)
+                        if status==status.NOTMATCH:
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                        else:
+                            self.click(1609,85)
+                            time.sleep(0.2)                            
+                            status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1600,80)
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break
+                elif place in "普陀山":
+                    if not place in scenario:
+                        self.ToThePTS()
+                    scenario = "普陀山"
+                    time.sleep(1)
+                    self.click(60,81)
+                    time.sleep(1)   
+                    self.tap_("普陀山",place_x,place_y)
+                    self.open_prop()
+                    #判断提示框是否出现
+                    while True:
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.prompt_box)
+                        if status==status.NOTMATCH:
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                        else:
+                            self.click(1609,85)
+                            time.sleep(0.2)                            
+                            status,ag= self.findMultiColorInRegionFuzzyByTable(da.failjiemian)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1600,80)
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break                                
                 else:
                     print("所在地址没找到")
                     os._exit(0)
@@ -1359,6 +1536,47 @@ class action(rb.Robot):
                 print("抵达西梁女国")
                 break
         return True
+    
+    #前往北俱芦洲
+    def TotheBJLZ(self):
+        self.ToTheHGS()
+        self.click(804,333)
+        time.sleep(1)
+        self.click(60,81)
+        time.sleep(1)
+        while True:
+            if self.rgb_array(da.map_feature["花果山"])==State.OK:
+                print("OK")
+                break
+            else:        
+                time.sleep(0.5)        
+        self.tap_("花果山",32,94)
+        self.mask_(True)
+        while True:
+            if self.rgb_array(da.map_feature["花果山土地"])==State.OK:
+                print("OK")
+                break
+            else:        
+                time.sleep(0.5) 
+        self.click(834,271)
+        while True:
+            if self.rgb_array(da.map_feature["是的"])==State.OK:
+                print("OK")
+                break
+            else:        
+                time.sleep(0.5)   
+        self.click(1550,552)
+        time.sleep(0.5) 
+        self.mask_(False)
+        while True:
+            #self.queue.put("check")
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            if  "北俱芦洲" in reponse:
+                print("抵达目的地")
+                break
+    #前往女儿村
+    def TotheNEC(self):
+         pass   
     
     def get_maps(self):
         self.ToTheXLNG()
@@ -1442,7 +1660,7 @@ class action(rb.Robot):
                 else:
                     self.click(64,844)
                     time.sleep(0.6)
-       
+
         else:
             while True:
                 if self.rgb_array(da.mask["是否屏蔽"])==State.OK:
@@ -1451,8 +1669,9 @@ class action(rb.Robot):
                 else:
                     time.sleep(0.7)
                     break
-                    
-                    
+
+                
+                         
 def main():
     zoom_count = 1.5
     start = time.time()
@@ -1460,8 +1679,12 @@ def main():
     m1 = rh.MyThread(q,zoom_count=zoom_count)
     m1.start()
     Robot = action(q,zoom_count=zoom_count)
-    Robot.get_maps()
-
+    #Robot.get_maps()
+    Robot.Orb()
+    # tulist = Robot.check_map()
+    # mapInfomation = {"tu":tulist}
+    # with open("./角色信息.json", 'w',encoding="utf-8") as f:
+    #     json.dump(mapInfomation,f,ensure_ascii=False,indent = 4)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
