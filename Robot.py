@@ -25,6 +25,7 @@ from numba import jit
 import tesserocr
 from tesserocr import PyTessBaseAPI, PSM, OEM,RIL,iterate_level
 from PIL import Image
+import data as da
 
 def binstr_to_nparray(hex_2_str,abs_x,abs_y):
     binary = np.zeros((abs_y,abs_x), dtype=np.uint8)
@@ -511,6 +512,16 @@ class Robot:
         else:
             return True                
 
+    #检测宝宝是否健康            
+    def check_thePetHealth(self):
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(da.check_pet_HP)
+            if status == State.NOTMATCH:
+                self.click(1575,14)
+                time.sleep(1)
+                self.click(1224,156) 
+            else:
+                break
 
     def fire(self):
         while True:

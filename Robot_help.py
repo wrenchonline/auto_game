@@ -46,6 +46,8 @@ class MyThread (threading.Thread,rb.Robot):
                                     self.click(1581,823)
                                     time.sleep(0.5)
                                     break
+                            self.check_thePetHealth()
+                            
                             self.queue.task_done()
                         else:
                             self.queue.task_done()

@@ -1574,9 +1574,106 @@ class action(rb.Robot):
             if  "北俱芦洲" in reponse:
                 print("抵达目的地")
                 break
+    
     #前往女儿村
     def TotheNEC(self):
-         pass   
+        while True:
+            #self.queue.put("check")
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+            time.sleep(2)
+        self.click(1695,1015)
+        time.sleep(0.2)        
+        self.flag_transfer("yellow")
+        time.sleep(0.5)
+        q = False
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(flag_jiemian)
+            if status==status.NOTMATCH:
+                if q:
+                    self.click(1609,85)
+                    time.sleep(0.5)
+                    status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+                    if status==status.NOTMATCH:
+                        time.sleep(0.5)        
+                    else:
+                        break
+            else:
+                q = True
+                self.click(476,258)
+                time.sleep(0.2)
+        time.sleep(1)
+        self.mask_(True)
+        self.click(115,225)
+        time.sleep(0.1)  
+        self.mask_(False)     
+        while True:
+            #self.queue.put("check")
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            if  "女儿村" in reponse:
+                print("抵达目的地")
+                break
+        
+            
+     
+    #前往建邺城
+    def TotheJYC(self):
+        while True:
+            #self.queue.put("check")
+            if self.no_prop():
+                self.click(1828,1020)
+                time.sleep(0.5)
+                if not self.no_prop():
+                    break
+            else:
+                break
+            time.sleep(2)
+        self.click(1695,1015)
+        time.sleep(1)
+        status,x,y= self.discover_feixingfu()
+        if status == status.OK:
+            print(x,y)
+        self.click(x,y)
+        time.sleep(1)
+        tpl = self.Print_screen()
+        target = cv2.imread("./images/shiyong.png")
+        x,y = self.matchTemplate(tpl,target)
+        if x != -1:
+            self.click(x,y)
+        else:
+            print("飞行符没有使用")
+        while True:
+            #self.queue.put("check")
+            status,ag= self.findMultiColorInRegionFuzzyByTable(feixingfu_jiemian)
+            if status==status.OK:
+                time.sleep(0.7)
+                self.click(1223,659)
+                time.sleep(0.7)
+                break
+        while True:
+            #self.queue.put("check")
+            status,ag= self.findMultiColorInRegionFuzzyByTable(zhujiemian)
+            time.sleep(0.5)
+            if status==status.NOTMATCH:
+                print("前往建邺国")
+                status,ag= self.findMultiColorInRegionFuzzyByTable(fanhui)
+                if status==status.OK:
+                    self.click(ag[0],ag[1])
+                time.sleep(2)
+            elif status==status.OK:
+                while True:
+                    reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+                    if  "建邺城" in reponse:
+                        print("抵达建邺城")
+                        break
+                break
+        return True
+        
     
     def get_maps(self):
         self.ToTheXLNG()
@@ -1669,26 +1766,62 @@ class action(rb.Robot):
                 else:
                     time.sleep(0.7)
                     break
-
                 
-                         
-def main():
+
+               
+
+def test_TotheJYC():
     zoom_count = 1.5
     start = time.time()
     q = queue.Queue()
     m1 = rh.MyThread(q,zoom_count=zoom_count)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
-    #Robot.get_maps()
-    Robot.Orb()
-    # tulist = Robot.check_map()
-    # mapInfomation = {"tu":tulist}
-    # with open("./角色信息.json", 'w',encoding="utf-8") as f:
-    #     json.dump(mapInfomation,f,ensure_ascii=False,indent = 4)
+    Robot = action(q,zoom_count=zoom_count)    
+    Robot.TotheJYC()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
     
+def test_ToNEC():
+    zoom_count = 1.5
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)    
+    Robot.TotheNEC()
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+                  
+def test_check_pet_HP():
+    zoom_count = 1.5
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)    
+    Robot.check_thePetHealth()
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+def main():
+    # zoom_count = 1.5
+    # start = time.time()
+    # q = queue.Queue()
+    # m1 = rh.MyThread(q,zoom_count=zoom_count)
+    # m1.start()
+    # Robot = action(q,zoom_count=zoom_count)
+    # #Robot.get_maps()
+    # Robot.Orb()
+    # # tulist = Robot.check_map()
+    # # mapInfomation = {"tu":tulist}
+    # # with open("./角色信息.json", 'w',encoding="utf-8") as f:
+    # #     json.dump(mapInfomation,f,ensure_ascii=False,indent = 4)
+    # end = time.time()
+    # print("Elapsed (with compilation) = %s" % (end - start))
+    # Robot.quit()
+    test_check_pet_HP()
     
 if __name__ == "__main__":
     main()
