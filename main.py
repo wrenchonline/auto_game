@@ -1766,10 +1766,109 @@ class action(rb.Robot):
                 else:
                     time.sleep(0.7)
                     break
-                
+    def estimate_map(self,name):             
+        if name == "建邺城":
+            return da.map_name.JYC
+        elif name == "朱紫国":
+            return da.map_name.ZZG    
+        elif name == "女儿村":   
+            return da.map_name.NEC 
+        elif name == "东海湾":
+            return da.map_name.DHW 
+        elif name == "长寿郊外":
+            return da.map_name.CSJW 
+        elif name == "大唐国境":
+            return da.map_name.DTGJ 
+        elif name == "江南野外":
+            return da.map_name.JNYW
+        elif name == "五庄观":
+            return da.map_name.WZG
+        elif name == "北俱芦洲":
+            return da.map_name.BJLZ
+        elif name == "普陀山":
+            return da.map_name.PTS
+        elif name == "麒麟山":    
+            return da.map_name.QLS
+        elif name == "狮驼岭":
+            return da.map_name.STL
+        elif name == "大唐境外":
+            return da.map_name.DTJW
+        elif name == "墨家村":
+            return da.map_name.MJC
+        elif name == "花果山":
+            return da.map_name.HGS
+        
+    #排序仓库顺序存图，取图
+    def get_set_map(self,G):
+        if G:
+            print("取图")
+            
+        else:
+            print("存图") 
+            tpl = self.Print_screen()
+            target = cv2.imread("./images/tu.png")
+            start_pos = (948,312,1060,427)
+            convert_pos = [948,312,1060,427]
+            tu_list = list()
+            for i in range(0,5):
+                time.sleep(0.5)
+                convert_pos[0] = start_pos[0] + i*134
+                convert_pos[2] = start_pos[2] + i*134
+                for j in range(0,4):
+                    time.sleep(0.5)
+                    print(j)
+                    convert_pos[1] = start_pos[1] + j*134
+                    convert_pos[3] = start_pos[3] + j*134
+                    self.click(convert_pos[0]+5,convert_pos[1]+5)
+                    time.sleep(0.5)
+                    tpl = self.Print_screen()
+                    #self.show(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]])
+                    x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target,0.15)
+                    if x != -1:
+                        print("找到宝图")
+                        while True:
+                            if self.rgb_array(da.ditu_show["仓库道具栏显示地图字体"]) == State.OK:
+                                break
+                            else:
+                                time.sleep(1)
+                        #这里判断下提示框
+                        tpl = self.Print_screen()
+                        #检测字体
+                        name = self.x_Ocrtext(da.ditu,"00E804,011805#03DC07,032006#08DD0B,072009",546,549,692,591)
+                        if name == "":
+                            print("无法识别字体")
+                            continue
+                        print(name)
+                        map_da = self.estimate_map(name) 
+                        c__x,c__y = da.CK[map_da]
+                        #检测是否开启仓库选择栏
+                        while True:
+                            if self.rgb_array(da.cangku["仓库选择界面"])==State.OK:
+                                break
+                            else:
+                                self.click(421,928)
+                                time.sleep(0.7)
+                        while True:
+                            if self.rgb_array(da.cangku["仓库选择界面"])==State.OK:
+                                self.click(c__x,c__y)
+                                time.sleep(0.6) 
+                            else:
+                                time.sleep(0.7)
+                                break
+                            
+                        while True:
+                            tpl = self.Print_screen()  
+                            x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target,0.15)
+                            if x != -1:
+                                self.click(convert_pos[0]+5,convert_pos[1]+5)
+                                self.click(convert_pos[0]+5,convert_pos[1]+5)
+                            else:
+                                break
+                        print("已经存取好地图到仓库中")
+                    
 
-               
 
+    
 def test_TotheJYC():
     zoom_count = 1.5
     start = time.time()
@@ -1805,6 +1904,19 @@ def test_check_pet_HP():
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
+    
+def test_get_set_map():
+    zoom_count = 1.5
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)    
+    Robot.get_set_map(False)
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()    
+    
 def main():
     # zoom_count = 1.5
     # start = time.time()
@@ -1821,7 +1933,7 @@ def main():
     # end = time.time()
     # print("Elapsed (with compilation) = %s" % (end - start))
     # Robot.quit()
-    test_check_pet_HP()
+    test_get_set_map()
     
 if __name__ == "__main__":
     main()

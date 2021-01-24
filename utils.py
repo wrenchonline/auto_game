@@ -38,6 +38,10 @@ class State(Enum):
     ROLLBACK = 3
     NOTMATCH = 4
     
+
+    
+    
+    
 #rgb误差函数，反正是从pyscreeze这上面抄的魔改的
 def pixelMatchesColor(pix,expectedRGBColor,tolerance=0):
     """
