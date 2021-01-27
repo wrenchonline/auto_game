@@ -326,7 +326,7 @@ class Robot:
                     ok = True
                 except cv2.error as e: 
                     ok = False
-                    print("匹配错误")
+                    #print("匹配错误")
                     return (-1,-1)
                 
                 min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
@@ -610,6 +610,7 @@ class Robot:
                         dict_= {"text":symbol,"left":boxes[0],"top":boxes[1],"boxes2":boxes[2],"boxes3":boxes[3]}
                         _data_list.append(dict_)
                     except Exception as e:
+                        pass
                         print(traceback.print_exc())
                         print("没有字符")
         return _data_list
@@ -644,49 +645,85 @@ class Robot:
 
                     
                     
-    def z_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2,jiange=3,M=0.05)->str:
+    def z_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2,jiange=1,M=0.1):
         #ret = re.findall(r"@(.*?)\$",tab,re.I|re.M)
         textline = list()
         m_textline = list()
         z_textline = list()
         strs = ""
-        for tab in tabs:
-            if "@" in tab:
-                data_tuple = tab.split("@")[1]
-                hex_str_16 = tab.split("@")[0]
-            else:
-                data_tuple = tab
-                hex_str_16 = tab.split("$")[0]
-            data_tuple = data_tuple.split("$")
-            if len(data_tuple):
-                    p_hexstr_2 = data_tuple[0]
-                    hexstr_2 = hexstr_16_to_hexstr_2(hex_str_16)
-                    hexstr_2 += p_hexstr_2
-                    word = data_tuple[1]
-                    x = int(data_tuple[4])
-                    y = int(data_tuple[3])
-                    image_array = binstr_to_nparray(hexstr_2,x,y)
-                    
-                    image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
-                    #self.show(image_array1)
-                    new_X_t = self.matchTemplate(image_array1,image_array,M,getone=False)
-                    #print(new_X_t)
-                    if new_X_t !=(-1,-1):
-                        # print("当前识字为:{0}".format(word))
-                        for pos in  new_X_t:
-                            textline.append((pos[0],word))
-        #去除重复元素
-        textline = list(set(textline))
-        z_textline = textline
-        #x坐标间隔不能大于
-        for z in z_textline:
-            for xc in textline:
-                if z[1] == xc[1] and z[0] ==xc[0]:
-                    continue
-                elif abs(z[0]-xc[0]) <= jiange:
-                    textline.remove(xc)
-        #升序
-        m_textline = sorted(textline,key=lambda x:x[0])
-        for m in m_textline:
-            strs += m[1]
+        image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
+        # 4、分割字符
+        white = []  # 记录每一列的白色像素总和
+        black = []  # ..........黑色.......
+        height = image_array1.shape[0]
+        width = image_array1.shape[1]
+        white_max = 0
+        black_max = 0
+        # 计算每一列的黑白色像素总和
+        for i in range(width):
+            s = 0  # 这一列白色总数
+            t = 0  # 这一列黑色总数
+            for j in range(height):
+                if image_array1[j][i] == 255:
+                    s += 1
+                if image_array1[j][i] == 0:
+                    t += 1
+            white_max = max(white_max, s)
+            black_max = max(black_max, t)
+            white.append(s)
+            black.append(t)
+            # print(s)
+            # print(t)
+        arg = False  # False表示白底黑字；True表示黑底白字
+        if black_max > white_max:
+            arg = True
+
+        # 分割图像
+        def find_end(start_):
+            end_ = start_ + 1
+            for m in range(start_ + 1, width - 1):
+                if (black[m] if arg else white[m]) > (0.95 * black_max if arg else 0.95 * white_max):  # 0.95这个参数请多调整，对应下面的0.05
+                    end_ = m
+                    break
+            return end_
+        
+        n = 1
+        start = 1
+        end = 2
+        while n < width - 2:
+            n += 1
+            if (white[n] if arg else black[n]) > (0.05 * white_max if arg else 0.05 * black_max):
+                # 上面这些判断用来辨别是白底黑字还是黑底白字
+                # 0.05这个参数请多调整，对应上面的0.95
+                start = n
+                end = find_end(start)
+                n = end
+                if end - start > 1:
+                    cj = image_array1[1:height+2, start:end+1]
+                    #self.show(cj)
+                    for tab in tabs:
+                        if "@" in tab:
+                            data_tuple = tab.split("@")[1]
+                            hex_str_16 = tab.split("@")[0]
+                        else:
+                            data_tuple = tab
+                            hex_str_16 = tab.split("$")[0]
+                        data_tuple = data_tuple.split("$")
+                        if len(data_tuple):
+                                p_hexstr_2 = data_tuple[0]
+                                hexstr_2 = hexstr_16_to_hexstr_2(hex_str_16)
+                                hexstr_2 += p_hexstr_2
+                                word = data_tuple[1]
+                                x = int(data_tuple[4])
+                                y = int(data_tuple[3])
+                                image_array = binstr_to_nparray(hexstr_2,x,y)
+                                # self.show(cj)
+                                # self.show(image_array)
+                                new_X_t = self.matchTemplate(cj,image_array,M,getone=True)
+                                #print(new_X_t)
+                                if new_X_t !=(-1,-1):
+                                    #print("当前识字为:{0}".format(word))
+                                    strs += word 
+                                    break                               
+                    #self.show(image_array)
         return strs
