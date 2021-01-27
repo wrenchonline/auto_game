@@ -129,6 +129,9 @@ class Robot:
             print("The window coordinates: ({0},{1},{2},{3})".format(str(self.left),str(self.top),str(self.right),str(self.bottom)))
             self.game_width = self.right - self.left
             self.game_height = self.bottom - self.top
+
+            # self.game_width = 1920
+            # self.game_height = 1080
             
         else:
             print("Not found game hwnd")
