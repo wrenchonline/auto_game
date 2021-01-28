@@ -700,6 +700,7 @@ class Robot:
                 n = end
                 if end - start > 1:
                     cj = image_array1[1:height+2, start:end+1]
+                    #
                     #self.show(cj)
                     for tab in tabs:
                         if "@" in tab:
@@ -717,13 +718,16 @@ class Robot:
                                 x = int(data_tuple[4])
                                 y = int(data_tuple[3])
                                 image_array = binstr_to_nparray(hexstr_2,x,y)
-                                # self.show(cj)
-                                # self.show(image_array)
+
+                                #if word == "6":
+                                #     for w in image_array[0]
+                                #      print("正在匹配字符: 7")
+                                    # self.show(cj)
+                                    # self.show(image_array)
                                 new_X_t = self.matchTemplate(cj,image_array,M,getone=True)
                                 #print(new_X_t)
                                 if new_X_t !=(-1,-1):
                                     #print("当前识字为:{0}".format(word))
                                     strs += word 
                                     break                               
-                    #self.show(image_array)
         return strs

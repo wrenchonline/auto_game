@@ -383,10 +383,17 @@ class action(rb.Robot):
             #                     lang='eng',oem=1,
             #                     attribute=["tessedit_char_whitelist", 
             #                     "0123456789,"],THRESH_GAUSSIAN=False)
-            pos = self.z_Ocrtext(da.pos_feature,"CFE3E9,311D17",116,62,192,84,M=0.6)
+            pos = self.z_Ocrtext(da.pos_feature,"CFE3E9,311D17",119,62,192,84,M=0.26)
             if len(pos):
                 #pos = pos[0]["text"]
+                if pos[0] == ",":
+                    pos = pos[1:]
+                if pos[len(pos)-1]==",":
+                    pos = pos[:len(pos)-1]
+                    
                 postr = pos.replace("\n","")
+                postr = pos.replace(",,",",")
+                
                 try:
                     _x = int(postr.split(',')[0])
                     _y = int(postr.split(',')[1])
@@ -451,7 +458,6 @@ class action(rb.Robot):
         self.go_to_CSC()
         #打开地图
         time.sleep(1)
-        
         self.click(125,45)
         time.sleep(1)        
 #        if self.rgb_array(da.map_feature["长寿村"])==State.OK:
@@ -463,33 +469,27 @@ class action(rb.Robot):
             if status==status.NOTMATCH:
                 time.sleep(0.5)        
             else:
-                time.sleep(1)
-                self.click(61,378) #屏蔽玩家
-                time.sleep(1)
-                self.click(64,844) #屏蔽界面
-                time.sleep(1)
-                self.click(1849,1018) 
-                time.sleep(1)
-                self.click(64,844) 
-                time.sleep(1)
-                while True:
-                    #self.queue.put("check")
-                    reponse = self.Ocrtext("1C1D21,1B1C20",151, 36, 307, 77,THRESH_GAUSSIAN=False)[0]
-                    reponse = reponse["text"].replace("\n","")
-                    reponse = reponse.replace(" ","")
-                    if  reponse in "长寿郊外":
-                        print("抵达目的地")
-                        return
-                        
-                
+                self.mask_(True)
+                self.click(1052,648)
+                time.sleep(0.5)
+                self.mask_(False)
+                break
+        while True:
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
+            if  "长寿郊外" in reponse:
+                print("抵达长寿郊外")
+                break
+    
+    #前往朱紫国         
     def go_to_ZZG(self):
         while True:
             #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.feixingfu_jiemian)
             if status==status.OK:
                 time.sleep(0.7)
-                self.click(860,729)
+                self.click(573,483)
                 time.sleep(0.7)
+            if status==status.NOTMATCH:
                 break
         while True:
             #self.queue.put("check")
@@ -503,12 +503,13 @@ class action(rb.Robot):
                 time.sleep(2)
             elif status==status.OK:
                 while True:
-                    reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+                    reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
                     if  "朱紫国" in reponse:
                         print("抵达朱紫国")
                         break
                 break
         return True
+    
     
     #去往大唐境外
     def TotheDTJW(self):
@@ -544,32 +545,27 @@ class action(rb.Robot):
         time.sleep(1)
         self.click(125,45)
         time.sleep(1)        
-        if self.rgb_array(da.map_feature["朱紫国"])==State.OK:
-            self.tap_("朱紫国",6,4)   
-            time.sleep(0.5)
-            while True:
-                #self.queue.put("check")
-                status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
-                if status==status.NOTMATCH:
-                    time.sleep(0.5)        
-                else:
-                    time.sleep(1)
-                    self.click(61,378) #屏蔽玩家
-                    time.sleep(1)
-                    self.click(64,844) #屏蔽界面
-                    time.sleep(1)
-                    self.click(104,1000) 
-                    time.sleep(1)
-                    self.click(104,1000)
-                    time.sleep(1)
-                    while True:
-                        ##self.queue.put("check")
-                        reponse = self.Ocrtext("1C1D21,1B1C20",151, 36, 307, 77,THRESH_GAUSSIAN=False)[0]
-                        reponse = reponse["text"].replace("\n","")
-                        reponse = reponse.replace(" ","")
-                        if  reponse in "大唐境外":
-                            print("抵达目的地")
-                            return
+        #if self.rgb_array(da.map_feature["朱紫国"])==State.OK:
+        
+        self.tap_("朱紫国",6,4)   
+        time.sleep(0.5)
+        
+        while True:
+            #self.queue.put("check")
+            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+            if status==status.NOTMATCH:
+                time.sleep(0.5)        
+            else:
+                self.click(42,656)   
+                time.sleep(0.5)
+                break             
+        while True:
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
+            if  "大唐境外" in reponse:
+                print("抵达大唐境外")
+                break
+            else:
+                time.sleep(0.5)
     #前往墨家村
     def TotheMJC(self):
         self.TotheDaTangJingWai()
@@ -594,7 +590,7 @@ class action(rb.Robot):
                 break
         while True:
             ##self.queue.put("check")
-            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "墨家村" in reponse:
                 print("抵达目的地")
                 return
@@ -641,7 +637,7 @@ class action(rb.Robot):
         time.sleep(1)
         while True:
             #self.queue.put("check")
-            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "大唐国境" in reponse:
                 print("抵达目的地")
                 return
@@ -699,7 +695,7 @@ class action(rb.Robot):
                     time.sleep(1)
                     while True:
                         #self.queue.put("check")
-                        reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+                        reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
                         if  "麒麟山" in reponse:
                             print("抵达目的地")
                             return
@@ -731,7 +727,7 @@ class action(rb.Robot):
                 time.sleep(1)
                 while True:
                     #self.queue.put("check")
-                    reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+                    reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
                     if  "狮驼岭" in reponse:
                         print("抵达目的地")
                         return
@@ -781,7 +777,7 @@ class action(rb.Robot):
                 break        
         while True:
             #self.queue.put("check")
-            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "东海湾" in reponse:
                 print("抵达目的地")
                 return
@@ -823,7 +819,7 @@ class action(rb.Robot):
         time.sleep(1)
         self.click(1713,1057)
         while True:
-            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "江南野外" in reponse:
                 print("抵达目的地")
                 break            
@@ -873,7 +869,7 @@ class action(rb.Robot):
         time.sleep(1)      
         while True:
             #self.queue.put("check")
-            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "花果山" in reponse:
                 print("抵达目的地")
                 return
@@ -923,7 +919,7 @@ class action(rb.Robot):
                 time.sleep(1)
             elif status==status.OK:
                 while True:
-                    reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+                    reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
                     if  "傲来国" in reponse:
                         print("抵达傲来国")
                         break
@@ -975,7 +971,7 @@ class action(rb.Robot):
         self.click(64,844) #屏蔽界面
         time.sleep(1)
         while True:
-            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "五庄观" in reponse:
                 print("抵达五庄观")
                 break
@@ -1026,7 +1022,7 @@ class action(rb.Robot):
             else:        
                 time.sleep(0.5)
         while True:
-            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "普陀山" in reponse:
                 print("抵达普陀山")
                 break
@@ -1518,7 +1514,7 @@ class action(rb.Robot):
         self.mask_(False)
         while True:
             #self.queue.put("check")
-            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "北俱芦洲" in reponse:
                 print("抵达目的地")
                 break
@@ -1562,7 +1558,7 @@ class action(rb.Robot):
         self.mask_(False)     
         while True:
             #self.queue.put("check")
-            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "女儿村" in reponse:
                 print("抵达目的地")
                 break
@@ -1615,7 +1611,7 @@ class action(rb.Robot):
                 time.sleep(2)
             elif status==status.OK:
                 while True:
-                    reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",151, 36, 307, 77)
+                    reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
                     if  "建邺城" in reponse:
                         print("抵达建邺城")
                         break
@@ -1682,34 +1678,33 @@ class action(rb.Robot):
                 if self.rgb_array(da.mask["是否屏蔽"])==State.OK:
                     break
                 else:
-                    self.click(61,378) 
+                    self.click(45,252) 
                     time.sleep(0.6)
 
             while True:
                 if self.rgb_array(da.mask["已经屏蔽玩家"])==State.OK:
                     break
                 else:
-                    self.click(75,534)
+                    self.click(47,362)
                     time.sleep(0.6)
                
             while True:
                 if self.rgb_array(da.mask["已经隐藏摊位"])==State.OK:
                     break
                 else:
-                    self.click(75,696)
+                    self.click(49,468)
                     time.sleep(0.6)
          
             while True:
                 if self.rgb_array(da.mask["已经隐藏界面"])==State.OK:
                     break
                 else:
-                    self.click(64,844)
+                    self.click(47,562)
                     time.sleep(0.6)
-
         else:
             while True:
                 if self.rgb_array(da.mask["是否屏蔽"])==State.OK:
-                    self.click(64,1000)
+                    self.click(42,656)
                     time.sleep(0.6) 
                 else:
                     time.sleep(0.7)
@@ -1922,7 +1917,26 @@ def test_go_to_CSJW():
     Robot.go_to_CSJW() 
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
-    Robot.quit()     
+    Robot.quit() 
+    
+        
+def test_x_ocrtext():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)    
+    while True:
+        reponse = Robot.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
+        if  "长寿郊外" in reponse:
+            print("抵达长寿郊外")
+            break
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()       
+
+    
+    
            
 def test_tap():
     start = time.time()
@@ -1933,13 +1947,28 @@ def test_tap():
     time.sleep(1)
     Robot.click(125,45)
     time.sleep(1)        
-    Robot.tap_("长寿村",144,44)
+    Robot.tap_("朱紫国",81,52)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
-    Robot.quit()       
+    Robot.quit()  
+    
+def test_DTJW():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)   
+    Robot.TotheDTJW()
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+def test_display():
+    s = "010000000000000110000000000000110000000000000110000000000000110000111111111110011111000000111110000000000111100000000000011000000000000"
+    display(s,9,15,"")        
+         
     
 def main():
-    test_go_to_CSJW()
+    test_DTJW()
     
     
     
