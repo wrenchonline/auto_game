@@ -568,26 +568,38 @@ class action(rb.Robot):
                 time.sleep(0.5)
     #前往墨家村
     def TotheMJC(self):
-        self.TotheDaTangJingWai()
+        self.TotheDTJW()
         self.click(125,45)
         time.sleep(1)
-        while True:
-            if self.rgb_array(da.map_feature["大唐境外A"])==State.OK:
-                print("OK")
-                break
-            else:        
-                time.sleep(0.5)
+        # while True:
+        #     if self.rgb_array(da.map_feature["大唐境外A"])==State.OK:
+        #         print("OK")
+        #         break
+        #     else:        
+        #         time.sleep(0.5)
         self.tap_("大唐境外",233,109)
-        self.click(1136,220)
+        
+        
+        self.mask_(True)
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["火焰山土地"]["坐标"])
+            if status == status.NOTMATCH:
+                time.sleep(0.5)
+            else:
+                self.click(785,174)
+                time.sleep(0.5)
+                break
         while True:
             #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["送我进墨家村"]["坐标"])
             if status == status.NOTMATCH:
                 time.sleep(0.5)
             else:
-                self.click(1562,376)
+                self.click(1045,246)
                 time.sleep(0.5)
                 break
+        self.mask_(False)
+            
         while True:
             ##self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
@@ -615,7 +627,7 @@ class action(rb.Robot):
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.flag_jiemian)
             if status==status.NOTMATCH:
                 if q:
-                    self.click(1609,85)
+                    self.click(1070,54)
                     time.sleep(0.5)
                     status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
                     if status==status.NOTMATCH:
@@ -676,61 +688,50 @@ class action(rb.Robot):
         time.sleep(1)
         self.click(125,45)
         time.sleep(1)        
-        if self.rgb_array(da.map_feature["朱紫国"])==State.OK:
-            self.tap_("朱紫国",3,111)   
-            time.sleep(0.5)
-            while True:
-                status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
-                if status==status.NOTMATCH:
-                    time.sleep(0.5)
-                else:
-                    time.sleep(1)
-                    self.click(61,378) #屏蔽顽疾
-                    time.sleep(1)
-                    self.click(64,844) #屏蔽界面
-                    time.sleep(1)
-                    self.click(83,222) 
-                    time.sleep(1)
-                    self.click(64,844) 
-                    time.sleep(1)
-                    while True:
-                        #self.queue.put("check")
-                        reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
-                        if  "麒麟山" in reponse:
-                            print("抵达目的地")
-                            return
+
+        self.tap_("朱紫国",3,111)   
+        time.sleep(0.5)
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+            if status==status.NOTMATCH:
+                time.sleep(0.5)
+            else:
+                break
+        self.mask_(True)
+        self.click(14,98)
+        time.sleep(0.5)
+        self.mask_(False)
+        while True:
+            #self.queue.put("check")
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
+            if  "麒麟山" in reponse:
+                print("抵达目的地")
+                return
+                        
+                        
+                        
     #前往狮驼岭
     def TotheSTL(self):
-        self.TotheDaTangJingWai()
+        self.TotheDTJW()
         self.click(125,45)
         time.sleep(1)
-        while True:
-            if self.rgb_array(da.map_feature["大唐境外A"])==State.OK:
-                print("OK")
-                break
-            else:        
-                time.sleep(0.5)
         self.tap_("大唐境外",7,49)
         while True:
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
             if status==status.NOTMATCH:
                 time.sleep(0.5)
             else:
-                time.sleep(1)
-                self.click(61,378) 
-                time.sleep(1)
-                self.click(64,844) #屏蔽界面
-                time.sleep(1)
-                self.click(104,1000)
-                time.sleep(1)
-                self.click(191,562)
-                time.sleep(1)
-                while True:
-                    #self.queue.put("check")
-                    reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
-                    if  "狮驼岭" in reponse:
-                        print("抵达目的地")
-                        return
+                break
+        self.click(18,348)
+        time.sleep(0.5)
+        while True:
+            #self.queue.put("check")
+            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
+            if  "狮驼岭" in reponse:
+                print("抵达目的地")
+                return
+            
+                    
     #前往东海湾        
     def ToTheDHW(self):
         while True:
@@ -752,35 +753,50 @@ class action(rb.Robot):
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.flag_jiemian)
             if status==status.NOTMATCH:
                 if q:
-                    self.click(1609,85)
+                    self.click(1070,54)
                     time.sleep(0.5)
                     status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
                     if status==status.NOTMATCH:
-                        time.sleep(0.5)        
+                        time.sleep(0.5)
                     else:
                         break
             else:
                 q = True
-                self.click(1224,840)
+                self.click(815,558)
                 time.sleep(0.2)
-        time.sleep(1)
-        self.click(949,609)
-        time.sleep(1)
+                
+        # time.sleep(1)
+        # self.click(949,609)
+        # time.sleep(1)
+        
+        
+        self.mask_(True)
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["驿站老板"]["坐标"])
+            if status == status.NOTMATCH:
+                time.sleep(0.5)
+            else:
+                self.click(640,405)
+                time.sleep(0.5)
+                break
         while True:
             #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["我要去"]["坐标"])
             if status == status.NOTMATCH:
                 time.sleep(0.5)
             else:
-                self.click(1449,509)
+                self.click(1062,340)
                 time.sleep(0.5)
-                break        
+                break
+        self.mask_(False) 
+                 
         while True:
             #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "东海湾" in reponse:
                 print("抵达目的地")
                 return
+    
     #前往江南野外        
     def ToTheJNYW(self):
         while True:
@@ -801,7 +817,7 @@ class action(rb.Robot):
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.flag_jiemian)
             if status==status.NOTMATCH:
                 if q:
-                    self.click(1609,85)
+                    self.click(1070,54)
                     time.sleep(0.5)
                     status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
                     if status==status.NOTMATCH:
@@ -810,14 +826,13 @@ class action(rb.Robot):
                         break
             else:
                 q = True
-                self.click(1603,907)
+                self.click(1069,604)
                 time.sleep(0.2)
-        time.sleep(1)
-        self.click(949,609)
-        time.sleep(1)
-        self.click(1220, 679)
-        time.sleep(1)
-        self.click(1713,1057)
+                
+        self.mask_(True)
+        self.click(1190,697)
+        time.sleep(0.5)
+        self.mask_(False)
         while True:
             reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "江南野外" in reponse:
@@ -831,6 +846,7 @@ class action(rb.Robot):
                     break
             else:
                 break
+            
     #前往花果山
     def ToTheHGS(self):
         while True:
@@ -852,7 +868,7 @@ class action(rb.Robot):
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.flag_jiemian)
             if status==status.NOTMATCH:
                 if q:
-                    self.click(1609,85)
+                    self.click(1070,54)
                     time.sleep(0.5)
                     status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
                     if status==status.NOTMATCH:
@@ -873,7 +889,7 @@ class action(rb.Robot):
             if  "花果山" in reponse:
                 print("抵达目的地")
                 return
-            
+    #前往傲来国        
     def ToTheALG(self):
         while True:
             #self.queue.put("check")
@@ -926,6 +942,7 @@ class action(rb.Robot):
                 break
         return True
     
+    #前往五庄观
     def ToTheWZG(self):
         self.ToDTGJ()
         #打开地图
@@ -1540,7 +1557,7 @@ class action(rb.Robot):
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.flag_jiemian)
             if status==status.NOTMATCH:
                 if q:
-                    self.click(1609,85)
+                    self.click(1070,54)
                     time.sleep(0.5)
                     status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
                     if status==status.NOTMATCH:
@@ -1850,6 +1867,7 @@ def test_get_set_map():
     start = time.time()
     q = queue.Queue()
     m1 = rh.MyThread(q,zoom_count=zoom_count)
+    
     m1.start()
     Robot = action(q,zoom_count=zoom_count)    
     Robot.get_set_map(False)
@@ -1937,7 +1955,7 @@ def test_x_ocrtext():
 
     
     
-           
+#           
 def test_tap():
     start = time.time()
     q = queue.Queue()
@@ -1947,7 +1965,7 @@ def test_tap():
     time.sleep(1)
     Robot.click(125,45)
     time.sleep(1)        
-    Robot.tap_("朱紫国",81,52)
+    Robot.tap_("朱紫国",89,94)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()  
@@ -1966,9 +1984,120 @@ def test_display():
     s = "010000000000000110000000000000110000000000000110000000000000110000111111111110011111000000111110000000000111100000000000011000000000000"
     display(s,9,15,"")        
          
+         
+def test_NPC_HYS():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)   
+
+    Robot.mask_(True)
+    while True:
+        status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.map_feature["火焰山土地"]["坐标"])
+        if status == status.NOTMATCH:
+            time.sleep(0.5)
+        else:
+            Robot.click(785,174)
+            time.sleep(0.5)
+            break
+    while True:
+        #self.queue.put("check")
+        status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.map_feature["送我进墨家村"]["坐标"])
+        if status == status.NOTMATCH:
+            time.sleep(0.5)
+        else:
+            Robot.click(1045,246)
+            time.sleep(0.5)
+            break
+    Robot.mask_(False)         
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit() 
+    
+#测试东海湾驿站老板           
+def test_NPC_YZLB():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)   
+
+    Robot.mask_(True)
+    while True:
+        status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.map_feature["驿站老板"]["坐标"])
+        if status == status.NOTMATCH:
+            time.sleep(0.5)
+        else:
+            Robot.click(640,405)
+            time.sleep(0.5)
+            break
+    while True:
+        #self.queue.put("check")
+        status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.map_feature["我要去"]["坐标"])
+        if status == status.NOTMATCH:
+            time.sleep(0.5)
+        else:
+            Robot.click(1062,340)
+            time.sleep(0.5)
+            break
+    Robot.mask_(False)         
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit() 
+    
+#测试东海湾  
+def test_ToTheDHW():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)       
+    Robot.ToTheDHW()   
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+    
+
+
+#测试江南野外
+def test_ToTheJNYW():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)           
+    Robot.ToTheJNYW()        
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+    
+#测试麒麟山
+def test_TotheQLS():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)          
+    Robot.TotheQLS()    
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit() 
+    
+#测试狮驼岭       
+def test_TotheSTL():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)          
+    Robot.TotheSTL()    
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()     
     
 def main():
-    test_DTJW()
+    test_TotheSTL()
     
     
     
