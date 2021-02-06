@@ -878,10 +878,10 @@ class action(rb.Robot):
             else:
                 q = True
                 #
-                self.click(1448,243)
+                self.click(962,163)
                 time.sleep(0.2)
         time.sleep(1)
-        self.click(1658,105)
+        self.click(1241,80)
         time.sleep(1)      
         while True:
             #self.queue.put("check")
@@ -1501,34 +1501,31 @@ class action(rb.Robot):
     #前往北俱芦洲
     def TotheBJLZ(self):
         self.ToTheHGS()
-        self.click(804,333)
-        time.sleep(1)
+        #self.click(804,333)
         self.click(125,45)
         time.sleep(1)
-        while True:
-            if self.rgb_array(da.map_feature["花果山"])==State.OK:
-                print("OK")
-                break
-            else:        
-                time.sleep(0.5)        
         self.tap_("花果山",32,94)
         self.mask_(True)
         while True:
-            if self.rgb_array(da.map_feature["花果山土地"])==State.OK:
-                print("OK")
+            status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["花果山土地"]["坐标"])
+            if status == status.NOTMATCH:
+                time.sleep(0.5)
+            else:
+                self.click(552,193)
+                time.sleep(0.5)
                 break
-            else:        
-                time.sleep(0.5) 
-        self.click(834,271)
         while True:
-            if self.rgb_array(da.map_feature["是的"])==State.OK:
-                print("OK")
+            #self.queue.put("check")
+            status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["是的"]["坐标"])
+            if status == status.NOTMATCH:
+                time.sleep(0.5)
+            else:
+                self.click(1062,340)
+                time.sleep(0.5)
                 break
-            else:        
-                time.sleep(0.5)   
-        self.click(1550,552)
-        time.sleep(0.5) 
-        self.mask_(False)
+        self.mask_(False) 
+        
+        time.sleep(0.5)
         while True:
             #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
@@ -1634,8 +1631,9 @@ class action(rb.Robot):
                         break
                 break
         return True
-        
+
     
+    #获取宝图
     def get_maps(self):
         self.ToTheXLNG()
         time.sleep(0.5)
@@ -1827,7 +1825,7 @@ class action(rb.Robot):
                                 break
                         print("已经存取好地图到仓库中")
                     
-zoom_count = 1.0
+zoom_count = 1.5
 
     
 def test_TotheJYC():
@@ -1984,7 +1982,7 @@ def test_display():
     s = "010000000000000110000000000000110000000000000110000000000000110000111111111110011111000000111110000000000111100000000000011000000000000"
     display(s,9,15,"")        
          
-         
+#测试墨家村NPC火焰山土地         
 def test_NPC_HYS():
     start = time.time()
     q = queue.Queue()
@@ -2094,10 +2092,54 @@ def test_TotheSTL():
     Robot.TotheSTL()    
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
-    Robot.quit()     
+    Robot.quit() 
+      
+#测试北俱芦洲 花果山土地         
+def test_NPC_HGSTD():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)   
+    Robot.mask_(True)
+    while True:
+        status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.map_feature["花果山土地"]["坐标"])
+        if status == status.NOTMATCH:
+            time.sleep(0.5)
+        else:
+            Robot.click(552,193)
+            time.sleep(0.5)
+            break
+    while True:
+        #self.queue.put("check")
+        status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.map_feature["是的"]["坐标"])
+        if status == status.NOTMATCH:
+            time.sleep(0.5)
+        else:
+            Robot.click(1062,340)
+            time.sleep(0.5)
+            break
+    Robot.mask_(False)         
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit() 
+    
+#测试前往北俱芦洲
+def test_TotheBJLZ():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)      
+    Robot.TotheBJLZ()
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+
+  
     
 def main():
-    test_TotheSTL()
+    test_TotheBJLZ()
     
     
     
