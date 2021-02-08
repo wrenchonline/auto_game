@@ -636,7 +636,7 @@ class Robot:
                     #self.show(image_array)
                     image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
                     #self.show(image_array1)
-                    new_X_t = self.matchTemplate(image_array1,image_array,0.4)
+                    new_X_t = self.matchTemplate(image_array1,image_array,0.2)
                     #print(new_X_t)
                     if new_X_t !=(-1,-1):
                         print("当前识字为:{0}".format(word))
@@ -702,6 +702,7 @@ class Robot:
                     cj = image_array1[1:height+2, start:end+1]
                     #
                     #self.show(cj)
+                    bno_found = True
                     for tab in tabs:
                         if "@" in tab:
                             data_tuple = tab.split("@")[1]
@@ -729,5 +730,8 @@ class Robot:
                                 if new_X_t !=(-1,-1):
                                     #print("当前识字为:{0}".format(word))
                                     strs += word 
-                                    break                               
+                                    bno_found = False
+                                    break
+                    if bno_found:
+                       strs += "?"                                            
         return strs
