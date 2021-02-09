@@ -136,7 +136,7 @@ class Robot:
         else:
             print("Not found game hwnd")
     """
-    x,y = findMultiColorInRegionFuzzy( 0xef6fdc, "24|5|0xffeecb,-7|30|0x2fb7ff", 90, 0, 0, 1919, 1079)
+    x,y = findMultiColorInRegionFuzzy( "0xed1d60", "14|-7|0xb1cdf0,21|4|0xe2df73", 90, 0, 0, 1279, 719)
     """
     def findMultiColorInRegionFuzzy(self,color,posandcolor,degree,x1=None,y1=None,x2=None,y2=None,tab=None):
         x = None
@@ -174,8 +174,8 @@ class Robot:
                         state = State.NOTMATCH
                         break
                 if state == State.OK:
-                    return State.OK,(x,y)
-        return State.NOTMATCH,(-1,-1)
+                    return State.OK,x,y
+        return State.NOTMATCH,-1,-1
     
     def findMultiColorInRegionFuzzyByTable(self,t_Set,degree=90,x1=None,y1=None,x2=None,y2=None):
         tolerance = 100 - degree
