@@ -174,7 +174,7 @@ class Robot:
                         state = State.NOTMATCH
                         break
                 if state == State.OK:
-                    return State.OK,x,y
+                    return State.OK,x-x1,y-y1
         return State.NOTMATCH,-1,-1
     
     def findMultiColorInRegionFuzzyByTable(self,t_Set,degree=90,x1=None,y1=None,x2=None,y2=None):
@@ -513,7 +513,7 @@ class Robot:
         if x == -1:
             return False
         else:
-            return True                
+            return True
 
     #检测宝宝是否健康            
     def check_thePetHealth(self):
@@ -615,7 +615,7 @@ class Robot:
                         print("没有字符")
         return _data_list
     
-    def x_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2):
+    def x_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2,similarity=0.2):
         #ret = re.findall(r"@(.*?)\$",tab,re.I|re.M)
         for tab in tabs:
             if "@" in tab:
@@ -636,7 +636,7 @@ class Robot:
                     #self.show(image_array)
                     image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
                     #self.show(image_array1)
-                    new_X_t = self.matchTemplate(image_array1,image_array,0.2)
+                    new_X_t = self.matchTemplate(image_array1,image_array,similarity)
                     #print(new_X_t)
                     if new_X_t !=(-1,-1):
                         print("当前识字为:{0}".format(word))
