@@ -264,38 +264,48 @@ class action(rb.Robot):
                                 tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
                             except:
                                 print("使用tesseract解析字体异常，正在使用字库")
-                                postr = self.z_Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
-                                                ,401,343,480,364,)
-                                print("postr:",postr)
-                                if len(postr):
-                                    postr = postr.replace("?","")
+                                pos = self.z_Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                                ,401,343,480,364,M=0.2)
+                                print("postr:",pos)
+                                if len(pos):
+                                    if pos[0] == "?":
+                                        pos = pos[1:]
+                                    if pos[len(pos)-1]=="?":
+                                        pos = pos[:len(pos)-1]
+                                    postr = pos.replace("\n","")
+                                    postr = pos.replace("??","?")
                                     try:
-                                        _x = int(postr.split(',')[0])
-                                        _y = int(postr.split(',')[1])
+                                        _x = int(postr.split('?')[0])
+                                        _y = int(postr.split('?')[1])
                                         tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
                                     except Exception as e:
                                         print("字库解析异常")
                         else:
-                            pos = self.Ocrtext("06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
-                                               ,379,343,455,365,ril=RIL.TEXTLINE,
-                                               lang='eng',oem=1,
-                                               attribute=["tessedit_char_whitelist",
-                                                "0123456789,"])[0]
-                            print(pos)
                             try:
+                                pos = self.Ocrtext("06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                                ,379,343,455,365,ril=RIL.TEXTLINE,
+                                                lang='eng',oem=1,
+                                                attribute=["tessedit_char_whitelist",
+                                                    "0123456789,"])[0]
+                                print(pos)
                                 _x = int(pos['text'].split(',')[0])
                                 _y = int(pos['text'].split(',')[1])
                                 tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
                             except:
                                 print("使用tesseract解析字体异常，正在使用字库")
-                                postr = self.z_Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
-                                                ,379,343,455,365,)
-                                print("postr:",postr)
-                                if len(postr):
-                                    postr = postr.replace("?","")
+                                pos = self.z_Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                                ,370,339,480,364,M=0.2)
+                                print("postr:",pos)
+                                if len(pos):
+                                    if pos[0] == "?":
+                                        pos = pos[1:]
+                                    if pos[len(pos)-1]=="?":
+                                        pos = pos[:len(pos)-1]
+                                    postr = pos.replace("\n","")
+                                    postr = pos.replace("??","?")
                                     try:
-                                        _x = int(postr.split(',')[0])
-                                        _y = int(postr.split(',')[1])
+                                        _x = int(postr.split('?')[0])
+                                        _y = int(postr.split('?')[1])
                                         tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
                                     except Exception as e:
                                         print("字库解析异常")
@@ -466,17 +476,17 @@ class action(rb.Robot):
             if status==status.NOTMATCH:
                 time.sleep(0.5)        
             else:
-                self.mask_(True)
-                self.click(1052,648)
-                time.sleep(0.5)
-                self.mask_(False)
                 break
         while True:
             reponse = self.x_Ocrtext(da.scenario_chunjie,"794732,454431",94,  24,208,   51)
             if  "长寿郊外" in reponse:
                 print("抵达长寿郊外")
                 break
-    
+            else:
+                self.mask_(True)
+                self.click(1052,648)
+                time.sleep(0.5)
+                self.mask_(False)
     #前往朱紫国         
     def go_to_ZZG(self):
         while True:
@@ -563,6 +573,7 @@ class action(rb.Robot):
                 break
             else:
                 time.sleep(0.5)
+                
     #前往墨家村
     def TotheMJC(self):
         self.TotheDTJW()
@@ -635,16 +646,18 @@ class action(rb.Robot):
                 q = True
                 self.click(185,602)
                 time.sleep(0.2)
-        time.sleep(1)
-        self.click(12,704)
-        time.sleep(1)
+
         while True:
             #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario_chunjie,"794732,454431",94,  24,208,   51)
             if  "大唐国境" in reponse:
                 print("抵达目的地")
                 return
-            
+            else:
+                time.sleep(0.5)
+                self.click(12,704)
+                time.sleep(0.5)
+
     #前往麒麟山
     def TotheQLS(self):
         while True:
@@ -688,17 +701,18 @@ class action(rb.Robot):
                 time.sleep(0.5)
             else:
                 break
-        self.mask_(True)
-        self.click(14,98)
-        time.sleep(0.5)
-        self.mask_(False)
+
         while True:
             #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario_chunjie,"794732,454431",94,  24,208,   51)
             if  "麒麟山" in reponse:
                 print("抵达目的地")
                 return
-
+            else:
+                self.mask_(True)
+                self.click(14,98)
+                time.sleep(0.5)
+                self.mask_(False)
 
     #前往狮驼岭
     def TotheSTL(self):
@@ -712,16 +726,17 @@ class action(rb.Robot):
                 time.sleep(0.5)
             else:
                 break
-        self.click(18,348)
-        time.sleep(0.5)
+
         while True:
             #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario_chunjie,"794732,454431",94,  24,208,   51)
             if  "狮驼岭" in reponse:
                 print("抵达目的地")
                 return
-            
-                    
+            else:
+                self.click(18,348)
+                time.sleep(0.5)                
+
     #前往东海湾        
     def ToTheDHW(self):
         while True:
@@ -818,16 +833,16 @@ class action(rb.Robot):
                 q = True
                 self.click(1069,604)
                 time.sleep(0.2)
-                
-        self.mask_(True)
-        self.click(1190,697)
-        time.sleep(0.5)
-        self.mask_(False)
         while True:
             reponse = self.x_Ocrtext(da.scenario_chunjie,"794732,454431",94,  24,208,   51)
             if  "江南野外" in reponse:
                 print("抵达目的地")
-                break            
+                break
+            else:
+                self.mask_(True)
+                self.click(1190,697)
+                time.sleep(0.5)
+                self.mask_(False)
         while True:
             if self.no_prop():
                 self.click(1220, 679)
@@ -870,18 +885,18 @@ class action(rb.Robot):
                 #
                 self.click(962,163)
                 time.sleep(0.2)
-        self.mask_(True)
-        time.sleep(1)
-        self.click(1241,80)
-        time.sleep(1) 
-        self.mask_(False)     
         while True:
             #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario_chunjie,"794732,454431",94,  24,208,   51)
             if  "花果山" in reponse:
                 print("抵达目的地")
                 return
-
+            else:
+                self.mask_(True)
+                time.sleep(1)
+                self.click(1241,80)
+                time.sleep(1) 
+                self.mask_(False)  
     #前往傲来国        
     def ToTheALG(self):
         while True:
@@ -946,8 +961,8 @@ class action(rb.Robot):
         time.sleep(0.5)
         self.mask_(True)
         self.click(16,195)
-        time.sleep(1)   
-        self.mask_(False)     
+        time.sleep(0.5)
+        self.mask_(False)
         while True:
             #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario_chunjie,"794732,454431",94,  24,208,   51)
@@ -960,16 +975,16 @@ class action(rb.Robot):
         self.open_map()
         time.sleep(1)                
         self.tap_("大唐境外",633,76)
-        self.mask_(True)
-        self.click(1245,200)
-        time.sleep(1)   
-        self.mask_(False) 
         while True:
             reponse = self.x_Ocrtext(da.scenario_chunjie,"794732,454431",94,  24,208,   51)
             if  "五庄观" in reponse:
                 print("抵达五庄观")
                 break
-
+            else:
+                self.mask_(True)
+                self.click(1245,200)
+                time.sleep(0.2)
+                self.mask_(False) 
                 
     def open_prop(self):
         while True:
@@ -982,8 +997,15 @@ class action(rb.Robot):
             else:
                 break
             time.sleep(2)
-        self.click(1121, 673)
-        
+        while True:
+            status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["打开地图界面"]["基点"],da.prompt_box["打开地图界面"]["偏移"], 80,  622,3, 1207,  307)
+            if status == State.NOTMATCH:
+                print("当前没有打开道具栏")
+                time.sleep(0.5)
+                self.click(1121, 673)
+            else:
+                print("已经打开道具栏")
+                break
         
     #前往普陀山
     def ToThePTS(self):
@@ -1037,7 +1059,6 @@ class action(rb.Robot):
         scenario = ""
         if not b_only_load_config:
             tulist = self.check_map()
-            mapInfomation = {"tu":tulist}
             while True:
                 status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
                 if status==status.NOTMATCH:
@@ -1045,7 +1066,7 @@ class action(rb.Robot):
                 else:
                     self.click(1072,54) #界面返回 
                     time.sleep(1)
-            self.config_save(mapInfomation)
+            self.config_save(tulist)
 
         #加载配置文件
         load_dict = self.config_load()
@@ -1442,7 +1463,38 @@ class action(rb.Robot):
                                 self.queue.put("check")
                                 self.queue.join()
                             break
-                    self.config_save(maps)                                
+                    self.config_save(maps)
+                elif place in "五庄观":
+                    if not place in scenario:
+                        self.ToTheWZG()
+                    scenario = "五庄观"
+                    time.sleep(1)
+                    self.open_map()
+                    time.sleep(1)   
+                    self.tap_("五庄观",place_x,place_y)
+                    self.open_prop()
+
+                    #判断提示框是否出现
+                    while True:
+                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
+                        if status==status.NOTMATCH:
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                            self.click(backpack_x,backpack_y)
+                        else:
+                            self.click(1072,54) #界面返回 
+                            time.sleep(0.2)                            
+                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
+                            if status==status.NOTMATCH:
+                                pass
+                            else:
+                                time.sleep(1)
+                                self.click(1072,54) #界面返回 
+                                time.sleep(1)
+                                self.queue.put("check")
+                                self.queue.join()
+                            break
+                    self.config_save(maps)                                                    
                 else:
                     print("所在地址没找到")
                     os._exit(0)
@@ -1764,7 +1816,7 @@ class action(rb.Robot):
         self.click(125,45)
         time.sleep(0.5)
         while True:
-            status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["打开地图界面"]["基点"],da.prompt_box["打开地图界面"]["偏移"], 80, 606,2, 1174,126)
+            status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["打开地图界面"]["基点"],da.prompt_box["打开地图界面"]["偏移"], 80,  622,3, 1207,307)
             if status == State.NOTMATCH:
                 print("NOTMATCH")
                 time.sleep(0.5)
@@ -2303,7 +2355,7 @@ def test_ToTheXLNG():
     q = queue.Queue()
     m1 = rh.MyThread(q,zoom_count=zoom_count)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)        
+    Robot = action(q,zoom_count=zoom_count)
     Robot.ToTheXLNG()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2329,9 +2381,9 @@ def test_box():
     status,x,y= Robot.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
-    Robot.quit() 
+    Robot.quit()
 
-
+#测试打开地图
 def test_openmap():
     start = time.time()
     q = queue.Queue()
@@ -2341,7 +2393,7 @@ def test_openmap():
     Robot.click(125,45)
     time.sleep(0.5)
     while True:
-        status,x,y=Robot.findMultiColorInRegionFuzzy(da.prompt_box["打开地图界面"]["基点"],da.prompt_box["打开地图界面"]["偏移"], 80, 606,2, 1174,126)
+        status,x,y=Robot.findMultiColorInRegionFuzzy(da.prompt_box["打开地图界面"]["基点"],da.prompt_box["打开地图界面"]["偏移"], 80,  622,3, 1207,  307)
         if status == State.NOTMATCH:
             print("NOTMATCH")
             time.sleep(0.5)
@@ -2349,11 +2401,11 @@ def test_openmap():
         else:
             print("openning the map")
             break
-
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit() 
 
+#测试配置文件
 def test_config():
     start = time.time()
     q = queue.Queue()
@@ -2368,10 +2420,47 @@ def test_config():
             Robot.config_save(maps)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
-    Robot.quit() 
+    Robot.quit()
+
+#测试战斗系统
+def test_fire():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)
+    Robot.queue.put("check")
+    Robot.queue.join()
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+
+#测试打开道具栏
+def test_openprop():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)
+    Robot.open_prop()
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+
+#测试安全提示框
+def test_safe_prompt():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)
+    while True:
+        pass
+
+
 
 def main():
-    test_config()
+    test_TotheQLS()
     
     
     

@@ -159,10 +159,17 @@ class Robot:
                 _tmp = {"px":int(px),"py":int(py),"rgb_hex":rgb_hex}
                 posandcolor_list.append(_tmp)
             for x,y in pos_x_y_list:
-                
                 for p in posandcolor_list:
                     __px = p["px"]
                     __py = p["py"]
+                    newY = y+__py
+                    newX = x+__px
+                    if newY > len(tpl):
+                        print("findMultiColorInRegionFuzzy::检测y越界,返回失败")
+                        return State.NOTMATCH,-1,-1
+                    if newX > len(tpl[0]):
+                        print("findMultiColorInRegionFuzzy::检查x越界,返回失败")
+                        return State.NOTMATCH,-1,-1
                     __rgb_hex = p["rgb_hex"]
                     b,g,r = tpl[y+__py,x+__px]
                     exR = int(__rgb_hex[2:4],16) 
@@ -534,7 +541,7 @@ class Robot:
             target1 = cv2.imread("./images/autoing.png")
             x,y = self.matchTemplate(tpl,target,0.1)
             if x == -1:
-                print("正在自动战斗中")
+                break
             else:
                 print("点击自动战斗 posx:{0} posy:{1}".format(x,y))
                 while True:
@@ -719,7 +726,6 @@ class Robot:
                                 x = int(data_tuple[4])
                                 y = int(data_tuple[3])
                                 image_array = binstr_to_nparray(hexstr_2,x,y)
-
                                 #if word == "6":
                                 #     for w in image_array[0]
                                 #      print("正在匹配字符: 7")
