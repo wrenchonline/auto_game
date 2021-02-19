@@ -160,18 +160,18 @@ class Robot:
                 posandcolor_list.append(_tmp)
             for x,y in pos_x_y_list:
                 for p in posandcolor_list:
-                    __px = p["px"]
-                    __py = p["py"]
-                    newY = y+__py
-                    newX = x+__px
-                    if newY > len(tpl):
+                    # __px = int(p["px"])
+                    # __py = int(p["py"])
+                    newY = y+p["px"]
+                    newX = x+p["py"]
+                    if newY > self.game_height:
                         print("findMultiColorInRegionFuzzy::检测y越界,返回失败")
                         return State.NOTMATCH,-1,-1
-                    if newX > len(tpl[0]):
+                    if newX > self.game_width:
                         print("findMultiColorInRegionFuzzy::检查x越界,返回失败")
                         return State.NOTMATCH,-1,-1
                     __rgb_hex = p["rgb_hex"]
-                    b,g,r = tpl[y+__py,x+__px]
+                    b,g,r = tpl[newY,newX]
                     exR = int(__rgb_hex[2:4],16) 
                     exG = int(__rgb_hex[4:6],16) 
                     exB = int(__rgb_hex[6:8],16) 

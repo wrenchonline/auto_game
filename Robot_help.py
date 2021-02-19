@@ -33,7 +33,6 @@ class MyThread (threading.Thread,rb.Robot):
         fire_end = False
         try: 
             while True:
-
                 if not self.queue.empty():  # 如果还有队列数据
                     data = self.queue.get(False)
                     if data in "check":
@@ -58,6 +57,7 @@ class MyThread (threading.Thread,rb.Robot):
                                         break
                                 if fire_end:
                                     break
+                                break
                                 #self.queue.task_done()
                         self.queue.task_done()
                     if data in "exit":

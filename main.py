@@ -95,7 +95,7 @@ class action(rb.Robot):
                             break
                     elif color == "yellow":
                         target = cv2.imread("./images/yellow_flag.png")
-                        x,y = self.matchTemplate(tpl,target,0.05)
+                        x,y = self.matchTemplate(tpl,target,0.1)
                         if x != -1:
                             self.click(x,y)
                             self.click(x,y)
@@ -213,7 +213,6 @@ class action(rb.Robot):
             time.sleep(2)
         
         self.click(1121, 673)
-        
         time.sleep(1)
         tpl = self.Print_screen()
         target = cv2.imread("./images/tu.png")
@@ -261,7 +260,7 @@ class action(rb.Robot):
                                 pos['text'] = pos['text'].replace("\n","")
                                 _x = int(pos['text'].split(',')[0])
                                 _y = int(pos['text'].split(',')[1])
-                                tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
+                                tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5,convert_pos[2],convert_pos[3]))
                             except:
                                 print("使用tesseract解析字体异常，正在使用字库")
                                 pos = self.z_Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
@@ -277,7 +276,7 @@ class action(rb.Robot):
                                     try:
                                         _x = int(postr.split('?')[0])
                                         _y = int(postr.split('?')[1])
-                                        tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
+                                        tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5,convert_pos[2],convert_pos[3]))
                                     except Exception as e:
                                         print("字库解析异常")
                         else:
@@ -290,7 +289,7 @@ class action(rb.Robot):
                                 print(pos)
                                 _x = int(pos['text'].split(',')[0])
                                 _y = int(pos['text'].split(',')[1])
-                                tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
+                                tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5,convert_pos[2],convert_pos[3]))
                             except:
                                 print("使用tesseract解析字体异常，正在使用字库")
                                 pos = self.z_Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
@@ -306,7 +305,7 @@ class action(rb.Robot):
                                     try:
                                         _x = int(postr.split('?')[0])
                                         _y = int(postr.split('?')[1])
-                                        tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5))
+                                        tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5,convert_pos[2],convert_pos[3]))
                                     except Exception as e:
                                         print("字库解析异常")
 
@@ -997,6 +996,8 @@ class action(rb.Robot):
             else:
                 break
             time.sleep(2)
+        time.sleep(0.5)
+        self.click(1121, 673)
         while True:
             status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["打开地图界面"]["基点"],da.prompt_box["打开地图界面"]["偏移"], 80,  622,3, 1207,  307)
             if status == State.NOTMATCH:
@@ -1054,6 +1055,35 @@ class action(rb.Robot):
         with open("./角色信息.json", 'w',encoding="utf-8") as f:
             json.dump(load_dict,f,ensure_ascii=False,indent = 4)
 
+
+    def orb_(self,place,place_x,place_y,x1,y1,x2,y2):
+        time.sleep(1)
+        self.open_map()
+        time.sleep(1)
+        self.tap_(place,place_x,place_y)
+        self.open_prop()
+        #判断提示框是否出现
+        while True:
+            status,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"], 75,x1-5,y1-5,x2,y2)
+            #status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
+            if status==status.OK:
+                self.click(x1+5,y1+5)
+                self.click(x1+5,y1+5)
+                self.click(x1+5,y1+5)
+            else:
+                while True:
+                    status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["打开地图界面"]["基点"],da.prompt_box["打开地图界面"]["偏移"], 80,  1029,   22, 1098,94)
+                    if status == State.NOTMATCH:
+                        time.sleep(0.5)
+                        self.click(1072,54) #界面返回 
+                        break
+                #没回到主界面直接代表进入战斗界面
+                status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian,degree=85)
+                if status==status.NOTMATCH:
+                    self.queue.put("check")
+                    self.queue.join()
+                time.sleep(0.5)
+        
     def Orb(self,b_only_load_config=False):
         #当前场景
         scenario = ""
@@ -1067,7 +1097,7 @@ class action(rb.Robot):
                     self.click(1072,54) #界面返回 
                     time.sleep(1)
             self.config_save(tulist)
-
+  
         #加载配置文件
         load_dict = self.config_load()
         maps =  load_dict["tu"]
@@ -1077,157 +1107,39 @@ class action(rb.Robot):
                 place = m[0]
                 place_x = m[1]
                 place_y = m[2]
-                backpack_x = m[3]
-                backpack_y = m[4]
+                backpack_x1 = m[3]
+                backpack_y1 = m[4]
+                backpack_x2 = m[5]
+                backpack_y2 = m[6]
                 if place in "长寿郊外":
                     if not place in scenario:
                         self.go_to_CSJW()
                     scenario = "长寿郊外"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)
-                    self.tap_("长寿郊外",place_x,place_y)
-                    self.open_prop()
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回 
-                            time.sleep(0.5)
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)
                 elif place in "大唐国境":
                     if not place in scenario:
                         self.ToDTGJ()
                     scenario = "大唐国境"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)   
-                    self.tap_("大唐国境",place_x,place_y)
-                    self.open_prop()
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回 
-                            time.sleep(0.2)                            
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)
                 elif place in "大唐境外":
                     if not place in scenario:
                         self.TotheDTJW()
                     scenario = "大唐境外"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)   
-                    self.tap_("大唐境外",place_x,place_y)
-                    self.open_prop()
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回 
-                            time.sleep(0.2)                            
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)
                 elif place in "麒麟山":
                     if not place in scenario:
                         self.TotheQLS()
                     scenario = "麒麟山"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)   
-                    self.tap_("麒麟山",place_x,place_y)
-                    self.open_prop()
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回 
-                            time.sleep(0.2)                            
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)
                 elif place in "狮驼岭":
                     if not place in scenario:
                         self.TotheSTL()
                     scenario = "狮驼岭"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)   
-                    self.tap_("狮驼岭",place_x,place_y)
-                    self.open_prop()
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回 
-                            time.sleep(0.2)                            
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)    
                 elif place in "朱紫国":
                     if not place in scenario:
@@ -1257,248 +1169,61 @@ class action(rb.Robot):
                             print("飞行符没有使用")
                         self.go_to_ZZG()
                     scenario = "朱紫国"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)   
-                    self.tap_("朱紫国",place_x,place_y)
-                    self.open_prop()
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回 
-                            time.sleep(0.2)                            
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)
                 elif place in "花果山":
                     if not place in scenario:
                         self.ToTheHGS()
                     scenario = "花果山"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)
-                    self.tap_("花果山",place_x,place_y)
-                    self.open_prop()
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回 
-                            time.sleep(0.2)                            
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)
                 elif place in "东海湾":
                     if not place in scenario:
                         self.ToTheDHW()
                     scenario = "东海湾"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)   
-                    self.tap_("东海湾",place_x,place_y)
-                    self.open_prop()
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回 
-                            time.sleep(0.2)                            
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)
                 elif place in "江南野外":
                     if not place in scenario:
                         self.ToTheJNYW()
                     scenario = "江南野外"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)   
-                    self.tap_("江南野外",place_x,place_y)
-                    self.open_prop()
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80,231,4,287,62)
-                        #status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回
-                            time.sleep(0.2)
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80,283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)
                 elif place in "傲来国":
                     if not place in scenario:
                         self.ToTheALG()
                     scenario = "傲来国"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)   
-                    self.tap_("傲来国",place_x,place_y)
-                    self.open_prop()
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回 
-                            time.sleep(0.2)                            
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)
                 elif place in "北俱芦洲":
                     if not place in scenario:
                         self.TotheBJLZ()
                     scenario = "北俱芦洲"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)   
-                    self.tap_("北俱芦洲",place_x,place_y)
-                    self.open_prop()
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回 
-                            time.sleep(0.2)                            
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)
                 elif place in "普陀山":
                     if not place in scenario:
                         self.ToThePTS()
                     scenario = "普陀山"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)   
-                    self.tap_("普陀山",place_x,place_y)
-                    self.open_prop()
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回 
-                            time.sleep(0.2)                            
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)
                 elif place in "五庄观":
                     if not place in scenario:
                         self.ToTheWZG()
                     scenario = "五庄观"
-                    time.sleep(1)
-                    self.open_map()
-                    time.sleep(1)   
-                    self.tap_("五庄观",place_x,place_y)
-                    self.open_prop()
-
-                    #判断提示框是否出现
-                    while True:
-                        status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
-                        if status==status.NOTMATCH:
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                            self.click(backpack_x,backpack_y)
-                        else:
-                            self.click(1072,54) #界面返回 
-                            time.sleep(0.2)                            
-                            status,x,y= self.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
-                            if status==status.NOTMATCH:
-                                pass
-                            else:
-                                time.sleep(1)
-                                self.click(1072,54) #界面返回 
-                                time.sleep(1)
-                                self.queue.put("check")
-                                self.queue.join()
-                            break
-                    self.config_save(maps)                                                    
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
+                    self.config_save(maps)
+                elif place in "女儿村":
+                    if not place in scenario:
+                        self.TotheNEC()
+                    scenario = "女儿村"
+                    self.orb_(scenario,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
+                    self.config_save(maps)                                                     
                 else:
                     print("所在地址没找到")
                     os._exit(0)
             
+
 
     #前往西凉女国
     def ToTheXLNG(self):
@@ -1621,18 +1346,18 @@ class action(rb.Robot):
                 self.click(320,172)
                 time.sleep(0.2)
         time.sleep(1)
-        self.mask_(True)
-        self.click(115,225)
-        time.sleep(0.1)  
-        self.mask_(False)     
         while True:
             #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario_chunjie,"794732,454431",94,  24,208,   51)
             if  "女儿村" in reponse:
                 print("抵达目的地")
                 break
-        
-            
+            else:
+                self.mask_(True)
+                self.click(115,225)
+                time.sleep(0.2)  
+                self.mask_(False)  
+                    
      
     #前往建邺城
     def TotheJYC(self):
@@ -2361,13 +2086,13 @@ def test_ToTheXLNG():
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
 
-def test_orb():
+def test_orb(b_only_load_config=False):
     start = time.time()
     q = queue.Queue()
     m1 = rh.MyThread(q,zoom_count=zoom_count)
     m1.start()
     Robot = action(q,zoom_count=zoom_count)        
-    Robot.Orb(b_only_load_config=False)
+    Robot.Orb(b_only_load_config)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
@@ -2460,8 +2185,8 @@ def test_safe_prompt():
 
 
 def main():
-    test_TotheQLS()
-    
+    #test_ToNEC()
+    test_orb(True)
     
     
 if __name__ == "__main__":
