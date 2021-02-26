@@ -1077,12 +1077,16 @@ class action(rb.Robot):
                         time.sleep(0.5)
                         self.click(1072,54) #界面返回 
                         break
+                while True:
                 #没回到主界面直接代表进入战斗界面
-                status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian,degree=85)
-                if status==status.NOTMATCH:
-                    self.queue.put("check")
-                    self.queue.join()
+                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian,degree=85)
+                    if status==status.NOTMATCH:
+                        self.queue.put("check")
+                        self.queue.join()
+                        break
                 time.sleep(0.5)
+                break
+        
         
     def Orb(self,b_only_load_config=False):
         #当前场景
