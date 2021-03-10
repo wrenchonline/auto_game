@@ -177,9 +177,9 @@ class Robot:
                     exB = int(__rgb_hex[6:8],16) 
                     if (pixelMatchesColor((r, g, b),(exR,exG,exB),tolerance)):
                         state = State.OK
+                        break
                     else:
                         state = State.NOTMATCH
-                        break
                 if state == State.OK:
                     return State.OK,x-x1,y-y1
         return State.NOTMATCH,-1,-1

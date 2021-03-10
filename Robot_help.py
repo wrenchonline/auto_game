@@ -65,16 +65,16 @@ class MyThread (threading.Thread,rb.Robot):
                         self.queue.task_done()
                         break
                 #检查安全令牌
-                status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["弹出令牌界面"]["基点"],da.prompt_box["弹出令牌界面"]["偏移"],80,1213,502, 1264,561)
-                if status==status.NOTMATCH:
-                    pass
-                else:
-                    print("检测到安全提示框弹出，正在关闭....")
-                    cancel_safe_x = 1213 + x
-                    cancel_safe_y = 502 + y
-                    self.click(cancel_safe_x,cancel_safe_y)
-                    time.sleep(0.5)
-                time.sleep(2)
+                # status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["弹出令牌界面"]["基点"],da.prompt_box["弹出令牌界面"]["偏移"],80,1213,502, 1264,561)
+                # if status==status.NOTMATCH:
+                #     pass
+                # else:
+                #     print("检测到安全提示框弹出，正在关闭....")
+                #     cancel_safe_x = 1213 + x
+                #     cancel_safe_y = 502 + y
+                #     self.click(cancel_safe_x,cancel_safe_y)
+                #     time.sleep(0.5)
+                # time.sleep(2)
         except BaseException as e:
             self.exc = e
             self.someFunction()
