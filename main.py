@@ -214,8 +214,8 @@ class action(rb.Robot):
         
         self.click(1121, 673)
         time.sleep(1)
-        tpl = self.Print_screen()
-        target = cv2.imread("./images/tu.png")
+        # tpl = self.Print_screen()
+        # target = cv2.imread("./images/tu.png")
         start_pos = (600,175,683,257)
         convert_pos = [600,175,683,257]
         tu_list = list()
@@ -241,30 +241,17 @@ class action(rb.Robot):
                            break
                        else:
                            time.sleep(1)
-                    #这里判断下提示框
-                    tpl = self.Print_screen()
+                    # #这里判断下提示框
+                    # tpl = self.Print_screen()
 
                     #self.show(tpl[338:366,297:394])
                     #检测字体
-                    data = self.x_Ocrtext(da.ditu,"00E804,011805#03DC07,032006#08DD0B,072009",297,338,394,366,similarity=0.35)
+                    data = self.x_Ocrtext(da.ditu,"00E804,011805#03DC07,032006#08DD0B,072009",297,338,394,366,similarity=0.4)
                     print(data)                    
                     if data:
                         if len(data)>3:
-                            try:
-                                pos = self.Ocrtext("06BE0B,06420B#00E804,011805#03DC07,032006#08DD0B,072009",
-                                                401,343,480,364,ril=RIL.TEXTLINE,
-                                                lang='eng',oem=1,
-                                                attribute=["tessedit_char_whitelist", 
-                                                    "0123456789,"])[0]
-                                print(pos)
-                                pos['text'] = pos['text'].replace("\n","")
-                                _x = int(pos['text'].split(',')[0])
-                                _y = int(pos['text'].split(',')[1])
-                                tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5,convert_pos[2],convert_pos[3]))
-                            except:
-                                print("使用tesseract解析字体异常，正在使用字库")
                                 pos = self.z_Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
-                                                ,401,343,480,364,M=0.2)
+                                                ,401,343,485,364,M=0.2)
                                 print("postr:",pos)
                                 if len(pos):
                                     if pos[0] == "?":
@@ -280,20 +267,8 @@ class action(rb.Robot):
                                     except Exception as e:
                                         print("字库解析异常")
                         else:
-                            try:
-                                pos = self.Ocrtext("06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
-                                                ,379,343,455,365,ril=RIL.TEXTLINE,
-                                                lang='eng',oem=1,
-                                                attribute=["tessedit_char_whitelist",
-                                                    "0123456789,"])[0]
-                                print(pos)
-                                _x = int(pos['text'].split(',')[0])
-                                _y = int(pos['text'].split(',')[1])
-                                tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5,convert_pos[2],convert_pos[3]))
-                            except:
-                                print("使用tesseract解析字体异常，正在使用字库")
                                 pos = self.z_Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
-                                                ,370,339,480,364,M=0.2)
+                                                ,370,339,485,364,M=0.2)
                                 print("postr:",pos)
                                 if len(pos):
                                     if pos[0] == "?":
@@ -1577,6 +1552,7 @@ class action(rb.Robot):
                 self.click(125,45)
             else:
                 print("openning the map")
+                self.click(125,45)
                 break
 
 
@@ -1710,7 +1686,7 @@ class action(rb.Robot):
                 else:
                     self.click(1072,54) #界面返回 
 
-zoom_count = 1.0
+zoom_count = 1.5
 
 #测试前往建邺城    
 def test_TotheJYC():
@@ -2215,7 +2191,7 @@ def test_safe_prompt():
 
 def main():
     #test_ToNEC()
-    test_orb(True)
+    test_orb(False)
     #test_get_set_map()
     
     
