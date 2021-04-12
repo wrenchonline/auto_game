@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-from os import error
 
-from numba.cuda.decorators import convert_types
 import Robot as rb
 import time
-import pytesseract as pytes
 from utils import *
-from tesserocr import RIL
 import Robot_help as rh
 import math
 import queue
