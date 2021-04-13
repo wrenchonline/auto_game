@@ -207,7 +207,6 @@ class action(rb.Robot):
             else:
                 break
             time.sleep(2)
-        
         self.click(1121, 673)
         time.sleep(1)
         # tpl = self.Print_screen()
@@ -237,10 +236,6 @@ class action(rb.Robot):
                            break
                        else:
                            time.sleep(1)
-                    # #这里判断下提示框
-                    # tpl = self.Print_screen()
-
-                    #self.show(tpl[338:366,297:394])
                     #检测字体
                     data = self.x_Ocrtext(da.ditu,"00E804,011805#03DC07,032006#08DD0B,072009",297,338,394,366,similarity=0.4)
                     print(data)                    
@@ -1551,10 +1546,23 @@ class action(rb.Robot):
                 self.click(125,45)
                 break
 
-
+    def VerifyRange(self,x,y,x1,y1,x2,y2,x_range,y_range):
+        start_pos = (x1,y1,x2,y2)
+        convert_pos = [x1,y1,x2,y2]
+        tu_list = list()
+        for i in range(0,5):
+            convert_pos[0] = start_pos[0] + i*x_range
+            convert_pos[2] = start_pos[2] + i*x_range
+            for j in range(0,4):
+                convert_pos[1] = start_pos[1] + j*y_range
+                convert_pos[3] = start_pos[3] + j*y_range
+                if convert_pos[0] < x < convert_pos[2] and convert_pos[1] < y < convert_pos[3]:
+                    return convert_pos[0],convert_pos[1],convert_pos[2],convert_pos[3]
+        return -1,-1,-1,-1
+    
+    
     #排序仓库顺序存图，取图
-    def get_set_map(self,G=False,togo=False):
-
+    def get_set_map(self,GetOrSet='get',togo=False):
         if togo:
             self.ToTheXLNG()
             time.sleep(0.5)
@@ -1576,26 +1584,28 @@ class action(rb.Robot):
             while True:
                 if self.rgb_array(da.cangku["仓库界面"])==State.OK:
                     break
-        if G:
+        if GetOrSet=='get':
             n,nn,nnn,nnnn=None,None,None,None
             time.sleep(1)
-            tpl = self.Print_screen()
-            target = cv2.imread("./images/tu.png")
             map_number = 0
-            for i in range(0,13):
-                tpl = self.Print_screen()
-                #self.show(tpl[314:831,205:881])
-                x,y = self.matchTemplate(tpl[205:559,140:587],target,0.15)
-                if x != -1:
-                    print("找到宝图")
+            while True:
+                time.sleep(1)
+                _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"],60,x1=140,y1=205,x2=587,y2=559)
+                time.sleep(1)
+                if x !=-1:
                     time.sleep(0.5)
                     self.click(140+x,205+y)
                     self.click(140+x,205+y)
                     self.click(140+x,205+y)
                     time.sleep(0.5)
-                    map_number +=1
+                    map_number+=1
+                    print("仓库里找到宝图,map_number=",map_number)
+                    if map_number == 12:  #默认取12张宝图挖宝
+                        break
                 else:
-                    break
+                    time.sleep(0.5)
+                    self.click(360,624)
+                    time.sleep(1)
             self.click(1072,54) #界面返回  
             time.sleep(0.5)
             self.mask_(False)
@@ -1609,70 +1619,62 @@ class action(rb.Robot):
             return  map_number
         else:
             print("存图") 
-            tpl = self.Print_screen()
+            #tpl = self.Print_screen()
             #target = cv2.imread("./images/tu.png")
-            start_pos = (627,207,709,287)
-            convert_pos = [627,207,709,287]
-            tu_list = list()
-            for i in range(0,5):
-                time.sleep(0.5)
-                convert_pos[0] = start_pos[0] + i*90
-                convert_pos[2] = start_pos[2] + i*90
-                for j in range(0,4):
-                    time.sleep(0.5)
-                    print(j)
-                    convert_pos[1] = start_pos[1] + j*90
-                    convert_pos[3] = start_pos[3] + j*90
-                    self.click(convert_pos[0]+5,convert_pos[1]+5)
-                    time.sleep(1)
-                    tpl = self.Print_screen()
-                    #self.show(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]])
-                    _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"],70, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
-                    #x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target,0.1)
-                    if x != -1:
-                        print("找到宝图")
-                        while True:
-                            if self.rgb_array(da.ditu_show["仓库道具栏显示地图字体"]) == State.OK:
-                                break
-                            else:
-                                time.sleep(1)
-                        #这里判断下提示框
-                        tpl = self.Print_screen()
-                        #检测字体
-                        name = self.x_Ocrtext(da.ditu,"00E804,011805#03DC07,032006#08DD0B,072009",355,367,461,395)
-                        if name == "":
-                            print("无法识别字体")
-                            continue
-                        print(name)
-                        map_da = self.estimate_map(name) 
-                        c__x,c__y = da.CK[map_da]
-                        #检测是否开启仓库选择栏
-                        while True:
-                            if self.rgb_array(da.cangku["仓库选择界面"])==State.OK:
-                                break
-                            else:
-                                self.click(263,  623)
-                                time.sleep(0.7)
-                        while True:
-                            if self.rgb_array(da.cangku["仓库选择界面"])==State.OK:
-                                self.click(c__x,c__y)
-                                time.sleep(0.6) 
-                            else:
-                                time.sleep(0.7)
-                                break
-                            
-                        while True:
-                            time.sleep(1)
-                            tpl = self.Print_screen()  
-                            _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图"]["基点"], da.daoju["普通宝图"]["偏移"], 74, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
-                            #x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target,0.1)
-                            if x != -1:
-                                self.click(convert_pos[0]+5,convert_pos[1]+5)
-                                self.click(convert_pos[0]+5,convert_pos[1]+5)
-                            else:
-                                break
-                        print("已经存取好地图到仓库中")
+            # start_pos = (627,207,709,287)
+            # convert_pos = [627,207,709,287]
+            #self.show(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]])
+            while True:
+                _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"],60, 628,201,1073,558)
+                if x ==-1:
+                    break
+                x = 628 + x
+                y = 201 + y
+                while True:
+                    if self.rgb_array(da.ditu_show["仓库道具栏显示地图字体"]) == State.OK:
+                        break
+                    else:
+                        time.sleep(1)
+                        self.click(x+5,y+5)
+                #这里判断下提示框
+                tpl = self.Print_screen()
+                #检测字体
+                name = self.x_Ocrtext(da.ditu,"00E804,011805#03DC07,032006#08DD0B,072009",355,367,461,395)
+                if name == "":
+                    print("无法识别字体")
+                    continue
+                print(name)
+                map_da = self.estimate_map(name) 
+                c__x,c__y = da.CK[map_da]
+                #检测是否开启仓库选择栏
+                while True:
+                    if self.rgb_array(da.cangku["仓库选择界面"])==State.OK:
+                        break
+                    else:
+                        self.click(263,  623)
+                        time.sleep(0.7)
+                while True:
+                    if self.rgb_array(da.cangku["仓库选择界面"])==State.OK:
+                        self.click(c__x,c__y)
+                        time.sleep(0.6) 
+                    else:
+                        time.sleep(0.7)
+                        break
 
+                c1,c2,c3,c4 = self.VerifyRange(x,y,627,207,709,287,90,90)
+                while True:
+                    time.sleep(1)
+                    tpl = self.Print_screen()                          
+                    if c1:
+                        _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"],60, c1,c2,c3,c4)
+                    #x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target,0.1)
+                        if x != -1:
+                            self.click(c1+5,c2+5)
+                            self.click(c1+5,c2+5)
+                        else:
+                            break
+                print("已经存取好地图到仓库中")
+                
             while True:
                 #self.queue.put("check")
                 status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
@@ -1720,13 +1722,13 @@ def test_check_pet_HP():
     Robot.quit()
 
 #测试存图    
-def test_get_set_map():
+def test_get_set_map(getorset='get'):
     start = time.time()
     q = queue.Queue()
     m1 = rh.MyThread(q,zoom_count=zoom_count)
     m1.start()
     Robot = action(q,zoom_count=zoom_count)    
-    Robot.get_set_map(False)
+    Robot.get_set_map(getorset)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()  
@@ -2187,9 +2189,9 @@ def test_safe_prompt():
 
 def main():
     #test_ToNEC()
-    test_orb(False)
-    #test_get_set_map()
-    
+    #test_orb(False)
+    #test_get_set_map(getorset='get')
+    test_check_map()
     
 if __name__ == "__main__":
     main()

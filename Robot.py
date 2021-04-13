@@ -138,7 +138,10 @@ class Robot:
     """
     x,y = findMultiColorInRegionFuzzy( "0xed1d60", "14|-7|0xb1cdf0,21|4|0xe2df73", 90, 0, 0, 1279, 719)
     """
-    def findMultiColorInRegionFuzzy(self,color,posandcolor,degree,x1=None,y1=None,x2=None,y2=None,tab=None):
+    def findMultiColorInRegionFuzzy(self,color,
+                                    posandcolor,degree,
+                                    x1=None,y1=None,x2=None,y2=None,
+                                    tab=None,blist=False):
         x = None
         y = None
         tolerance = 100 - degree
@@ -147,6 +150,7 @@ class Robot:
         r,g,b  = Hex_to_RGB(color)
         tpl = self.Print_screen()
         posandcolor_list = list()
+        positems = list()
         posandcolors_param = posandcolor.split(",")
         state = State.OK
         pos_x_y_list = self.__findMultiColor(tpl,(r,g,b),tolerance,x1,y1,x2,y2)   
@@ -177,12 +181,20 @@ class Robot:
                     exB = int(__rgb_hex[6:8],16) 
                     if (pixelMatchesColor((r, g, b),(exR,exG,exB),tolerance)):
                         state = State.OK
-                        break
                     else:
                         state = State.NOTMATCH
+                        continue
                 if state == State.OK:
-                    return State.OK,x-x1,y-y1
-        return State.NOTMATCH,-1,-1
+                   positems.append((x-x1,y-y1))
+            if len(positems):
+                if not blist:
+                    return State.OK,positems[0][0],positems[0][1]
+                else:
+                    return State.OK,positems
+        if not blist:
+            return State.NOTMATCH,-1,-1
+        else:
+            return State.NOTMATCH,positems
     
     def findMultiColorInRegionFuzzyByTable(self,t_Set,degree=90,x1=None,y1=None,x2=None,y2=None):
         tolerance = 100 - degree
