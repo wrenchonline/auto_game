@@ -112,7 +112,7 @@ class Robot:
 
 
     def Get_GameHwnd(self):
-        self.hwnd= win32gui.FindWindow('Qt5QWindowIcon','夜神模拟器')
+        self.hwnd= win32gui.FindWindow('Qt5QWindowIcon','夜神模拟器1')
         self.ScreenBoardhwnd = win32gui.FindWindowEx(self.hwnd, 0, 'Qt5QWindowIcon', 'ScreenBoardClassWindow')
         self.hwnd = win32gui.FindWindowEx(self.ScreenBoardhwnd, 0, self.class_name, self.title_name)
         print('hwnd=',self.hwnd)

@@ -1683,8 +1683,15 @@ class action(rb.Robot):
                     break
                 else:
                     self.click(1072,54) #界面返回 
+    #出售垃圾装备
+    def Sell_Garbage_Equipment(self):
+        pass
+
+
+                
 
 zoom_count = 1.5
+
 
 #测试前往建邺城    
 def test_TotheJYC():
@@ -2184,6 +2191,18 @@ def test_safe_prompt():
     Robot = action(q,zoom_count=zoom_count)
     while True:
         pass
+    
+    
+#测试探探
+def test_tantan():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)
+    while True:
+        time.sleep(5)
+        Robot.click(552,1240)
 
 
 
@@ -2191,7 +2210,7 @@ def main():
     #test_ToNEC()
     #test_orb(False)
     #test_get_set_map(getorset='get')
-    test_check_map()
+    test_tantan()
     
 if __name__ == "__main__":
     main()
