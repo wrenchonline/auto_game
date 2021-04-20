@@ -2203,14 +2203,41 @@ def test_tantan():
     while True:
         time.sleep(5)
         Robot.click(552,1240)
-
-
-
+#抢红包
+def Get_Gift():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)
+    while True:
+        status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["我的关注"]["基点"],da.tantan["我的关注"]["偏移"], 80, 580,  141,714,  182)
+        if status == State.NOTMATCH:
+            break
+        else:
+            Robot.click(636,157)
+        time.sleep(3)
+    Robot.click(618, 1139)    
+    Robot.move_click(618, 1165,618,  139)    
+    for i in range(0,8):
+        Robot.click(618,139+i*120)
+        time.sleep(3)
+        while True:
+            status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["红包"]["基点"],da.tantan["红包"]["偏移"], 80, 9,  167,211,246)
+            if status == State.NOTMATCH:
+                break
+            else:
+                Robot.click(636,157)
+            time.sleep(3)        
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+        
 def main():
     #test_ToNEC()
     #test_orb(False)
     #test_get_set_map(getorset='get')
-    test_tantan()
+    Get_Gift()
     
 if __name__ == "__main__":
     main()

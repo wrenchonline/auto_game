@@ -323,6 +323,12 @@ daoju = {
     "普通宝图B":{"基点":"0xed285e","偏移":"5|10|0xe7315b,26|10|0xa3943b"},
 }
 
+#x,y = findMultiColorInRegionFuzzy( 0x99918c, "14|0|0xffffff", 90, 0, 0, 719, 1279)
+tantan = {
+    "我的关注":{"基点":"0xedeceb","偏移":"4|5|0xffffff,1|8|0xffffff"},
+    "红包":{"基点":"0xfff0c5","偏移":"9|19|0xf2102c,0|-15|0xff7b33"},
+}
+
 
 
 

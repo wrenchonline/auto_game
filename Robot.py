@@ -112,7 +112,7 @@ class Robot:
 
 
     def Get_GameHwnd(self):
-        self.hwnd= win32gui.FindWindow('Qt5QWindowIcon','夜神模拟器1')
+        self.hwnd= win32gui.FindWindow('Qt5QWindowIcon','夜神模拟器')
         self.ScreenBoardhwnd = win32gui.FindWindowEx(self.hwnd, 0, 'Qt5QWindowIcon', 'ScreenBoardClassWindow')
         self.hwnd = win32gui.FindWindowEx(self.ScreenBoardhwnd, 0, self.class_name, self.title_name)
         print('hwnd=',self.hwnd)
@@ -149,6 +149,7 @@ class Robot:
         # height = abs(y2-y1)
         r,g,b  = Hex_to_RGB(color)
         tpl = self.Print_screen()
+        #self.show(tpl)
         posandcolor_list = list()
         positems = list()
         posandcolors_param = posandcolor.split(",")
@@ -168,12 +169,14 @@ class Robot:
                     # __py = int(p["py"])
                     newY = y+p["px"]
                     newX = x+p["py"]
-                    if newY > self.game_height:
-                        print("findMultiColorInRegionFuzzy::检测y越界,返回失败")
-                        return State.NOTMATCH,-1,-1
-                    if newX > self.game_width:
-                        print("findMultiColorInRegionFuzzy::检查x越界,返回失败")
-                        return State.NOTMATCH,-1,-1
+                    if newY >= self.game_height:
+                        continue
+                        # print("findMultiColorInRegionFuzzy::检测y越界,返回失败")
+                        # return State.NOTMATCH,-1,-1
+                    if newX >= self.game_width:
+                        continue
+                        # print("findMultiColorInRegionFuzzy::检查x越界,返回失败")
+                        # return State.NOTMATCH,-1,-1
                     __rgb_hex = p["rgb_hex"]
                     b,g,r = tpl[newY,newX]
                     exR = int(__rgb_hex[2:4],16) 
@@ -518,9 +521,9 @@ class Robot:
                 time.sleep(0.005)
         win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONDOWN,
                              wcon.MK_LBUTTON, lParam1)
-        time.sleep(0.5)
+        # time.sleep(0.1)
         win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE, 0, lParam2)
-        time.sleep(0.5)
+        time.sleep(1)
         win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONUP,
                              wcon.MK_LBUTTON, lParam2) 
         
