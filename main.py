@@ -10,6 +10,8 @@ from goto import with_goto
 import json
 import os
 import data as da
+from func_timeout import func_set_timeout
+
 
 class action(rb.Robot):
 
@@ -2204,34 +2206,57 @@ def test_tantan():
         time.sleep(5)
         Robot.click(552,1240)
 #抢红包
+#@func_set_timeout(60*3) 
+@with_goto
+def Get_Gift1(Robot):
+    label .start
+    while True:   
+        Robot.move_click(651, 1179,651, 139,Stride_y=20) 
+        for i in range(0,8):
+            Robot.click(618,139+i*120)
+            time.sleep(3)
+            while True:
+                status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["红包"]["基点"],da.tantan["红包"]["偏移"], 80, 9,  167,211,246)
+                if status == State.NOTMATCH:
+                    break
+                else:
+                    print("Found a gift,Chilk it!")
+                    Robot.click(9+x,167+y)
+                    break
+            time.sleep(1) 
+            while True:
+                status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["一键参与"]["基点"],da.tantan["一键参与"]["偏移"], 80,32, 1188,693, 1248)
+                if status == State.NOTMATCH:
+                    break
+                else:
+                    print("Join it!")
+                    Robot.click(32+x,1188+y) 
+                    time.sleep(1) 
+                    Robot.click(345,653)
+                    time.sleep(1) 
+                    Robot.click(647,164)
+                    time.sleep(1)
+                    break
+        while True:
+            status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["我的关注"]["基点"],da.tantan["我的关注"]["偏移"], 80, 580,  141,714,  182)
+            if status == State.NOTMATCH:
+                break
+            else:
+                Robot.click(636,157)
+                goto .start
+            time.sleep(3)
+
 def Get_Gift():
     start = time.time()
     q = queue.Queue()
     m1 = rh.MyThread(q,zoom_count=zoom_count)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
-    while True:
-        status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["我的关注"]["基点"],da.tantan["我的关注"]["偏移"], 80, 580,  141,714,  182)
-        if status == State.NOTMATCH:
-            break
-        else:
-            Robot.click(636,157)
-        time.sleep(3)
-    Robot.click(618, 1139)    
-    Robot.move_click(618, 1165,618,  139)    
-    for i in range(0,8):
-        Robot.click(618,139+i*120)
-        time.sleep(3)
-        while True:
-            status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["红包"]["基点"],da.tantan["红包"]["偏移"], 80, 9,  167,211,246)
-            if status == State.NOTMATCH:
-                break
-            else:
-                Robot.click(636,157)
-            time.sleep(3)        
+    Robot = action(q,zoom_count=zoom_count)  
+    Get_Gift1(Robot)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
+    
         
 def main():
     #test_ToNEC()

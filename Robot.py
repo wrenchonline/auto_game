@@ -111,9 +111,13 @@ class Robot:
         return binary
 
 
-    def Get_GameHwnd(self):
-        self.hwnd= win32gui.FindWindow('Qt5QWindowIcon','夜神模拟器')
-        self.ScreenBoardhwnd = win32gui.FindWindowEx(self.hwnd, 0, 'Qt5QWindowIcon', 'ScreenBoardClassWindow')
+    def Get_GameHwnd(self,Simulator_Name="雷电"):
+        if Simulator_Name == "夜神":
+            self.hwnd= win32gui.FindWindow('Qt5QWindowIcon','夜神模拟器')
+            self.ScreenBoardhwnd = win32gui.FindWindowEx(self.hwnd, 0, 'Qt5QWindowIcon', 'ScreenBoardClassWindow')
+        elif Simulator_Name == "雷电":
+            self.hwnd= win32gui.FindWindow('LDPlayerMainFrame','雷電模擬器')
+            self.ScreenBoardhwnd = win32gui.FindWindowEx(self.hwnd, 0, 'RenderWindow', 'TheRender')            
         self.hwnd = win32gui.FindWindowEx(self.ScreenBoardhwnd, 0, self.class_name, self.title_name)
         print('hwnd=',self.hwnd)
         text = win32gui.GetWindowText(self.hwnd)
@@ -125,11 +129,9 @@ class Robot:
             self.top=int(self.top*self.zoom_count )
             self.right=int(self.right*self.zoom_count )
             self.bottom=int(self.bottom*self.zoom_count ) 
-            
             print("The window coordinates: ({0},{1},{2},{3})".format(str(self.left),str(self.top),str(self.right),str(self.bottom)))
             self.game_width = self.right - self.left
             self.game_height = self.bottom - self.top
-
             # self.game_width = 1920
             # self.game_height = 1080
             
@@ -506,11 +508,15 @@ class Robot:
         win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONUP, 0, lParam)
         
     
-    def move_click(self,x:int=None,y:int=None,x1:int=None,y1:int=None):
+    def move_click(self,x:int=None,y:int=None,x1:int=None,y1:int=None,Stride_x:int=1,Stride_y:int=1):
         x = int(x/self.zoom_count)#1.5是缩放比例
         y = int(y/self.zoom_count)
         x1 = int(x1/self.zoom_count)
         y1 = int(y1/self.zoom_count)
+        x_down = False
+        y_down = False
+        lenth_x = None
+        lenth_y = None
         lParam1 = win32api.MAKELONG(x, y)
         lParam2 = win32api.MAKELONG(x1, y1)
         win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,wcon.MK_LBUTTON, lParam1)
@@ -520,12 +526,31 @@ class Robot:
                 win32api.GetKeyState(wcon.VK_MENU) < 0):
                 time.sleep(0.005)
         win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONDOWN,
-                             wcon.MK_LBUTTON, lParam1)
-        # time.sleep(0.1)
-        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE, 0, lParam2)
-        time.sleep(1)
+                              wcon.MK_LBUTTON, lParam1)
+        time.sleep(0.1)
+        #如果小于，降序
+        if x >= x1:
+            x_down = True
+        lenth_x = abs(x-x1)+1
+        if y >= y1:
+            y_down = True   
+        lenth_y = abs(y-y1)+1            
+        for lx in range(0,lenth_x,Stride_x):
+            for ly in range(0,lenth_y,Stride_y):
+                if x_down:
+                    x2 =x - lx
+                else:
+                    x2 =x + lx
+                if y_down:
+                    y2 = y - ly
+                else:
+                    y2 = y + ly
+                    
+                print("x2:{0}y2:{1}".format(x2,y2))
+                win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,wcon.MK_LBUTTON, win32api.MAKELONG(x2,y2))
+        time.sleep(0.1)
         win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONUP,
-                             wcon.MK_LBUTTON, lParam2) 
+                            wcon.MK_LBUTTON, lParam2) 
         
         
     def check_fire(self):

@@ -322,11 +322,12 @@ daoju = {
     "普通宝图A":{"基点":"0xee1d5c","偏移":"7|0|0x90d9ba,-1|7|0xe2f1f0"},
     "普通宝图B":{"基点":"0xed285e","偏移":"5|10|0xe7315b,26|10|0xa3943b"},
 }
-
+#x,y = findMultiColorInRegionFuzzy( 0xffc74d, "32|4|0xffc44b", 90, 0, 0, 719, 1279)
 #x,y = findMultiColorInRegionFuzzy( 0x99918c, "14|0|0xffffff", 90, 0, 0, 719, 1279)
 tantan = {
     "我的关注":{"基点":"0xedeceb","偏移":"4|5|0xffffff,1|8|0xffffff"},
     "红包":{"基点":"0xfff0c5","偏移":"9|19|0xf2102c,0|-15|0xff7b33"},
+    "一键参与":{"基点":"0xffc74d","偏移":"32|4|0xffc44b"},
 }
 
 
