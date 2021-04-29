@@ -324,17 +324,28 @@ daoju = {
 }
 #x,y = findMultiColorInRegionFuzzy( 0xffc74d, "32|4|0xffc44b", 90, 0, 0, 719, 1279)
 #x,y = findMultiColorInRegionFuzzy( 0x99918c, "14|0|0xffffff", 90, 0, 0, 719, 1279)
+
+
+#x,y = findMultiColorInRegionFuzzy( 0x636363, "14|2|0x636363", 90, 0, 0, 719, 1279)
+#x,y = findMultiColorInRegionFuzzy( 0xd9dadb, "8|5|0xffffff", 90, 0, 0, 719, 1279)
+
+#x,y = findMultiColorInRegionFuzzy( 0x636363, "6|-9|0x636363,14|1|0x636363,15|-8|0xffffff", 90, 0, 0, 719, 1279)
+
+#x,y = findMultiColorInRegionFuzzy( 0xff7343, "50|2|0xb83305", 90, 0, 0, 719, 1279)
 tantan = {
-    "我的关注":{"基点":"0xedeceb","偏移":"4|5|0xffffff,1|8|0xffffff"},
+    "我的关注":{"基点":"0xd9dadb","偏移":"8|5|0xffffff"},
     "红包":{"基点":"0xfff0c5","偏移":"9|19|0xf2102c,0|-15|0xff7b33"},
     "一键参与":{"基点":"0xffc74d","偏移":"32|4|0xffc44b"},
+    "直播动态界面":{"基点":"0x636363","偏移":"6|-9|0x636363,14|1|0x636363,15|-8|0xffffff"},
+    "已经参与":{"基点":"0xff7343","偏移":"50|2|0xb83305"},
+    
 }
 
 
 
 
 #failjiemian = (291,29, 0xffff01),(290,45, 0xe8e903),(322,37, 0xf9f901),(371,32,0xffff01)
-
+#
 #x,y = findMultiColorInRegionFuzzy( 0x253f50, "23|0|0x183850,-1|23|0x182f46,21|24|0x183c58,-289|33|0xf4f5f5,-290|53|0xfdfdfd", 90, 0, 0, 1279, 719)
 prompt_box = {
     "提示框":{"基点":"0xf8fc4a","偏移":"-12|12|0xf0f42e,13|12|0xf0f427,1|24|0xe8ec04"},

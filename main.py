@@ -2209,25 +2209,38 @@ def test_tantan():
 #@func_set_timeout(60*3) 
 @with_goto
 def Get_Gift1(Robot):
+    first = False 
+    bJoin = False
+    bfGITFT = False
     label .start
-    while True:   
-        Robot.move_click(651, 1179,651, 139,Stride_y=20) 
+    while True:
+        if first:
+            pass
+        else:
+            Robot.click(636,157)
+            print("mouse chlik!")
+            first = False
+            Robot.move_click(634, 1179,634, 139,Stride_y=20) 
         for i in range(0,8):
-            Robot.click(618,139+i*120)
             time.sleep(3)
+            Robot.click(618,139+i*120)
             while True:
                 status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["红包"]["基点"],da.tantan["红包"]["偏移"], 80, 9,  167,211,246)
                 if status == State.NOTMATCH:
                     break
                 else:
-                    print("Found a gift,Chilk it!")
+                    print("Found a gift,Chlik it!")
                     Robot.click(9+x,167+y)
+                    bfGITFT = True
                     break
-            time.sleep(1) 
+            time.sleep(3) 
             while True:
                 status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["一键参与"]["基点"],da.tantan["一键参与"]["偏移"], 80,32, 1188,693, 1248)
                 if status == State.NOTMATCH:
-                    break
+                    if bfGITFT:
+                        continue
+                    else: 
+                        break
                 else:
                     print("Join it!")
                     Robot.click(32+x,1188+y) 
@@ -2236,26 +2249,62 @@ def Get_Gift1(Robot):
                     time.sleep(1) 
                     Robot.click(647,164)
                     time.sleep(1)
+                    bJoin = True
+                    bfGITFT = False
                     break
+            time.sleep(3)
+            if bJoin:
+                print("bJoin and continue")
+                while True:
+                    status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["我的关注"]["基点"],da.tantan["我的关注"]["偏移"], 80, 580,  141,714,  182)
+                    if status == State.NOTMATCH:
+                        print("wait for the my aatention end")
+                        time.sleep(1.5)
+                        break
+                    else:
+                        Robot.click(636,157)
+                        Robot.click(636,157)
+                        time.sleep(1.5)
+                continue
         while True:
             status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["我的关注"]["基点"],da.tantan["我的关注"]["偏移"], 80, 580,  141,714,  182)
             if status == State.NOTMATCH:
-                break
+                if bJoin:
+                    bJoin = False
+                    print("Doesn't match my attention")
+                    time.sleep(2)
+                else:
+                    break
             else:
                 Robot.click(636,157)
-                goto .start
-            time.sleep(3)
+                time.sleep(3)
+                goto .start        
 
 def Get_Gift():
-    start = time.time()
+    # start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
-    m1.start()
-    Robot = action(q,zoom_count=zoom_count)  
-    Get_Gift1(Robot)
-    end = time.time()
-    print("Elapsed (with compilation) = %s" % (end - start))
-    Robot.quit()
+    # m1 = rh.MyThread(q,zoom_count=zoom_count)
+    # m1.start()
+    Robot = action(q,zoom_count=zoom_count)
+    while True:
+        status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["直播动态界面"]["基点"],da.tantan["直播动态界面"]["偏移"], 90,16,56,87,99)
+        if status == State.NOTMATCH:
+            time.sleep(1)
+            while True:
+                status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["我的关注"]["基点"],da.tantan["我的关注"]["偏移"], 75,577,139,690,181) 
+                if status == State.NOTMATCH:
+                    time.sleep(1)
+                    break
+                else:
+                    print("Into my attention")
+                    Robot.click(629,161)
+                    time.sleep(1)
+                    Get_Gift1(Robot)
+        else:
+            print("Enter the dynamic interface")
+            Robot.click(358,199)
+            time.sleep(1)
+            
     
         
 def main():

@@ -545,10 +545,8 @@ class Robot:
                     y2 = y - ly
                 else:
                     y2 = y + ly
-                    
-                print("x2:{0}y2:{1}".format(x2,y2))
+                #print("x2:{0}y2:{1}".format(x2,y2))
                 win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,wcon.MK_LBUTTON, win32api.MAKELONG(x2,y2))
-        time.sleep(0.1)
         win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONUP,
                             wcon.MK_LBUTTON, lParam2) 
         
