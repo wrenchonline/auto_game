@@ -41,10 +41,13 @@ class MyThread (threading.Thread,rb.Robot):
                             if bfire:
                                 self.fire()
                                 fire_end = True
+                                time.sleep(5)
+                                print("正在战斗")
                                 #self.check_thePetHealth()
                             else:
                                 while fire_end:
-                                    status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["取消自动战斗"]["基点"],da.prompt_box["取消自动战斗"]["偏移"],80,671,310,1188,638)
+                                    print("战斗结束")
+                                    status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["取消自动战斗"]["基点"],da.prompt_box["取消自动战斗"]["偏移"],70,671,310,1188,638)
                                     #status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
                                     if status==status.NOTMATCH:
                                         time.sleep(0.5)        

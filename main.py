@@ -12,6 +12,8 @@ import os
 import data as da
 from func_timeout import func_set_timeout
 
+zoom_count = 1.0
+
 
 class action(rb.Robot):
 
@@ -33,47 +35,32 @@ class action(rb.Robot):
             time.sleep(0.5)
             tpl = self.Print_screen()
             if color == "red":
-                target = cv2.imread("./images/red_flag.png")
-                x,y = self.matchTemplate(tpl,target,0.13)
-                if x != -1:
-                    self.click(x,y)
-                    self.click(x,y)
+                status = self.Found_do(da.utils["红旗"]["基点"],da.utils["红旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="红旗")
+                if status == status.OK:
                     break
                 else:
                     goto .end
             elif color == "yellow":
-                target = cv2.imread("./images/yellow_flag.png")
-                x,y = self.matchTemplate(tpl,target,0.13)
-                if x != -1:
-                    self.click(x,y)
-                    self.click(x,y)
+                status = self.Found_do(da.utils["黄旗"]["基点"],da.utils["黄旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="黄旗")
+                if status == status.OK:
                     break
                 else:
                     goto .end
             elif color == "blue":
-                target = cv2.imread("./images/blue_flag.png")
-                x,y = self.matchTemplate(tpl,target,0.13)
-                if x != -1:
-                    self.click(x,y)
-                    self.click(x,y)
+                status = self.Found_do(da.utils["蓝旗"]["基点"],da.utils["蓝旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="蓝旗")
+                if status == status.OK:
                     break
                 else:
                     goto .end
             elif color == "green":
-                target = cv2.imread("./images/green_flag.png")
-                x,y = self.matchTemplate(tpl,target,0.13)
-                if x != -1:
-                    self.click(x,y)
-                    self.click(x,y)
+                status = self.Found_do(da.utils["绿旗"]["基点"],da.utils["绿旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="绿旗")
+                if status == status.OK:
                     break
                 else:
                     goto .end
             elif color == "white":
-                target = cv2.imread("./images/white_flag.png")
-                x,y = self.matchTemplate(tpl,target,0.13)
-                if x != -1:
-                    self.click(x,y)
-                    self.click(x,y)
+                status = self.Found_do(da.utils["白旗"]["基点"],da.utils["白旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="白旗")
+                if status == status.OK:
                     break
                 else:
                     goto .end
@@ -82,42 +69,26 @@ class action(rb.Robot):
                 #没找到，去行囊里面找
                 self.click(833,140)
                 time.sleep(0.5)
-                tpl = self.Print_screen()
                 while True:
                     if color == "red":
-                        target = cv2.imread("./images/red_flag.png")
-                        x,y = self.matchTemplate(tpl,target,0.05)
-                        if x != -1:
-                            self.click(x,y)
-                            self.click(x,y)
+                        status = self.Found_do(da.utils["红旗"]["基点"],da.utils["红旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="红旗")
+                        if status == status.OK:
                             break
                     elif color == "yellow":
-                        target = cv2.imread("./images/yellow_flag.png")
-                        x,y = self.matchTemplate(tpl,target,0.1)
-                        if x != -1:
-                            self.click(x,y)
-                            self.click(x,y)
+                        status = self.Found_do(da.utils["黄旗"]["基点"],da.utils["黄旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="黄旗")
+                        if status == status.OK:
                             break
                     elif color == "blue":
-                        target = cv2.imread("./images/blue_flag.png")
-                        x,y = self.matchTemplate(tpl,target,0.05)
-                        if x != -1:
-                            self.click(x,y)
-                            self.click(x,y)
+                        status = self.Found_do(da.utils["蓝旗"]["基点"],da.utils["蓝旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="蓝旗")
+                        if status == status.OK:
                             break
                     elif color == "green":
-                        target = cv2.imread("./images/green_flag.png")
-                        x,y = self.matchTemplate(tpl,target,0.05)
-                        if x != -1:
-                            self.click(x,y)
-                            self.click(x,y)
+                        status = self.Found_do(da.utils["绿旗"]["基点"],da.utils["绿旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="绿旗")
+                        if status == status.OK:
                             break
                     elif color == "white":
-                        target = cv2.imread("./images/white_flag.png")
-                        x,y = self.matchTemplate(tpl,target,0.05)
-                        if x != -1:
-                            self.click(x,y)
-                            self.click(x,y)
+                        status = self.Found_do(da.utils["白旗"]["基点"],da.utils["白旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="白旗")
+                        if status == status.OK:
                             break
                     else:
                         print("not found flags")
@@ -382,14 +353,9 @@ class action(rb.Robot):
                     
                     
     def discover_feixingfu(self):
-        tpl = self.Print_screen()
         status = State.NOTMATCH
-        target = cv2.imread("./images/feixingfu.png")
-        x,y = self.matchTemplate(tpl,target,0.15)
-        if x != -1:
-            print("发现飞行符")
-            return State.OK,x,y
-        return State.NOTMATCH,x,y
+        status = self.Found_do(da.utils["飞行符"]["基点"],da.utils["飞行符"]["偏移"], 80,592,170, 1057,538,name="道具栏飞行符")
+        return status
     
     def no_prop(self):
         status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["道具栏展开"]["基点"], da.prompt_box["道具栏展开"]["偏移"], 80,1186,648, 1248,706)
@@ -413,47 +379,50 @@ class action(rb.Robot):
             else:
                 break
             time.sleep(2)
+        time.sleep(1)
         self.click(1121, 673)
         time.sleep(1)
-        status,x,y= self.discover_feixingfu()
+        status = self.discover_feixingfu()
         if status == status.OK:
-            print(x,y)
-        self.click(x,y)
-        time.sleep(1)
-        tpl = self.Print_screen()
-        target = cv2.imread("./images/shiyong.png")
-        x,y = self.matchTemplate(tpl,target)
-        if x != -1:
-            self.click(x,y)
+            print("发现飞行符")
+            time.sleep(1)
+            tpl = self.Print_screen()
+            target = cv2.imread("./images/shiyong.png")
+            x,y = self.matchTemplate(tpl,target)
+            if x != -1:
+                self.click(x,y)
+            else:
+                print("飞行符没有使用")
+                return
+            time.sleep(1)
+            self.go_to_CSC()
+            #打开地图
+            time.sleep(1)
+            self.open_map()
+            time.sleep(1)        
+            self.tap_("长寿村",144,6)   
+            time.sleep(0.5)
+            while True:
+                #self.queue.put("check")
+                status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+                if status==status.NOTMATCH:
+                    time.sleep(0.5)        
+                else:
+                    break
+            while True:
+                reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
+                if  "长寿郊外" in reponse:
+                    print("抵达长寿郊外")
+                    break
+                else:
+                    self.mask_(True)
+                    self.click(1038,600)
+                    time.sleep(0.5)
+                    self.mask_(False)
+            return True
         else:
-            print("飞行符没有使用")
-            return
-        time.sleep(1)
-        self.go_to_CSC()
-        #打开地图
-        time.sleep(1)
-        self.open_map()
-        time.sleep(1)        
-#        if self.rgb_array(da.map_feature["长寿村"])==State.OK:
-        self.tap_("长寿村",144,6)   
-        time.sleep(0.5)
-        while True:
-            #self.queue.put("check")
-            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
-            if status==status.NOTMATCH:
-                time.sleep(0.5)        
-            else:
-                break
-        while True:
-            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
-            if  "长寿郊外" in reponse:
-                print("抵达长寿郊外")
-                break
-            else:
-                self.mask_(True)
-                self.click(1052,648)
-                time.sleep(0.5)
-                self.mask_(False)
+            return False    
+                    
     #前往朱紫国         
     def go_to_ZZG(self):
         while True:
@@ -499,47 +468,46 @@ class action(rb.Robot):
             time.sleep(2)
         self.click(1121, 673)
         time.sleep(1)
-        status,x,y= self.discover_feixingfu()
+        status = self.discover_feixingfu()
         if status == status.OK:
-            print(x,y)
-        self.click(x,y)
-        time.sleep(1)
-        tpl = self.Print_screen()
-        target = cv2.imread("./images/shiyong.png")
-        x,y = self.matchTemplate(tpl,target)
-        if x != -1:
-            self.click(x,y)
-        else:
-            print("飞行符没有使用")
-            return
-        #self.click(654,669)
-        time.sleep(1)
-        self.go_to_ZZG()
-        #打开地图
-        time.sleep(1)
-        self.open_map()
-        time.sleep(1)        
-        #if self.rgb_array(da.map_feature["朱紫国"])==State.OK:
-        
-        self.tap_("朱紫国",6,4)   
-        time.sleep(0.5)
-        
-        while True:
-            #self.queue.put("check")
-            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
-            if status==status.NOTMATCH:
-                time.sleep(0.5)        
+            print("发现飞行符")
+            time.sleep(1)
+            tpl = self.Print_screen()
+            target = cv2.imread("./images/shiyong.png")
+            x,y = self.matchTemplate(tpl,target)
+            if x != -1:
+                self.click(x,y)
             else:
-                self.click(42,656)   
-                time.sleep(0.5)
-                break             
-        while True:
-            reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
-            if  "大唐境外" in reponse:
-                print("抵达大唐境外")
-                break
-            else:
-                time.sleep(0.5)
+                print("飞行符没有使用")
+                return
+            #self.click(654,669)
+            time.sleep(1)
+            self.go_to_ZZG()
+            #打开地图
+            time.sleep(1)
+            self.open_map()
+            time.sleep(1)        
+            #if self.rgb_array(da.map_feature["朱紫国"])==State.OK:
+            
+            self.tap_("朱紫国",6,4)   
+            time.sleep(0.5)
+            
+            while True:
+                #self.queue.put("check")
+                status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+                if status==status.NOTMATCH:
+                    time.sleep(0.5)        
+                else:
+                    self.click(42,656)   
+                    time.sleep(0.5)
+                    break             
+            while True:
+                reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
+                if  "大唐境外" in reponse:
+                    print("抵达大唐境外")
+                    break
+                else:
+                    time.sleep(0.5)
                 
     #前往墨家村
     def TotheMJC(self):
@@ -641,35 +609,34 @@ class action(rb.Robot):
             time.sleep(2)
         self.click(1121, 673)
         time.sleep(1)
-        status,x,y= self.discover_feixingfu()
+        status = self.discover_feixingfu()
         if status == status.OK:
-            print(x,y)
-        self.click(x,y)
-        time.sleep(1)
-        tpl = self.Print_screen()
-        target = cv2.imread("./images/shiyong.png")
-        x,y = self.matchTemplate(tpl,target)
-        if x != -1:
-            self.click(x,y)
-        else:
-            print("飞行符没有使用")
-            return
-        #self.click(654,669)
-        time.sleep(1)
-        self.go_to_ZZG()
-        #打开地图
-        time.sleep(1)
-        self.open_map()
-        time.sleep(1)        
-
-        self.tap_("朱紫国",3,111)   
-        time.sleep(0.5)
-        while True:
-            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
-            if status==status.NOTMATCH:
-                time.sleep(0.5)
+            print("发现飞行符")
+            time.sleep(1)
+            tpl = self.Print_screen()
+            target = cv2.imread("./images/shiyong.png")
+            x,y = self.matchTemplate(tpl,target)
+            if x != -1:
+                self.click(x,y)
             else:
-                break
+                print("飞行符没有使用")
+                return
+            #self.click(654,669)
+            time.sleep(1)
+            self.go_to_ZZG()
+            #打开地图
+            time.sleep(1)
+            self.open_map()
+            time.sleep(1)        
+
+            self.tap_("朱紫国",3,111)   
+            time.sleep(0.5)
+            while True:
+                status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+                if status==status.NOTMATCH:
+                    time.sleep(0.5)
+                else:
+                    break
 
         while True:
             #self.queue.put("check")
@@ -880,44 +847,43 @@ class action(rb.Robot):
             time.sleep(2)
         self.click(1121, 673)
         time.sleep(1)
-        status,x,y= self.discover_feixingfu()
+        status = self.discover_feixingfu()
         if status == status.OK:
-            print(x,y)
-        self.click(x,y)
-        time.sleep(1)
-        tpl = self.Print_screen()
-        target = cv2.imread("./images/shiyong.png")
-        x,y = self.matchTemplate(tpl,target)
-        if x != -1:
-            self.click(x,y)
-        else:
-            print("飞行符没有使用")
-            return
-        time.sleep(1)
-        while True:
-            status,ag= self.findMultiColorInRegionFuzzyByTable(da.feixingfu_jiemian)
-            if status==status.OK:
-                time.sleep(0.7)
-                self.click(1525,788)
-                time.sleep(0.7)
-                break
-        while True:
-            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
-            time.sleep(0.5)
-            if status==status.NOTMATCH:
-                print("前往傲来国")
-                status,ag= self.findMultiColorInRegionFuzzyByTable(da.fanhui)
+            print("发现飞行符")
+            time.sleep(1)
+            tpl = self.Print_screen()
+            target = cv2.imread("./images/shiyong.png")
+            x,y = self.matchTemplate(tpl,target)
+            if x != -1:
+                self.click(x,y)
+            else:
+                print("飞行符没有使用")
+                return
+            time.sleep(1)
+            while True:
+                status,ag= self.findMultiColorInRegionFuzzyByTable(da.feixingfu_jiemian)
                 if status==status.OK:
-                    self.click(ag[0],ag[1])
-                time.sleep(1)
-            elif status==status.OK:
-                while True:
-                    reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
-                    if  "傲来国" in reponse:
-                        print("抵达傲来国")
-                        break
-                break
-        return True
+                    time.sleep(0.7)
+                    self.click(1010,521)
+                    time.sleep(0.7)
+                    break
+            while True:
+                status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+                time.sleep(0.5)
+                if status==status.NOTMATCH:
+                    print("前往傲来国")
+                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.fanhui)
+                    if status==status.OK:
+                        self.click(ag[0],ag[1])
+                    time.sleep(1)
+                elif status==status.OK:
+                    while True:
+                        reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
+                        if  "傲来国" in reponse:
+                            print("抵达傲来国")
+                            break
+                    break
+            return True
     
     #前往五庄观
     def ToTheWZG(self):
@@ -969,7 +935,7 @@ class action(rb.Robot):
         time.sleep(0.5)
         self.click(1121, 673)
         while True:
-            status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["打开地图界面"]["基点"],da.prompt_box["打开地图界面"]["偏移"], 80,  622,3, 1207,  307)
+            status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["打开地图界面"]["基点"],da.prompt_box["打开地图界面"]["偏移"], 88,  622,3, 1207,  307)
             if status == State.NOTMATCH:
                 print("当前没有打开道具栏")
                 time.sleep(0.5)
@@ -1058,6 +1024,7 @@ class action(rb.Robot):
                     if status==status.NOTMATCH:
                         self.queue.put("check")
                         self.queue.join()
+                        time.sleep(2)
                         break
                     else:
                         break
@@ -1094,7 +1061,10 @@ class action(rb.Robot):
                 backpack_y2 = m[6]
                 if place in "长寿郊外":
                     if not place in scenario:
-                        self.go_to_CSJW()
+                        b = self.go_to_CSJW()
+                        if not b:
+                            print("没有发现飞行符，无法前往长寿郊外")
+                            return 
                     scenario = "长寿郊外"
                     self.orb_(scenario,place_x,place_y,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
                     self.config_save(maps)
@@ -1136,10 +1106,9 @@ class action(rb.Robot):
                             time.sleep(2)
                         self.click(1121, 673)
                         time.sleep(1)
-                        status,x,y= self.discover_feixingfu()
+                        status = self.discover_feixingfu()
                         if status == status.OK:
-                            print(x,y)
-                        self.click(x,y)
+                            print("发现飞行符")
                         time.sleep(1)
                         tpl = self.Print_screen()
                         target = cv2.imread("./images/shiyong.png")
@@ -1205,7 +1174,13 @@ class action(rb.Robot):
                         self.TotheMJC()
                     scenario = "墨家村"
                     self.orb_(scenario,place_x,place_y,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
-                    self.config_save(maps)                                                  
+                    self.config_save(maps) 
+                elif place in "建邺城":
+                    if not place in scenario:
+                        self.TotheJYC()
+                    scenario = "建邺城"
+                    self.orb_(scenario,place_x,place_y,backpack_x1,backpack_y1,backpack_x2,backpack_y2)
+                    self.config_save(maps)                     
                 else:
                     print("所在地址没找到")
                     os._exit(0)
@@ -1226,43 +1201,43 @@ class action(rb.Robot):
             time.sleep(2)
         self.click(1121, 673)
         time.sleep(1)
-        status,x,y= self.discover_feixingfu()
+        status = self.discover_feixingfu()
         if status == status.OK:
-            print(x,y)
-        self.click(x,y)
-        time.sleep(1)
-        tpl = self.Print_screen()
-        target = cv2.imread("./images/shiyong.png")
-        x,y = self.matchTemplate(tpl,target)
-        if x != -1:
-            self.click(x,y)
-        else:
-            print("飞行符没有使用")
-            return
-        time.sleep(1)
-                        
-        while True:
-            #self.queue.put("check")
-            status,ag= self.findMultiColorInRegionFuzzyByTable(da.feixingfu_jiemian)
-            if status==status.OK:
-                time.sleep(0.7)
-                self.click(500,291)
-                time.sleep(0.7)
-                break
-        while True:
-            #self.queue.put("check")
-            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
-            time.sleep(0.5)
-            if status==status.NOTMATCH:
-                print("前往西梁女国")
-                status,ag= self.findMultiColorInRegionFuzzyByTable(da.fanhui)
+            print("发现飞行符")
+            time.sleep(1)
+            tpl = self.Print_screen()
+            target = cv2.imread("./images/shiyong.png")
+            x,y = self.matchTemplate(tpl,target)
+            if x != -1:
+                self.click(x,y)
+            else:
+                print("飞行符没有使用")
+                return
+            time.sleep(1)
+                            
+            while True:
+                #self.queue.put("check")
+                status,ag= self.findMultiColorInRegionFuzzyByTable(da.feixingfu_jiemian)
                 if status==status.OK:
-                    self.click(ag[0],ag[1])
+                    time.sleep(0.7)
+                    self.click(500,291)
+                    time.sleep(0.7)
+                    break
+            while True:
+                #self.queue.put("check")
+                status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
                 time.sleep(0.5)
-            elif status==status.OK:
-                print("抵达西梁女国")
-                break
-        return True
+                if status==status.NOTMATCH:
+                    print("前往西梁女国")
+                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.fanhui)
+                    if status==status.OK:
+                        self.click(ag[0],ag[1])
+                    time.sleep(0.5)
+                elif status==status.OK:
+                    print("抵达西梁女国")
+                    break
+            return True
+        
     
     #前往北俱芦洲
     def TotheBJLZ(self):
@@ -1359,44 +1334,43 @@ class action(rb.Robot):
             time.sleep(2)
         self.click(1121, 673)
         time.sleep(1)
-        status,x,y= self.discover_feixingfu()
+        status = self.discover_feixingfu()
         if status == status.OK:
-            print(x,y)
-        self.click(x,y)
-        time.sleep(1)
-        tpl = self.Print_screen()
-        target = cv2.imread("./images/shiyong.png")
-        x,y = self.matchTemplate(tpl,target)
-        if x != -1:
-            self.click(x,y)
-        else:
-            print("飞行符没有使用")
-        while True:
-            #self.queue.put("check")
-            status,ag= self.findMultiColorInRegionFuzzyByTable(da.feixingfu_jiemian)
-            if status==status.OK:
-                time.sleep(0.7)
-                self.click(812,440)
-                time.sleep(0.7)
-                break
-        while True:
-            #self.queue.put("check")
-            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
-            time.sleep(0.5)
-            if status==status.NOTMATCH:
-                print("前往建邺城")
-                status,ag= self.findMultiColorInRegionFuzzyByTable(da.fanhui)
+            print("发现飞行符")
+            time.sleep(1)
+            tpl = self.Print_screen()
+            target = cv2.imread("./images/shiyong.png")
+            x,y = self.matchTemplate(tpl,target)
+            if x != -1:
+                self.click(x,y)
+            else:
+                print("飞行符没有使用")
+            while True:
+                #self.queue.put("check")
+                status,ag= self.findMultiColorInRegionFuzzyByTable(da.feixingfu_jiemian)
                 if status==status.OK:
-                    self.click(ag[0],ag[1])
-                time.sleep(2)
-            elif status==status.OK:
-                while True:
-                    reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
-                    if  "建邺城" in reponse:
-                        print("抵达建邺城")
-                        break
-                break
-        return True
+                    time.sleep(0.7)
+                    self.click(812,440)
+                    time.sleep(0.7)
+                    break
+            while True:
+                #self.queue.put("check")
+                status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+                time.sleep(0.5)
+                if status==status.NOTMATCH:
+                    print("前往建邺城")
+                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.fanhui)
+                    if status==status.OK:
+                        self.click(ag[0],ag[1])
+                    time.sleep(2)
+                elif status==status.OK:
+                    while True:
+                        reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
+                        if  "建邺城" in reponse:
+                            print("抵达建邺城")
+                            break
+                    break
+            return True
 
     
     #获取宝图
@@ -1455,47 +1429,46 @@ class action(rb.Robot):
     
     def mask_(self,ON=True):
         if ON:
-            
             while True:
                 if self.rgb_array(da.mask["是否屏蔽"])==State.OK:
+                    print("没有屏蔽，点击")
                     self.click(37,250)
                     time.sleep(1)
                     break
                 else:
-                    time.sleep(1) 
+                    time.sleep(2) 
                     break
-                
             while True:
                 if self.rgb_array(da.mask["是否屏蔽"])==State.OK:
+                    print("已经屏蔽界面")
                     break
                 else:
+                    print("没有屏蔽界面")
                     self.click(45,252) 
-                    time.sleep(1) 
+                    time.sleep(2)
             while True:
                 if self.rgb_array(da.mask["已经屏蔽玩家"])==State.OK:
+                    print("已经屏蔽玩家")
                     break
                 else:
+                    print("没有屏蔽玩家，点击")
                     self.click(47,362)
-                    time.sleep(1) 
+                    time.sleep(2)
                
             while True:
                 if self.rgb_array(da.mask["已经隐藏摊位"])==State.OK:
+                    print("已经隐藏摊位")
                     break
                 else:
+                    print("没有隐藏摊位，点击")
                     self.click(49,468)
-                    time.sleep(1) 
-         
-            # while True:
-            #     if self.rgb_array(da.mask["已经隐藏界面"])==State.OK:
-            #         break
-            #     else:
-            #         self.click(47,562)
-            #         time.sleep(0.6)
+                    time.sleep(2) 
         else:
+            time.sleep(2)
             while True:
                 if self.rgb_array(da.mask["是否屏蔽"])==State.OK:
                     self.click(42,656)
-                    time.sleep(0.6) 
+                    time.sleep(0.6)
                 else:
                     time.sleep(0.7)
                     break
@@ -1692,7 +1665,7 @@ class action(rb.Robot):
 
                 
 
-zoom_count = 1.5
+
 
 
 #测试前往建邺城    
@@ -1773,25 +1746,24 @@ def test_go_to_CSC():
         time.sleep(2)
     Robot.click(1121, 673)
     time.sleep(1)
-    status,x,y= Robot.discover_feixingfu()
+    status = Robot.discover_feixingfu()
     if status == status.OK:
-        print(x,y)
-    Robot.click(x,y)
-    time.sleep(1)
-    tpl = Robot.Print_screen()
-    target = cv2.imread("./images/shiyong.png")
-    x,y = Robot.matchTemplate(tpl,target)
-    if x != -1:
-        Robot.click(x,y)
-    else:
-        print("飞行符没有使用")
-        return
-    time.sleep(1)    
-     
-    Robot.go_to_CSC()
-    end = time.time()
-    print("Elapsed (with compilation) = %s" % (end - start))
-    Robot.quit()
+        print("发现飞行符")
+        time.sleep(1)
+        tpl = Robot.Print_screen()
+        target = cv2.imread("./images/shiyong.png")
+        x,y = Robot.matchTemplate(tpl,target)
+        if x != -1:
+            Robot.click(x,y)
+        else:
+            print("飞行符没有使用")
+            return
+        time.sleep(1)    
+        
+        Robot.go_to_CSC()
+        end = time.time()
+        print("Elapsed (with compilation) = %s" % (end - start))
+        Robot.quit()
     
 #测试长寿郊外
 def test_go_to_CSJW():
@@ -2103,7 +2075,17 @@ def test_orb(b_only_load_config=False):
     q = queue.Queue()
     m1 = rh.MyThread(q,zoom_count=zoom_count)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)        
+    Robot = action(q,zoom_count=zoom_count)
+    while True:
+        value = input("是否加载配置文件并忽略道具栏读取图信息(Y/N):")
+        if 'Y' == value.upper():
+            b_only_load_config = True
+            break
+        elif 'N' == value.upper():
+            b_only_load_config = False
+            break
+        else:
+            continue
     Robot.Orb(b_only_load_config)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2218,11 +2200,12 @@ def Get_Gift1(Robot):
             pass
         else:
             Robot.click(636,157)
+            time.sleep(1)
             print("mouse chlik!")
             first = False
-            Robot.move_click(634, 1179,634, 139,Stride_y=20) 
+            Robot.move_click(636, 1179,636, 139,Stride_y=20) 
         for i in range(0,8):
-            time.sleep(3)
+            time.sleep(2)
             Robot.click(618,139+i*120)
             while True:
                 status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["红包"]["基点"],da.tantan["红包"]["偏移"], 80, 9,  167,211,246)
@@ -2231,9 +2214,11 @@ def Get_Gift1(Robot):
                 else:
                     print("Found a gift,Chlik it!")
                     Robot.click(9+x,167+y)
+                    Robot.click(9+x,167+y)
+                    Robot.click(9+x,167+y)
                     bfGITFT = True
                     break
-            time.sleep(3) 
+            time.sleep(2) 
             while True:
                 status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["一键参与"]["基点"],da.tantan["一键参与"]["偏移"], 80,32, 1188,693, 1248)
                 if status == State.NOTMATCH:
@@ -2252,7 +2237,7 @@ def Get_Gift1(Robot):
                     bJoin = True
                     bfGITFT = False
                     break
-            time.sleep(3)
+            time.sleep(2)
             if bJoin:
                 print("bJoin and continue")
                 while True:
@@ -2278,8 +2263,8 @@ def Get_Gift1(Robot):
             else:
                 Robot.click(636,157)
                 time.sleep(3)
-                goto .start        
-
+                goto .start
+                
 def Get_Gift():
     # start = time.time()
     q = queue.Queue()
@@ -2308,10 +2293,8 @@ def Get_Gift():
     
         
 def main():
-    #test_ToNEC()
-    #test_orb(False)
-    #test_get_set_map(getorset='get')
-    Get_Gift()
+    #test_ToTheDHW()
+    test_orb(b_only_load_config=False)
     
 if __name__ == "__main__":
     main()

@@ -26,6 +26,8 @@ import tesserocr
 from tesserocr import PyTessBaseAPI, PSM, OEM,RIL,iterate_level
 from PIL import Image
 import data as da
+from func_timeout import func_set_timeout ,FunctionTimedOut ,func_timeout
+
 
 def binstr_to_nparray(hex_2_str,abs_x,abs_y):
     binary = np.zeros((abs_y,abs_x), dtype=np.uint8)
@@ -111,7 +113,7 @@ class Robot:
         return binary
 
 
-    def Get_GameHwnd(self,Simulator_Name="雷电"):
+    def Get_GameHwnd(self,Simulator_Name="夜神"):
         if Simulator_Name == "夜神":
             self.hwnd= win32gui.FindWindow('Qt5QWindowIcon','夜神模拟器')
             self.ScreenBoardhwnd = win32gui.FindWindowEx(self.hwnd, 0, 'Qt5QWindowIcon', 'ScreenBoardClassWindow')
@@ -356,6 +358,7 @@ class Robot:
                 min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
                 if min_val > tolerance:
                     #print("not match")
+
                     return (-1,-1)
                 else:
                     pass
@@ -488,7 +491,8 @@ class Robot:
             print ("Not Found! Rollback it")
             ret = State.ROLLBACK
         return ret
-
+    def mouse_Wheel(self,):
+        pass
         
     
     def click(self,x:int=None,y:int=None,DOUBLE=False):
@@ -496,15 +500,16 @@ class Robot:
         x = int(x/self.zoom_count)#1.5是缩放比例
         y = int(y/self.zoom_count)
         lParam = win32api.MAKELONG(x, y)
-        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,wcon.MK_LBUTTON, lParam)
-        win32gui.SendMessage(self.ScreenBoardhwnd,  wcon.WM_SETCURSOR, self.ScreenBoardhwnd, win32api.MAKELONG(wcon.HTCLIENT, wcon.WM_LBUTTONDOWN))
+        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,0, lParam)
+        #win32gui.SendMessage(self.ScreenBoardhwnd,  wcon.WM_SETCURSOR, self.ScreenBoardhwnd, win32api.MAKELONG(wcon.HTCLIENT, wcon.WM_LBUTTONDOWN))
         # win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_SETCURSOR, 0, 0)
-        while (win32api.GetKeyState(wcon.VK_CONTROL) < 0 or
-                win32api.GetKeyState(wcon.VK_SHIFT) < 0 or
-                win32api.GetKeyState(wcon.VK_MENU) < 0):
-                time.sleep(0.005)
+        # while (win32api.GetKeyState(wcon.VK_CONTROL) < 0 or
+        #         win32api.GetKeyState(wcon.VK_SHIFT) < 0 or
+        #         win32api.GetKeyState(wcon.VK_MENU) < 0):
+        #         time.sleep(0.005)
         win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONDOWN,
                                 wcon.MK_LBUTTON, lParam)
+        time.sleep(0.1)
         win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONUP, 0, lParam)
         
     
@@ -519,7 +524,7 @@ class Robot:
         lenth_y = None
         lParam1 = win32api.MAKELONG(x, y)
         lParam2 = win32api.MAKELONG(x1, y1)
-        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,wcon.MK_LBUTTON, lParam1)
+        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,0, lParam1)
         # win32gui.SendMessage(self.ScreenBoardhwnd,  wcon.WM_SETCURSOR, self.ScreenBoardhwnd, win32api.MAKELONG(wcon.HTCLIENT, wcon.WM_LBUTTONDOWN))
         while (win32api.GetKeyState(wcon.VK_CONTROL) < 0 or
                 win32api.GetKeyState(wcon.VK_SHIFT) < 0 or
@@ -779,3 +784,40 @@ class Robot:
                     if bno_found:
                        strs += "?"                                            
         return strs
+    
+    
+    def WhileDo(self,color,
+                posandcolor,degree,
+                x1=None,y1=None,x2=None,y2=None,
+                tab=None,blist=False,ischlik=1,name="None"):
+        status = State.NOTMATCH
+        while True:
+            status,x,y= self.findMultiColorInRegionFuzzy(color,posandcolor,degree,x1,y1,x2,y2,tab,blist)
+            if status==status.NOTMATCH:
+                time.sleep(1)
+            else:
+                time.sleep(1)
+                for i in  range(0,ischlik):
+                    print("found {0} ==> x:{1} y:{2}".format(name,x1+x,x1+x))
+                    self.click(x1+x,y1+y)
+                break
+        return status
+    
+    
+    
+    def Found_do(self,color,
+                posandcolor,degree,
+                x1=None,y1=None,x2=None,y2=None,
+                tab=None,blist=False,timeout=10,ischlik=1,name="None"):
+        try:
+            doitReturnValue = func_timeout(timeout, self.WhileDo, args=(color,
+                posandcolor,degree,
+                x1,y1,x2,y2,
+                tab,blist,ischlik,name))
+        except FunctionTimedOut:
+            print ("获取时间超时\n")
+        except Exception as e:
+            pass
+        return doitReturnValue
+            # Handle any exceptions that doit might raise here
+    
