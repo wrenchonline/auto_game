@@ -12,7 +12,21 @@ import os
 import data as da
 from func_timeout import func_set_timeout
 
-zoom_count = 1.0
+zoom_count = 1.5
+
+
+utils_list = [
+    da.utils["飞行符"],
+    da.utils["红旗"],
+    da.utils["绿旗"],
+    da.utils["黄旗"],
+    da.utils["白旗"],
+    da.utils["红罗羹"],
+    da.utils["绿芦羹"],
+    da.utils["摄妖香"]
+    ] 
+
+
 
 
 class action(rb.Robot):
@@ -163,12 +177,84 @@ class action(rb.Robot):
             self.cx = ret
         except Exception as identifier:
             self.error.append(identifier)
+            
+    #测试保存物品
+    def save_the_prize(self):
+        # self.ToTheXLNG()
+        # time.sleep(0.5)
+        # self.mask_(True)
+        # time.sleep(1)
+        # while True:
+        #     if self.rgb_array(da.cangku["西凉_仓库管理员"])==State.OK:
+        #         self.click(642,110)
+        #         break
+        #     else:
+        #         time.sleep(0.5)
+        # time.sleep(1)
+        # while True:
+        #     if self.rgb_array(da.cangku["仓库操作"])==State.OK:
+        #         self.click(1017,424)
+        #         break
+        #     else:
+        #         time.sleep(0.5) 
+        # while True:
+        #     if self.rgb_array(da.cangku["仓库界面"])==State.OK:
+        #         break
+        # time.sleep(1)
+        self.find_items()
+            
+            
+    #
+    def map_items(self,convert_pos:list,da_items:dict):
+        time.sleep(0.1)
+        print("check items_name:{0}".format(da_items["物品名"]))
+        _,x,y = self.findMultiColorInRegionFuzzy(da_items["基点"], da_items["偏移"], 80, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
+        if x != -1:
+            print("found items_name:{0} x:{1} y:{2}".format(da_items["物品名"],x,y)) 
+            return True
+        else: return False
+        
+    '''
+    发现道具栏物品，如果是非识别物品，先存入仓库中
+    '''
+    def find_items(self):
+        start_pos = ( 634,213,695,279)
+        convert_pos = [ 634,213,695,279]
+        for i in range(0,5):
+            time.sleep(0.5)
+            convert_pos[0] = start_pos[0] + i*87
+            convert_pos[2] = start_pos[2] + i*87
+            for j in range(0,4):
+                time.sleep(0.5)
+                convert_pos[1] = start_pos[1] + j*90
+                convert_pos[3] = start_pos[3] + j*90
+                self.click(convert_pos[0]+5,convert_pos[1]+5)
+                timc = [convert_pos[0],convert_pos[1],convert_pos[2],convert_pos[3]]
+                # tpl = self.Print_screen()
+                # self.show(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]])
+                #发现的物品
+                items_name_list = map(self.map_items,[timc for i in range (len(utils_list))],utils_list)
+                tmp = [b for b in items_name_list]
+                if True in tmp:
+                    continue
+                else: 
+                    self.click(convert_pos[0]+5,convert_pos[1]+5)
+                    self.click(convert_pos[0]+5,convert_pos[1]+5)
+                    time.sleep(0.2)
+                    status = self.Found_do(da.utils["道具栏空白"]["基点"],da.utils["道具栏空白"]["偏移"], 
+                                           90,convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3],
+                                           ischlik=2,timeout=5,
+                                           name="道具栏空白")
+                    if status == status.OK: continue
+                    else:
+                        print("the blank items is not Found")
+                        self.click(366,621)
+
     '''
     在各主城增加了仓库管理员NPC，坐标分别为：长安城（346，244）、长安城（224，141）、建邺城（54，32)、傲来国（143，101）、长寿村（111，62）、朱紫国（126，90）
     '''
     #check_map 打开道具栏遍历宝图
     def check_map(self):
-        n,nn,nnn,nnnn=None,None,None,None
         #打开道具栏
         while True:
             #self.queue.put("check")
@@ -1658,6 +1744,7 @@ class action(rb.Robot):
                     break
                 else:
                     self.click(1072,54) #界面返回 
+    
     #出售垃圾装备
     def Sell_Garbage_Equipment(self):
         pass
@@ -2289,12 +2376,22 @@ def Get_Gift():
             print("Enter the dynamic interface")
             Robot.click(358,199)
             time.sleep(1)
-            
-    
+
+#test_save_the_prize 测试存物品            
+def test_save_the_prize():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1.start()
+    Robot = action(q,zoom_count=zoom_count)
+    Robot.save_the_prize()
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()    
         
 def main():
     #test_ToTheDHW()
-    test_orb(b_only_load_config=False)
-    
+    #test_orb(b_only_load_config=False)
+    test_save_the_prize()
 if __name__ == "__main__":
     main()

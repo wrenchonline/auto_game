@@ -142,10 +142,7 @@ class Robot:
     """
     x,y = findMultiColorInRegionFuzzy( "0xed1d60", "14|-7|0xb1cdf0,21|4|0xe2df73", 90, 0, 0, 1279, 719)
     """
-    def findMultiColorInRegionFuzzy(self,color,
-                                    posandcolor,degree,
-                                    x1=None,y1=None,x2=None,y2=None,
-                                    tab=None,blist=False):
+    def findMultiColorInRegionFuzzy(self,color,posandcolor,degree,x1=None,y1=None,x2=None,y2=None,tab=None,islist=False):
         x = None
         y = None
         tolerance = 100 - degree
@@ -153,9 +150,7 @@ class Robot:
         # height = abs(y2-y1)
         r,g,b  = Hex_to_RGB(color)
         tpl = self.Print_screen()
-        #self.show(tpl)
         posandcolor_list = list()
-        positems = list()
         posandcolors_param = posandcolor.split(",")
         state = State.OK
         pos_x_y_list = self.__findMultiColor(tpl,(r,g,b),tolerance,x1,y1,x2,y2)   
@@ -169,20 +164,10 @@ class Robot:
                 posandcolor_list.append(_tmp)
             for x,y in pos_x_y_list:
                 for p in posandcolor_list:
-                    # __px = int(p["px"])
-                    # __py = int(p["py"])
-                    newY = y+p["px"]
-                    newX = x+p["py"]
-                    if newY >= self.game_height:
-                        continue
-                        # print("findMultiColorInRegionFuzzy::检测y越界,返回失败")
-                        # return State.NOTMATCH,-1,-1
-                    if newX >= self.game_width:
-                        continue
-                        # print("findMultiColorInRegionFuzzy::检查x越界,返回失败")
-                        # return State.NOTMATCH,-1,-1
+                    __px = p["px"]
+                    __py = p["py"]
                     __rgb_hex = p["rgb_hex"]
-                    b,g,r = tpl[newY,newX]
+                    b,g,r = tpl[y+__py,x+__px]
                     exR = int(__rgb_hex[2:4],16) 
                     exG = int(__rgb_hex[4:6],16) 
                     exB = int(__rgb_hex[6:8],16) 
@@ -190,18 +175,10 @@ class Robot:
                         state = State.OK
                     else:
                         state = State.NOTMATCH
-                        continue
+                        break
                 if state == State.OK:
-                   positems.append((x-x1,y-y1))
-            if len(positems):
-                if not blist:
-                    return State.OK,positems[0][0],positems[0][1]
-                else:
-                    return State.OK,positems
-        if not blist:
-            return State.NOTMATCH,-1,-1
-        else:
-            return State.NOTMATCH,positems
+                    return State.OK,x,y
+        return State.NOTMATCH,-1,-1
     
     def findMultiColorInRegionFuzzyByTable(self,t_Set,degree=90,x1=None,y1=None,x2=None,y2=None):
         tolerance = 100 - degree
@@ -809,6 +786,7 @@ class Robot:
                 posandcolor,degree,
                 x1=None,y1=None,x2=None,y2=None,
                 tab=None,blist=False,timeout=10,ischlik=1,name="None"):
+        doitReturnValue = State.ERROR
         try:
             doitReturnValue = func_timeout(timeout, self.WhileDo, args=(color,
                 posandcolor,degree,
