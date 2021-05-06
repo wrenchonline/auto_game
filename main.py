@@ -207,8 +207,8 @@ class action(rb.Robot):
     #
     def map_items(self,convert_pos:list,da_items:dict):
         time.sleep(0.1)
-        print("check items_name:{0}".format(da_items["物品名"]))
-        _,x,y = self.findMultiColorInRegionFuzzy(da_items["基点"], da_items["偏移"], 80, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
+        #print("check items_name:{0}".format(da_items["物品名"]))
+        _,x,y = self.findMultiColorInRegionFuzzy(da_items["基点"], da_items["偏移"], 75, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
         if x != -1:
             print("found items_name:{0} x:{1} y:{2}".format(da_items["物品名"],x,y)) 
             return True
@@ -218,12 +218,12 @@ class action(rb.Robot):
     发现道具栏物品，如果是非识别物品，先存入仓库中
     '''
     def find_items(self):
-        start_pos = ( 634,213,695,279)
-        convert_pos = [ 634,213,695,279]
+        start_pos = ( 625,213,708,279)
+        convert_pos = [ 625,213,708,279]
         for i in range(0,5):
             time.sleep(0.5)
-            convert_pos[0] = start_pos[0] + i*87
-            convert_pos[2] = start_pos[2] + i*87
+            convert_pos[0] = start_pos[0] + i*93
+            convert_pos[2] = start_pos[2] + i*93
             for j in range(0,4):
                 time.sleep(0.5)
                 convert_pos[1] = start_pos[1] + j*90
@@ -237,19 +237,22 @@ class action(rb.Robot):
                 tmp = [b for b in items_name_list]
                 if True in tmp:
                     continue
-                else: 
+                else:
+                    #print("double click on the items bar i:{0} j:{1}".format(i,j)) 
                     self.click(convert_pos[0]+5,convert_pos[1]+5)
                     self.click(convert_pos[0]+5,convert_pos[1]+5)
-                    time.sleep(0.2)
                     status = self.Found_do(da.utils["道具栏空白"]["基点"],da.utils["道具栏空白"]["偏移"], 
                                            90,convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3],
-                                           ischlik=2,timeout=5,
+                                           ischlik=2,timeout=1.5,
                                            name="道具栏空白")
                     if status == status.OK: continue
                     else:
                         print("the blank items is not Found")
                         self.click(366,621)
-
+                        time.sleep(1.5)
+                        self.click(convert_pos[0]+5,convert_pos[1]+5)
+                        self.click(convert_pos[0]+5,convert_pos[1]+5)
+    
     '''
     在各主城增加了仓库管理员NPC，坐标分别为：长安城（346，244）、长安城（224，141）、建邺城（54，32)、傲来国（143，101）、长寿村（111，62）、朱紫国（126，90）
     '''

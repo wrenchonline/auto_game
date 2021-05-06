@@ -139,6 +139,7 @@ class Robot:
             
         else:
             print("Not found game hwnd")
+            
     """
     x,y = findMultiColorInRegionFuzzy( "0xed1d60", "14|-7|0xb1cdf0,21|4|0xe2df73", 90, 0, 0, 1279, 719)
     """
@@ -164,10 +165,16 @@ class Robot:
                 posandcolor_list.append(_tmp)
             for x,y in pos_x_y_list:
                 for p in posandcolor_list:
-                    __px = p["px"]
-                    __py = p["py"]
+                    newY = p["px"] + y
+                    newX = p["py"] + x
                     __rgb_hex = p["rgb_hex"]
-                    b,g,r = tpl[y+__py,x+__px]
+                    if newY < y1 or newY > y2:
+                        state = State.NOTMATCH
+                        break
+                    if newX < x1 or newX > x2:
+                        state = State.NOTMATCH
+                        break
+                    b,g,r = tpl[newY,newX]
                     exR = int(__rgb_hex[2:4],16) 
                     exG = int(__rgb_hex[4:6],16) 
                     exB = int(__rgb_hex[6:8],16) 
@@ -183,11 +190,6 @@ class Robot:
     def findMultiColorInRegionFuzzyByTable(self,t_Set,degree=90,x1=None,y1=None,x2=None,y2=None):
         tolerance = 100 - degree
         tpl = None
-        #目前用不上x1,y1,x2,y2
-        #tpl = self.Print_screen()[y1:y2,x1:x2]
-        # if x1 and y1 and x2 and y2:
-        #     tpl = self.Print_screen()[y1:y2,x1:x2]
-        # else:
         tpl = self.Print_screen()
         state = State.NOTMATCH
         for x,y,rgb_16_hex in t_Set:
@@ -771,12 +773,11 @@ class Robot:
         while True:
             status,x,y= self.findMultiColorInRegionFuzzy(color,posandcolor,degree,x1,y1,x2,y2,tab,blist)
             if status==status.NOTMATCH:
-                time.sleep(1)
+                time.sleep(0.1)
             else:
-                time.sleep(1)
                 for i in  range(0,ischlik):
-                    print("found {0} ==> x:{1} y:{2}".format(name,x1+x,x1+x))
                     self.click(x1+x,y1+y)
+                print("found {0} ==> x:{1} y:{2}".format(name,x,y))
                 break
         return status
     
