@@ -1,32 +1,16 @@
 # -*- coding: utf-8 -*-
 #模板匹配
-from re import split
 import cv2
 import numpy as np
-import numpy 
-import win32gui 
-import win32api
-import win32ui
-import win32con
-import win32con as wcon
-import pynput
+import io
 import time
-import ctypes
 from ctypes import *
 from PIL import ImageGrab,Image
-import pytesseract as pytes
+import vbox
 from utils import * 
-import re 
-import random
-import string
-import traceback
-#jit是进行numpy运算
 from numba import jit
-import tesserocr
-from tesserocr import PyTessBaseAPI, PSM, OEM,RIL,iterate_level
-from PIL import Image
 import data as da
-from func_timeout import func_set_timeout ,FunctionTimedOut ,func_timeout
+from func_timeout import FunctionTimedOut ,func_timeout
 
 
 def binstr_to_nparray(hex_2_str,abs_x,abs_y):
@@ -41,25 +25,10 @@ def binstr_to_nparray(hex_2_str,abs_x,abs_y):
             i+=1
     return binary
 
-def get_window_rect(hwnd):
-    try:
-        f = ctypes.windll.dwmapi.DwmGetWindowAttribute
-    except WindowsError:
-        f = None
-    if f:
-        rect = ctypes.wintypes.RECT()
-        DWMWA_EXTENDED_FRAME_BOUNDS = 9
-        f(ctypes.wintypes.HWND(hwnd),
-          ctypes.wintypes.DWORD(DWMWA_EXTENDED_FRAME_BOUNDS),
-          ctypes.byref(rect),
-          ctypes.sizeof(rect)
-          )
-        return rect.left, rect.top, rect.right, rect.bottom
 
 class Robot:
-    def __init__(self,class_name,title_name,zoom_count):
-        self.class_name = class_name
-        self.title_name = title_name
+    def __init__(self):
+        self.vbox = None
         #窗口坐标
         self.left = 0
         self.top = 0 
@@ -69,7 +38,6 @@ class Robot:
         self.ScreenBoardhwnd = None
         self.game_width = 0
         self.game_height = 0
-        self.zoom_count = zoom_count
         self.rollback_list = list() #回滚机制，在于颜色匹配没找到或者卡屏的情况,根据此列表操作步骤重新回滚。
         
     @staticmethod
@@ -84,9 +52,6 @@ class Robot:
                     pos_x_y.append((x,y))
         return pos_x_y
     
-
-
-
     #像素转换成二值化点阵，返回二进制字符串
     @staticmethod
     @jit
@@ -94,9 +59,6 @@ class Robot:
         for idx ,x in enumerate (range(x1,x2)):
             for idy, y in enumerate (range(y1,y2)):
                 b,g,r = image_arrays[y,x]
-                # print("r:",r)
-                # print("g:",g)
-                # print("b:",b)
                 for m in MeanRgb:
                     __mean_s_r = m[0]
                     __mean_s_g = m[1]
@@ -113,32 +75,14 @@ class Robot:
         return binary
 
 
-    def Get_GameHwnd(self,Simulator_Name="夜神"):
-        if Simulator_Name == "夜神":
-            self.hwnd= win32gui.FindWindow('Qt5QWindowIcon','夜神模拟器')
-            self.ScreenBoardhwnd = win32gui.FindWindowEx(self.hwnd, 0, 'Qt5QWindowIcon', 'ScreenBoardClassWindow')
-        elif Simulator_Name == "雷电":
-            self.hwnd= win32gui.FindWindow('LDPlayerMainFrame','雷電模擬器')
-            self.ScreenBoardhwnd = win32gui.FindWindowEx(self.hwnd, 0, 'RenderWindow', 'TheRender')            
-        self.hwnd = win32gui.FindWindowEx(self.ScreenBoardhwnd, 0, self.class_name, self.title_name)
-        print('hwnd=',self.hwnd)
-        text = win32gui.GetWindowText(self.hwnd)
-        if self.hwnd:
-            print("found game hwnd")
-            self.left,self.top,self.right,self.bottom = win32gui.GetWindowRect(self.hwnd)
-            #窗口坐标
-            self.left=int(self.left*self.zoom_count)
-            self.top=int(self.top*self.zoom_count )
-            self.right=int(self.right*self.zoom_count )
-            self.bottom=int(self.bottom*self.zoom_count ) 
-            print("The window coordinates: ({0},{1},{2},{3})".format(str(self.left),str(self.top),str(self.right),str(self.bottom)))
-            self.game_width = self.right - self.left
-            self.game_height = self.bottom - self.top
-            # self.game_width = 1920
-            # self.game_height = 1080
-            
+    def Get_GameHwnd(self,Simulator_Name="vbox",game_width=1280,game_height=720):
+        if Simulator_Name != "vbox":
+            pass
         else:
-            print("Not found game hwnd")
+            self.vbox = vbox.Vbox()
+            self.vbox.init()
+            self.game_width = game_width
+            self.game_height = game_height
             
     """
     x,y = findMultiColorInRegionFuzzy( "0xed1d60", "14|-7|0xb1cdf0,21|4|0xe2df73", 90, 0, 0, 1279, 719)
@@ -147,10 +91,9 @@ class Robot:
         x = None
         y = None
         tolerance = 100 - degree
-        # width = abs(x2-x1)
-        # height = abs(y2-y1)
         r,g,b  = Hex_to_RGB(color)
         tpl = self.Print_screen()
+        #self.show(tpl)
         posandcolor_list = list()
         posandcolors_param = posandcolor.split(",")
         state = State.OK
@@ -184,7 +127,7 @@ class Robot:
                         state = State.NOTMATCH
                         break
                 if state == State.OK:
-                    return State.OK,x,y
+                    return State.OK,x-x1,y-y1
         return State.NOTMATCH,-1,-1
     
     def findMultiColorInRegionFuzzyByTable(self,t_Set,degree=90,x1=None,y1=None,x2=None,y2=None):
@@ -221,127 +164,38 @@ class Robot:
 
             
     def Print_screen(self):
-        
-        #返回句柄窗口的设备环境，覆盖整个窗口，包括非客户区，标题栏，菜单，边框
-        hWndDC = win32gui.GetWindowDC(self.hwnd)
-        #创建设备描述表
-        mfcDC = win32ui.CreateDCFromHandle(hWndDC)
-        #创建内存设备描述表
-        saveDC = mfcDC.CreateCompatibleDC()
-        #创建位图对象准备保存图片
-        saveBitMap = win32ui.CreateBitmap()
-        #为bitmap开辟存储空间
-        saveBitMap.CreateCompatibleBitmap(mfcDC,self.game_width,self.game_height)
-        #将截图保存到saveBitMap中
-        saveDC.SelectObject(saveBitMap)
-        #保存bitmap到内存设备描述表
-        saveDC.BitBlt((0,0), (self.game_width,self.game_height), mfcDC, (0, 0), win32con.SRCCOPY)
- 
-        signedIntsArray = saveBitMap.GetBitmapBits(True)
-        
-        win32gui.DeleteObject(saveBitMap.GetHandle())
-        saveDC.DeleteDC()
-        mfcDC.DeleteDC()
-        win32gui.ReleaseDC(self.hwnd, hWndDC)
-        
-        salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
-        
-        im_PIL = Image.frombuffer(
-            'RGB',
-            (self.game_width, self.game_height),
-            signedIntsArray, 'raw', 'BGRX', 0, 1)
-        # im_PIL.save("C:\\Users\\Wrench\\Desktop\\tmp\\im_opencv_" + salt + ".png")
-        # im = Image.open("C:\\Users\\Wrench\\Desktop\\tmp\\im_opencv_" + salt + ".png")
-        return cv2.cvtColor(np.array(im_PIL),cv2.COLOR_RGB2BGR)
+        signedIntsArray = self.vbox.screenshots()
+        image = Image.open(io.BytesIO(signedIntsArray))
+        img = cv2.cvtColor(np.asarray(image),cv2.COLOR_RGB2BGR)
+        return img
     
-    def doClick(self,cx,cy):
-        ctr = pynput.mouse.Controller()
-        ctr.move(cx, cy)   #鼠标移动到(x,y)位置
-        ctr.press(pynput.mouse.Button.left)  #移动并且在(x,y)位置左击
-        ctr.release(pynput.mouse.Button.left) 
-    def getCurPos(self):
-        return win32gui.GetCursorPos()
-    
-    def getPos(self):
-        while True:
-            res = getCurPos()
-            print (res)
-            time.sleep(1)
-            
-    def clickLeft(self):
-        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN | win32con.MOUSEEVENTF_LEFTUP, 0, 0)
-
-    def movePos(self,x, y):
-        windll.user32.SetCursorPos(x, y)
-
-    def animateMove(self,curPos, targetPos, durTime=1, fps=60):
-        x1 = curPos[0]
-        y1 = curPos[1]
-        x2 = targetPos[0]
-        y2 = targetPos[1]
-        dx = x2 - x1
-        dy = y2 - y1
-        times = int(fps * durTime)
-        dx_ = dx * 1.0 / times
-        dy_ = dy * 1.0 / times
-        sleep_time = durTime * 1.0 / times
-        for i in range(times):
-            int_temp_x = int(round(x1 + (i + 1) * dx_))
-            int_temp_y = int(round(y1 + (i + 1) * dy_))
-            windll.user32.SetCursorPos(int_temp_x, int_temp_y)
-            time.sleep(sleep_time)
-        windll.user32.SetCursorPos(x2, y2)
-        
     
     def show(self,tpl):
         cv2.namedWindow("Image")
-        cv2.imshow("Image", tpl)
-        cv2.waitKey (0)
+        cv2.startWindowThread()
+        cv2.imshow("Image",tpl)
+        cv2.waitKey(0) 
+        cv2.destroyAllWindows()        
 
-    def animateMoveAndClick(self,curPos, targetPos, durTime=0.5, fps=30, waitTime=0.5):
-        x1 = curPos[0]
-        y1 = curPos[1]
-        x2 = targetPos[0]
-        y2 = targetPos[1]
-        dx = x2 - x1
-        dy = y2 - y1
-        times = int(fps * durTime)
-        dx_ = dx * 1.0 / times
-        dy_ = dy * 1.0 / times
-        sleep_time = durTime * 1.0 / times
-
-        for i in range(times):
-            int_temp_x = int(round(x1 + (i + 1) * dx_))
-            int_temp_y = int(round(y1 + (i + 1) * dy_))
-            windll.user32.SetCursorPos(int_temp_x, int_temp_y)
-            time.sleep(sleep_time)
-        windll.user32.SetCursorPos(x2, y2)
-        time.sleep(waitTime)
-        self.clickLeft()
 
     def matchTemplate(self,tpl,target,tolerance=0.2,getone=True):
         methods = [cv2.TM_SQDIFF_NORMED]   #3种模板匹配方法 cv2.TM_CCORR_NORMED, cv2.TM_CCOEFF_NORMED
         th, tw = target.shape[:2]
         
         for md in methods:
-            #result = cv2.matchTemplate(tpl,target, md)
             if getone:  
                 try:
                     res =cv2.matchTemplate(tpl,target, md)
                     ok = True
                 except cv2.error as e: 
                     ok = False
-                    #print("匹配错误")
                     return (-1,-1)
                 
                 min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
                 if min_val > tolerance:
-                    #print("not match")
-
                     return (-1,-1)
                 else:
                     pass
-                    
                 if md == cv2.TM_SQDIFF_NORMED:
                     tl = min_loc
                 else:
@@ -357,8 +211,7 @@ class Robot:
                 for pt in zip(*loc[::-1]):  # *号表示可选参数
                     right_bottom = (int((pt[0]+int(tw/2))), int((pt[1]+int(th/2))))
                     right_bottom_list.append(right_bottom)
-                return right_bottom_list
-                    #cv2.rectangle(img_rgb, pt, right_bottom, (0, 0, 255), 2)                
+                return right_bottom_list            
         return (-1,-1)
         
     def clike_map(self):
@@ -366,75 +219,6 @@ class Robot:
         target = cv2.imread("./images/map.jpg")  
         new_target = self.matchTemplate(tpl,target)    
         self.click(new_target)  
-        
-        
-    def tsOcrText(self,tpl,text_features,x1,y1,x2,y2,lang='chi_sim',psm=7, oem=1):
-        _data_list = list()
-        tpl = tpl[y1:y2,x1:x2]
-        tpl = cv2.cvtColor(tpl,cv2.COLOR_RGB2GRAY)
-        img = cv2.adaptiveThreshold(tpl,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2) #经过测试高斯识别效果好
-        #numpy转换成PIL格式
-        img = Image.fromarray(img)
-        #img.show()
-        with PyTessBaseAPI(lang='chi_sim',psm=7, oem=1) as api:
-                level = RIL.TEXTLINE #以标题为主
-                #img = Image.open("C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\12121.png")
-                api.SetImage(img)
-                api.Recognize()
-                ri = api.GetIterator()
-                for r in iterate_level(ri, level):
-                    try: 
-                        symbol = r.GetUTF8Text(level)  # r == ri
-                        conf = r.Confidence(level) #相似度
-                        if symbol:
-                            pass
-                            #print('symbol {0}  conf: {1}'.format(symbol, conf))
-                        boxes = r.BoundingBox(level) #xy等等坐标
-                        dict_= {"text":symbol,"left":boxes[0],"top":boxes[1],"weight":boxes[2],"weight":boxes[3]}
-                        _data_list.append(dict_)
-                    except Exception as e:
-                        print("没有字符")
-        xz = list()
-        for idx, data in enumerate(_data_list):
-            for text in  text_features:
-                if text in data["text"]:
-                    x =  data["left"] + x1
-                    y =  data["top"] + y1
-                    xz.append((data["text"],x,y))            
-        #print("识别结果:{0}".format(xz))
-        return xz
-    
-    # def OcrText(self,tpl,x1,y1,x2,y2,config=('--oem 1 -l chi_sim --psm 7')):
-    #     econfig = ('--oem 1 -l eng --psm 6 digits')
-    #     cconfig = ('--oem 1 -l chi_sim --psm 6')
-    #     _data_list = list()
-    #     tpl = tpl[y1:y2,x1:x2]
-    #     tpl = cv2.cvtColor(tpl,cv2.COLOR_RGB2GRAY)
-    #     img = cv2.adaptiveThreshold(tpl,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2) #经过测试高斯识别效果好
-    #     #numpy转换成PIL格式
-    #     img = Image.fromarray(img)
-    #     #img.show()
-    #     with PyTessBaseAPI(lang='chi_sim',psm=7, oem=1) as api:
-    #             level = RIL.TEXTLINE #以标题为主
-    #             #img = Image.open("C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\12121.png")
-    #             api.SetImage(img)
-    #             api.Recognize()
-    #             ri = api.GetIterator()
-    #             for r in iterate_level(ri, level):
-    #                 try:
-    #                     symbol = r.GetUTF8Text(level)  # r == ri
-    #                     conf = r.Confidence(level) #相似度
-    #                     if symbol:
-    #                         pass
-    #                         #print('symbol {0}  conf: {1}'.format(symbol, conf))
-    #                     boxes = r.BoundingBox(level) #xy等等坐标
-    #                     dict_= {"text":symbol,"left":boxes[0],"top":boxes[1],"weight":boxes[2],"weight":boxes[3]}
-    #                     _data_list.append(dict_)
-    #                 except Exception as e:
-    #                     print("没有字符")
-    #     return _data_list
-    
- 
         
     def clike_expr_tool(self):
         tpl = self.Print_screen() 
@@ -476,64 +260,7 @@ class Robot:
     
     def click(self,x:int=None,y:int=None,DOUBLE=False):
         """Click at pixel xy."""
-        x = int(x/self.zoom_count)#1.5是缩放比例
-        y = int(y/self.zoom_count)
-        lParam = win32api.MAKELONG(x, y)
-        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,0, lParam)
-        #win32gui.SendMessage(self.ScreenBoardhwnd,  wcon.WM_SETCURSOR, self.ScreenBoardhwnd, win32api.MAKELONG(wcon.HTCLIENT, wcon.WM_LBUTTONDOWN))
-        # win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_SETCURSOR, 0, 0)
-        # while (win32api.GetKeyState(wcon.VK_CONTROL) < 0 or
-        #         win32api.GetKeyState(wcon.VK_SHIFT) < 0 or
-        #         win32api.GetKeyState(wcon.VK_MENU) < 0):
-        #         time.sleep(0.005)
-        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONDOWN,
-                                wcon.MK_LBUTTON, lParam)
-        time.sleep(0.1)
-        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONUP, 0, lParam)
-        
-    
-    def move_click(self,x:int=None,y:int=None,x1:int=None,y1:int=None,Stride_x:int=1,Stride_y:int=1):
-        x = int(x/self.zoom_count)#1.5是缩放比例
-        y = int(y/self.zoom_count)
-        x1 = int(x1/self.zoom_count)
-        y1 = int(y1/self.zoom_count)
-        x_down = False
-        y_down = False
-        lenth_x = None
-        lenth_y = None
-        lParam1 = win32api.MAKELONG(x, y)
-        lParam2 = win32api.MAKELONG(x1, y1)
-        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,0, lParam1)
-        # win32gui.SendMessage(self.ScreenBoardhwnd,  wcon.WM_SETCURSOR, self.ScreenBoardhwnd, win32api.MAKELONG(wcon.HTCLIENT, wcon.WM_LBUTTONDOWN))
-        while (win32api.GetKeyState(wcon.VK_CONTROL) < 0 or
-                win32api.GetKeyState(wcon.VK_SHIFT) < 0 or
-                win32api.GetKeyState(wcon.VK_MENU) < 0):
-                time.sleep(0.005)
-        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONDOWN,
-                              wcon.MK_LBUTTON, lParam1)
-        time.sleep(0.1)
-        #如果小于，降序
-        if x >= x1:
-            x_down = True
-        lenth_x = abs(x-x1)+1
-        if y >= y1:
-            y_down = True   
-        lenth_y = abs(y-y1)+1            
-        for lx in range(0,lenth_x,Stride_x):
-            for ly in range(0,lenth_y,Stride_y):
-                if x_down:
-                    x2 =x - lx
-                else:
-                    x2 =x + lx
-                if y_down:
-                    y2 = y - ly
-                else:
-                    y2 = y + ly
-                #print("x2:{0}y2:{1}".format(x2,y2))
-                win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_MOUSEMOVE,wcon.MK_LBUTTON, win32api.MAKELONG(x2,y2))
-        win32gui.PostMessage(self.ScreenBoardhwnd, wcon.WM_LBUTTONUP,
-                            wcon.MK_LBUTTON, lParam2) 
-        
+        self.vbox.put_mouse_event_absolute(x,y)
         
     def check_fire(self):
         tpl = self.Print_screen()
@@ -605,44 +332,7 @@ class Robot:
         binary = np.zeros((abs(y2-y1),abs(x2-x1)), dtype=np.uint8)
         bin_2_ = self.rgb_to_hexstr_2(tpl,binary,np.array(MeanRgb),x1,y1,x2,y2)
         return bin_2_
-    
-    def Ocrtext(self,scx_rgb,x1,y1,x2,y2,Debug=False,ril=RIL.TEXTLINE,lang='chi_sim',psm=7, oem=1,attribute=None,THRESH_GAUSSIAN =False):
-        
-        if THRESH_GAUSSIAN:
-            tpl = self.Print_screen()
-            tpl = tpl[y1:y2,x1:x2]
-            tpl = cv2.cvtColor(tpl,cv2.COLOR_RGB2GRAY)
-            image_array1 = cv2.adaptiveThreshold(tpl,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
-        else:
-            image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
-        if Debug:
-            self.show(image_array1)
-        _data_list = list()
-        with PyTessBaseAPI(lang=lang,psm=psm, oem=oem) as api:
-                level = ril#以标题为主
-                #img = Image.open("C:\\Users\\Wrench\\Nox_share\\ImageShare\\Screenshots\\12121.png")
-                img = Image.fromarray(image_array1)
-                if attribute:
-                    api.SetVariable(attribute[0], attribute[1])
-                #img.show()
-                api.SetImage(img)
-                api.Recognize()
-                ri = api.GetIterator()
-                for r in iterate_level(ri, level):
-                    try:
-                        symbol = r.GetUTF8Text(level)  # r == ri
-                        r.Confidence(level) #相似度
-                        if symbol:
-                            pass
-                            #print('symbol {0}  conf: {1}'.format(symbol, conf))
-                        boxes = r.BoundingBox(level) #xy等等坐标
-                        dict_= {"text":symbol,"left":boxes[0],"top":boxes[1],"boxes2":boxes[2],"boxes3":boxes[3]}
-                        _data_list.append(dict_)
-                    except Exception as e:
-                        pass
-                        print(traceback.print_exc())
-                        print("没有字符")
-        return _data_list
+
     
     def x_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2,similarity=0.2):
         #ret = re.findall(r"@(.*?)\$",tab,re.I|re.M)
@@ -674,7 +364,7 @@ class Robot:
 
                     
                     
-    def z_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2,jiange=1,M=0.1):
+    def Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2,jiange=1,M=0.1):
         #ret = re.findall(r"@(.*?)\$",tab,re.I|re.M)
         textline = list()
         m_textline = list()
@@ -748,15 +438,8 @@ class Robot:
                                 x = int(data_tuple[4])
                                 y = int(data_tuple[3])
                                 image_array = binstr_to_nparray(hexstr_2,x,y)
-                                #if word == "6":
-                                #     for w in image_array[0]
-                                #      print("正在匹配字符: 7")
-                                    # self.show(cj)
-                                    # self.show(image_array)
                                 new_X_t = self.matchTemplate(cj,image_array,M,getone=True)
-                                #print(new_X_t)
                                 if new_X_t !=(-1,-1):
-                                    #print("当前识字为:{0}".format(word))
                                     strs += word 
                                     bno_found = False
                                     break
@@ -773,7 +456,7 @@ class Robot:
         while True:
             status,x,y= self.findMultiColorInRegionFuzzy(color,posandcolor,degree,x1,y1,x2,y2,tab,blist)
             if status==status.NOTMATCH:
-                time.sleep(0.1)
+                pass
             else:
                 for i in  range(0,ischlik):
                     self.click(x1+x,y1+y)
@@ -798,5 +481,4 @@ class Robot:
         except Exception as e:
             pass
         return doitReturnValue
-            # Handle any exceptions that doit might raise here
     

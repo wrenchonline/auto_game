@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import threading
 import time
-import sys
 import Robot as rb
 import queue
 import data as da
@@ -20,7 +19,7 @@ class MyThread (threading.Thread,rb.Robot):
             self.queue = q
         else:
             raise("参数2不是队列")
-            
+        
   # Function that raises the custom exception 
     def someFunction(self,): 
         name = threading.current_thread().name 
@@ -43,7 +42,6 @@ class MyThread (threading.Thread,rb.Robot):
                                 fire_end = True
                                 time.sleep(5)
                                 print("正在战斗")
-                                #self.check_thePetHealth()
                             else:
                                 while fire_end:
                                     print("战斗结束")

@@ -6,13 +6,11 @@ from utils import *
 import Robot_help as rh
 import math
 import queue
-from goto import with_goto
 import json
 import os
 import data as da
-from func_timeout import func_set_timeout
 
-zoom_count = 1.5
+
 
 
 utils_list = [
@@ -31,8 +29,8 @@ utils_list = [
 
 class action(rb.Robot):
 
-    def __init__(self,q,class_name="subWin",title_name="sub",zoom_count=1.5):
-        rb.Robot.__init__(self,class_name=class_name,title_name=title_name,zoom_count=zoom_count)
+    def __init__(self,q):
+        rb.Robot.__init__(self)
         self.Get_GameHwnd()
         self.cx = None
         self.error = list()
@@ -41,45 +39,34 @@ class action(rb.Robot):
         else:
             raise("参数2不是队列")
         
-    @with_goto    
     def flag_transfer(self,color):
         while True:
             time.sleep(0.5)
             self.click(653,132)
             time.sleep(0.5)
-            tpl = self.Print_screen()
+            #pl = self.Print_screen()
+            #self.show(tpl)
             if color == "red":
-                status = self.Found_do(da.utils["红旗"]["基点"],da.utils["红旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="红旗")
+                status = self.Found_do(da.utils["红旗"]["基点"],da.utils["红旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="红旗")
                 if status == status.OK:
                     break
-                else:
-                    goto .end
             elif color == "yellow":
-                status = self.Found_do(da.utils["黄旗"]["基点"],da.utils["黄旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="黄旗")
+                status = self.Found_do(da.utils["黄旗"]["基点"],da.utils["黄旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="黄旗")
                 if status == status.OK:
                     break
-                else:
-                    goto .end
             elif color == "blue":
-                status = self.Found_do(da.utils["蓝旗"]["基点"],da.utils["蓝旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="蓝旗")
+                status = self.Found_do(da.utils["蓝旗"]["基点"],da.utils["蓝旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="蓝旗")
                 if status == status.OK:
                     break
-                else:
-                    goto .end
             elif color == "green":
-                status = self.Found_do(da.utils["绿旗"]["基点"],da.utils["绿旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="绿旗")
+                status = self.Found_do(da.utils["绿旗"]["基点"],da.utils["绿旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="绿旗")
                 if status == status.OK:
                     break
-                else:
-                    goto .end
             elif color == "white":
-                status = self.Found_do(da.utils["白旗"]["基点"],da.utils["白旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="白旗")
+                status = self.Found_do(da.utils["白旗"]["基点"],da.utils["白旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="白旗")
                 if status == status.OK:
                     break
-                else:
-                    goto .end
             else:
-                label .end
                 #没找到，去行囊里面找
                 self.click(833,140)
                 time.sleep(0.5)
@@ -89,19 +76,19 @@ class action(rb.Robot):
                         if status == status.OK:
                             break
                     elif color == "yellow":
-                        status = self.Found_do(da.utils["黄旗"]["基点"],da.utils["黄旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="黄旗")
+                        status = self.Found_do(da.utils["黄旗"]["基点"],da.utils["黄旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="黄旗")
                         if status == status.OK:
                             break
                     elif color == "blue":
-                        status = self.Found_do(da.utils["蓝旗"]["基点"],da.utils["蓝旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="蓝旗")
+                        status = self.Found_do(da.utils["蓝旗"]["基点"],da.utils["蓝旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="蓝旗")
                         if status == status.OK:
                             break
                     elif color == "green":
-                        status = self.Found_do(da.utils["绿旗"]["基点"],da.utils["绿旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="绿旗")
+                        status = self.Found_do(da.utils["绿旗"]["基点"],da.utils["绿旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="绿旗")
                         if status == status.OK:
                             break
                     elif color == "white":
-                        status = self.Found_do(da.utils["白旗"]["基点"],da.utils["白旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="白旗")
+                        status = self.Found_do(da.utils["白旗"]["基点"],da.utils["白旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="白旗")
                         if status == status.OK:
                             break
                     else:
@@ -110,63 +97,7 @@ class action(rb.Robot):
         return State.OK
         
         
-    # def find_map_by_shop(self):
-    #     tpl = self.Print_screen()
-    #     start_pos = [285,196,532,244] #第一个摊位
-    #     conversion = [285,196,532,244]
-    #     #self.show(tpl)
-    #     tu_shop = list()
-    #     xret = list()
-    #     jump = False
-    #     xret.clear()
-    #     for i in range(0,5):
-    #         if jump:
-    #             break
-    #         conversion[1] = start_pos[1] + i*144
-    #         conversion[3] = start_pos[3] + i*144
-    #         for j in range(0,4):
-    #             conversion[0] = start_pos[0] + j*341
-    #             conversion[2] = start_pos[2] + j*341
-    #             #print("conversion{0}".format(conversion))
-    #             e_shop_emty = self.findMultiColorInRegionFuzzyByTable(shop_emty,90,conversion[0],conversion[1],conversion[2],conversion[3])                
-    #             if e_shop_emty[0] == State.OK:
-    #                 print("发现空摊位")
-    #                 jump = True
-    #                 break
-    #             tu_shop = self.tsOcrText(tpl,tu_text_features,conversion[0],conversion[1],conversion[2],conversion[3]) 
-    #             if len(tu_shop):
-    #                 print("ret:{0}".format(tu_shop))
-    #                 xret.append(tu_shop[0])
-    #     return xret
-    
-    # def buy_map(self):
-    #     #点击系统界面
-    #     self.click(673,1025)
-    #     time.sleep(2)
-    #     self.click(1260,729)
-    #     time.sleep(2)
-    #     tpl = self.Print_screen()
-    #     max_page = int(self.OcrText(tpl,1411, 921, 1447, 962,config=('--oem 1 -l chi_sim --psm 7 '))[0][0])
-    #     print(max_page)
-    #     for i in range(1,max_page+1):
-    #       shop_pos_list = self.find_map_by_shop()
-    #       if len(shop_pos_list):
-    #          print("发现摊位坐标:{0}".format(shop_pos_list))
-    #          for j in shop_pos_list:
-    #             x = j[1]
-    #             y = j[2]
-    #             print("点击摊位坐标:({0},{1})".format(x,y))
-    #             self.click(x,y)
-    #             time.sleep(2)
-    #             self.click(1700,82)
-    #             time.sleep(2)
-    #       if i >= max_page:
-    #             continue
-    #       else:
-    #             print("点击下一页")   
-    #             self.click(1549,937) 
-    #             time.sleep(2)
-                
+
     
     def run_with_callback(self,fun,fun_param,pre_fun1,fun1_param,post_fun2,fun2_param):
         try:
@@ -180,27 +111,6 @@ class action(rb.Robot):
             
     #测试保存物品
     def save_the_prize(self):
-        # self.ToTheXLNG()
-        # time.sleep(0.5)
-        # self.mask_(True)
-        # time.sleep(1)
-        # while True:
-        #     if self.rgb_array(da.cangku["西凉_仓库管理员"])==State.OK:
-        #         self.click(642,110)
-        #         break
-        #     else:
-        #         time.sleep(0.5)
-        # time.sleep(1)
-        # while True:
-        #     if self.rgb_array(da.cangku["仓库操作"])==State.OK:
-        #         self.click(1017,424)
-        #         break
-        #     else:
-        #         time.sleep(0.5) 
-        # while True:
-        #     if self.rgb_array(da.cangku["仓库界面"])==State.OK:
-        #         break
-        # time.sleep(1)
         self.find_items()
             
             
@@ -303,7 +213,7 @@ class action(rb.Robot):
                     print(data)                    
                     if data:
                         if len(data)>3:
-                                pos = self.z_Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                pos = self.Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
                                                 ,401,343,485,364,M=0.2)
                                 print("postr:",pos)
                                 if len(pos):
@@ -320,7 +230,7 @@ class action(rb.Robot):
                                     except Exception as e:
                                         print("字库解析异常")
                         else:
-                                pos = self.z_Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                pos = self.Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
                                                 ,370,339,485,364,M=0.2)
                                 print("postr:",pos)
                                 if len(pos):
@@ -394,11 +304,6 @@ class action(rb.Robot):
         else:
             return status.NOTMATCH
         
-    #前往长寿郊外
-    # def go_to_CSJW(self):
-    #     ok = self.go_to_CSC()
-    #     if ok:
-    #         pass
         
     def tap_(self,D,X,Y):
         while True:
@@ -413,23 +318,15 @@ class action(rb.Robot):
                 break
         print("监控坐标")
         while True:
-            #C4CED1,3C322E
-            #self.queue.put("check")
-            # pos = self.Ocrtext("C4CED1,3C322E",116,62,192,84,
-            #                     lang='eng',oem=1,
-            #                     attribute=["tessedit_char_whitelist", 
-            #                     "0123456789,"],THRESH_GAUSSIAN=False)
-            pos = self.z_Ocrtext(da.pos_feature,"CFE3E9,311D17#F8DDCE,072331",100,60,206,85,M=0.26)
+            pos = self.Ocrtext(da.pos_feature,"CFE3E9,311D17#F8DDCE,072331",100,60,206,85,M=0.26)
             if len(pos):
                 #pos = pos[0]["text"]
                 if pos[0] == "?":
                     pos = pos[1:]
                 if pos[len(pos)-1]=="?":
                     pos = pos[:len(pos)-1]
-
                 postr = pos.replace("\n","")
                 postr = pos.replace("??","?")
-                
                 try:
                     _x = int(postr.split('?')[0])
                     _y = int(postr.split('?')[1])
@@ -488,7 +385,7 @@ class action(rb.Robot):
             #打开地图
             time.sleep(1)
             self.open_map()
-            time.sleep(1)        
+            time.sleep(1)
             self.tap_("长寿村",144,6)   
             time.sleep(0.5)
             while True:
@@ -515,7 +412,6 @@ class action(rb.Robot):
     #前往朱紫国         
     def go_to_ZZG(self):
         while True:
-            #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.feixingfu_jiemian,degree=80)
             if status==status.OK:
                 time.sleep(0.7)
@@ -524,7 +420,6 @@ class action(rb.Robot):
             if status==status.NOTMATCH:
                 break
         while True:
-            #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian,degree=80)
             time.sleep(0.5)
             if status==status.NOTMATCH:
@@ -546,7 +441,6 @@ class action(rb.Robot):
     #去往大唐境外
     def TotheDTJW(self):
         while True:
-            #self.queue.put("check")
             if self.no_prop():
                 self.click(1220, 679)
                 time.sleep(0.5)
@@ -603,15 +497,7 @@ class action(rb.Robot):
         self.TotheDTJW()
         self.open_map()
         time.sleep(1)
-        # while True:
-        #     if self.rgb_array(da.map_feature["大唐境外A"])==State.OK:
-        #         print("OK")
-        #         break
-        #     else:        
-        #         time.sleep(0.5)
         self.tap_("大唐境外",233,109)
-        
-        
         self.mask_(True)
         time.sleep(0.5)
         while True:
@@ -623,7 +509,6 @@ class action(rb.Robot):
                 time.sleep(0.5)
                 break
         while True:
-            #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["送我进墨家村"]["坐标"],degree=80)
             if status == status.NOTMATCH:
                 time.sleep(0.5)
@@ -635,15 +520,14 @@ class action(rb.Robot):
         self.mask_(False)
             
         while True:
-            ##self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "墨家村" in reponse:
                 print("抵达目的地")
                 return
+            
     #前往大唐国境        
     def ToDTGJ(self):
         while True:
-            #self.queue.put("check")
             if self.no_prop():
                 self.click(1220, 679)
                 time.sleep(0.5)
@@ -674,7 +558,6 @@ class action(rb.Robot):
                 time.sleep(0.2)
 
         while True:
-            #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "大唐国境" in reponse:
                 print("抵达目的地")
@@ -687,7 +570,6 @@ class action(rb.Robot):
     #前往麒麟山
     def TotheQLS(self):
         while True:
-            #self.queue.put("check")
             if self.no_prop():
                 self.click(1220, 679)
                 time.sleep(0.5)
@@ -710,14 +592,12 @@ class action(rb.Robot):
             else:
                 print("飞行符没有使用")
                 return
-            #self.click(654,669)
             time.sleep(1)
             self.go_to_ZZG()
             #打开地图
             time.sleep(1)
             self.open_map()
-            time.sleep(1)        
-
+            time.sleep(1)
             self.tap_("朱紫国",3,111)   
             time.sleep(0.5)
             while True:
@@ -728,7 +608,6 @@ class action(rb.Robot):
                     break
 
         while True:
-            #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "麒麟山" in reponse:
                 print("抵达目的地")
@@ -753,7 +632,6 @@ class action(rb.Robot):
                 break
 
         while True:
-            #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "狮驼岭" in reponse:
                 print("抵达目的地")
@@ -794,12 +672,7 @@ class action(rb.Robot):
                 q = True
                 self.click(815,558)
                 time.sleep(0.2)
-        
-        # time.sleep(1)
-        # self.click(949,609)
-        # time.sleep(1)
-        
-        
+                
         self.mask_(True)
         while True:
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["驿站老板"]["坐标"])
@@ -810,7 +683,6 @@ class action(rb.Robot):
                 time.sleep(0.5)
                 break
         while True:
-            #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["我要去"]["坐标"])
             if status == status.NOTMATCH:
                 time.sleep(0.5)
@@ -821,7 +693,6 @@ class action(rb.Robot):
         self.mask_(False) 
                  
         while True:
-            #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "东海湾" in reponse:
                 print("抵达目的地")
@@ -880,7 +751,6 @@ class action(rb.Robot):
     #前往花果山
     def ToTheHGS(self):
         while True:
-            #self.queue.put("check")
             if self.no_prop():
                 self.click(1220, 679)
                 time.sleep(0.5)
@@ -911,7 +781,6 @@ class action(rb.Robot):
                 self.click(962,163)
                 time.sleep(0.2)
         while True:
-            #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "花果山" in reponse:
                 print("抵达目的地")
@@ -988,7 +857,6 @@ class action(rb.Robot):
         time.sleep(0.5)
         self.mask_(False)
         while True:
-            #self.queue.put("check")
             reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
             if  "大唐境外" in reponse:
                 print("抵达大唐境外")
@@ -1012,7 +880,6 @@ class action(rb.Robot):
                 
     def open_prop(self):
         while True:
-            #self.queue.put("check")
             if self.no_prop():
                 self.click(1220, 679)
                 time.sleep(0.5)
@@ -1051,7 +918,6 @@ class action(rb.Robot):
                 time.sleep(0.5)
                 break
         while True:
-            #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["我要去"]["坐标"])
             if status == status.NOTMATCH:
                 time.sleep(0.5)
@@ -1090,11 +956,7 @@ class action(rb.Robot):
         time.sleep(1)
         #判断提示框是否出现
         while True:
-            # tpl = self.Print_screen()
-            # tpl = tpl[y1-5:y2,x1-5:x2]
-            # self.show(tpl)
             status,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"], 70,x1-5,y1-5,x2,y2)
-            #status,x,y = self.findMultiColorInRegionFuzzy( da.prompt_box["提示框"]["基点"], da.prompt_box["提示框"]["偏移"], 80, 231,4, 287,62)
             if status==status.OK:
                 self.click(x1+5,y1+5)
                 self.click(x1+5,y1+5)
@@ -1762,9 +1624,9 @@ class action(rb.Robot):
 def test_TotheJYC():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)    
+    Robot = action(q)    
     Robot.TotheJYC()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -1774,9 +1636,9 @@ def test_TotheJYC():
 def test_ToNEC():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)    
+    Robot = action(q)    
     Robot.TotheNEC()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -1785,9 +1647,9 @@ def test_ToNEC():
 def test_check_pet_HP():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)    
+    Robot = action(q)    
     Robot.check_thePetHealth()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -1797,9 +1659,9 @@ def test_check_pet_HP():
 def test_get_set_map(getorset='get'):
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)    
+    Robot = action(q)    
     Robot.get_set_map(getorset)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -1809,9 +1671,9 @@ def test_get_set_map(getorset='get'):
 def test_check_map():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)    
+    Robot = action(q)    
     Robot.check_map()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -1820,9 +1682,9 @@ def test_check_map():
 def test_go_to_CSC():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)   
+    Robot = action(q)   
     #确保道具栏没有被收起来
     while True:
         #self.queue.put("check")
@@ -1859,9 +1721,9 @@ def test_go_to_CSC():
 def test_go_to_CSJW():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)    
+    Robot = action(q)    
     Robot.go_to_CSJW() 
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -1871,9 +1733,9 @@ def test_go_to_CSJW():
 def test_x_ocrtext():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)    
+    Robot = action(q)    
     while True:
         reponse = Robot.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
         if  "长寿郊外" in reponse:
@@ -1889,9 +1751,9 @@ def test_x_ocrtext():
 def test_tap():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)   
+    Robot = action(q)   
     time.sleep(1)
     Robot.click(125,45)
     time.sleep(1)        
@@ -1904,9 +1766,9 @@ def test_tap():
 def test_DTJW():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)   
+    Robot = action(q)   
     Robot.TotheDTJW()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -1919,9 +1781,9 @@ def test_display():
 def test_NPC_HYS():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)   
+    Robot = action(q)   
 
     Robot.mask_(True)
     while True:
@@ -1950,9 +1812,9 @@ def test_NPC_HYS():
 def test_NPC_YZLB():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     Robot.mask_(True)
     while True:
         status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.map_feature["驿站老板"]["坐标"])
@@ -1980,9 +1842,7 @@ def test_NPC_YZLB():
 def test_ToTheDHW():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
-    m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     Robot.ToTheDHW()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -1993,9 +1853,9 @@ def test_ToTheDHW():
 def test_ToTheJNYW():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)           
+    Robot = action(q)           
     Robot.ToTheJNYW()        
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2005,9 +1865,9 @@ def test_ToTheJNYW():
 def test_TotheQLS():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     Robot.TotheQLS()    
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2018,9 +1878,9 @@ def test_TotheQLS():
 def test_TotheSTL():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)          
+    Robot = action(q)          
     Robot.TotheSTL()    
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2031,9 +1891,9 @@ def test_TotheSTL():
 def test_NPC_HGSTD():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)   
+    Robot = action(q)   
     Robot.mask_(True)
     while True:
         status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.map_feature["花果山土地"]["坐标"])
@@ -2061,9 +1921,9 @@ def test_NPC_HGSTD():
 def test_NPC_CSXN():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)   
+    Robot = action(q)   
     Robot.mask_(True)
     while True:
         status,ag= Robot.findMultiColorInRegionFuzzyByTable(da.map_feature["传送仙女"]["坐标"])
@@ -2092,9 +1952,9 @@ def test_NPC_CSXN():
 def test_TotheBJLZ():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)      
+    Robot = action(q)      
     Robot.TotheBJLZ()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2104,9 +1964,9 @@ def test_TotheBJLZ():
 def test_ToDTGJ():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)      
+    Robot = action(q)      
     Robot.ToDTGJ()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2116,9 +1976,9 @@ def test_ToDTGJ():
 def test_ToThePTS():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)        
+    Robot = action(q)        
     Robot.ToThePTS()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2128,9 +1988,9 @@ def test_ToThePTS():
 def test_ToTheWZG():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)        
+    Robot = action(q)        
     Robot.ToTheWZG()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2140,9 +2000,9 @@ def test_ToTheWZG():
 def test_TotheJYC():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)        
+    Robot = action(q)        
     Robot.TotheJYC()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2152,9 +2012,9 @@ def test_TotheJYC():
 def test_ToTheXLNG():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     Robot.ToTheXLNG()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2163,9 +2023,9 @@ def test_ToTheXLNG():
 def test_orb(b_only_load_config=False):
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     while True:
         value = input("是否加载配置文件并忽略道具栏读取图信息(Y/N):")
         if 'Y' == value.upper():
@@ -2184,9 +2044,9 @@ def test_orb(b_only_load_config=False):
 def test_box():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)        
+    Robot = action(q)        
     status,x,y= Robot.findMultiColorInRegionFuzzy(da.prompt_box["挖图失败"]["基点"],da.prompt_box["挖图失败"]["偏移"], 80, 283,18,781,51)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2196,9 +2056,9 @@ def test_box():
 def test_openmap():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     Robot.click(125,45)
     time.sleep(0.5)
     while True:
@@ -2218,9 +2078,9 @@ def test_openmap():
 def test_config():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     load_dict = Robot.config_load()
     maps =  load_dict["tu"]
     if isinstance(maps,list):
@@ -2235,9 +2095,9 @@ def test_config():
 def test_fire():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     Robot.queue.put("check")
     Robot.queue.join()
     end = time.time()
@@ -2248,9 +2108,9 @@ def test_fire():
 def test_openprop():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     Robot.open_prop()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2260,9 +2120,9 @@ def test_openprop():
 def test_safe_prompt():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     while True:
         pass
     
@@ -2271,20 +2131,17 @@ def test_safe_prompt():
 def test_tantan():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     while True:
         time.sleep(5)
         Robot.click(552,1240)
 #抢红包
-#@func_set_timeout(60*3) 
-@with_goto
 def Get_Gift1(Robot):
     first = False 
     bJoin = False
     bfGITFT = False
-    label .start
     while True:
         if first:
             pass
@@ -2353,14 +2210,15 @@ def Get_Gift1(Robot):
             else:
                 Robot.click(636,157)
                 time.sleep(3)
-                goto .start
+                break
+        continue
                 
 def Get_Gift():
     # start = time.time()
     q = queue.Queue()
     # m1 = rh.MyThread(q,zoom_count=zoom_count)
     # m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     while True:
         status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["直播动态界面"]["基点"],da.tantan["直播动态界面"]["偏移"], 90,16,56,87,99)
         if status == State.NOTMATCH:
@@ -2380,21 +2238,25 @@ def Get_Gift():
             Robot.click(358,199)
             time.sleep(1)
 
+
+
+
 #test_save_the_prize 测试存物品            
 def test_save_the_prize():
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q,zoom_count=zoom_count)
+    m1 = rh.MyThread(q)
     m1.start()
-    Robot = action(q,zoom_count=zoom_count)
+    Robot = action(q)
     Robot.save_the_prize()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
-    Robot.quit()    
-        
+    Robot.quit()
+    
+    
 def main():
-    #test_ToTheDHW()
+    test_ToTheDHW()
     #test_orb(b_only_load_config=False)
-    test_save_the_prize()
+    #test_save_the_prize()
 if __name__ == "__main__":
     main()
