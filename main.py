@@ -40,30 +40,28 @@ class action(rb.Robot):
             raise("参数2不是队列")
         
     def flag_transfer(self,color):
+        time.sleep(0.5)
+        self.click(653,132)
+        time.sleep(0.5)
         while True:
-            time.sleep(0.5)
-            self.click(653,132)
-            time.sleep(0.5)
-            #pl = self.Print_screen()
-            #self.show(tpl)
             if color == "red":
-                status = self.Found_do(da.utils["红旗"]["基点"],da.utils["红旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="红旗")
+                status = self.Found_do(da.utils["红旗"]["基点"],da.utils["红旗"]["偏移"], 70,592,170, 1057,538,ischlik=2,name="红旗")
                 if status == status.OK:
                     break
             elif color == "yellow":
-                status = self.Found_do(da.utils["黄旗"]["基点"],da.utils["黄旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="黄旗")
+                status = self.Found_do(da.utils["黄旗"]["基点"],da.utils["黄旗"]["偏移"], 70,592,170, 1057,538,ischlik=2,name="黄旗")
                 if status == status.OK:
                     break
             elif color == "blue":
-                status = self.Found_do(da.utils["蓝旗"]["基点"],da.utils["蓝旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="蓝旗")
+                status = self.Found_do(da.utils["蓝旗"]["基点"],da.utils["蓝旗"]["偏移"], 70,592,170, 1057,538,ischlik=2,name="蓝旗")
                 if status == status.OK:
                     break
             elif color == "green":
-                status = self.Found_do(da.utils["绿旗"]["基点"],da.utils["绿旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="绿旗")
+                status = self.Found_do(da.utils["绿旗"]["基点"],da.utils["绿旗"]["偏移"], 70,592,170, 1057,538,ischlik=2,name="绿旗")
                 if status == status.OK:
                     break
             elif color == "white":
-                status = self.Found_do(da.utils["白旗"]["基点"],da.utils["白旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="白旗")
+                status = self.Found_do(da.utils["白旗"]["基点"],da.utils["白旗"]["偏移"], 70,592,170, 1057,538,ischlik=2,name="白旗")
                 if status == status.OK:
                     break
             else:
@@ -72,28 +70,29 @@ class action(rb.Robot):
                 time.sleep(0.5)
                 while True:
                     if color == "red":
-                        status = self.Found_do(da.utils["红旗"]["基点"],da.utils["红旗"]["偏移"], 90,592,170, 1057,538,ischlik=2,name="红旗")
+                        status = self.Found_do(da.utils["红旗"]["基点"],da.utils["红旗"]["偏移"], 70,592,170, 1057,538,ischlik=2,name="红旗")
                         if status == status.OK:
-                            break
+                            cbreakon
                     elif color == "yellow":
-                        status = self.Found_do(da.utils["黄旗"]["基点"],da.utils["黄旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="黄旗")
+                        status = self.Found_do(da.utils["黄旗"]["基点"],da.utils["黄旗"]["偏移"], 70,592,170, 1057,538,ischlik=3,name="黄旗")
                         if status == status.OK:
                             break
                     elif color == "blue":
-                        status = self.Found_do(da.utils["蓝旗"]["基点"],da.utils["蓝旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="蓝旗")
+                        status = self.Found_do(da.utils["蓝旗"]["基点"],da.utils["蓝旗"]["偏移"], 70,592,170, 1057,538,ischlik=3,name="蓝旗")
                         if status == status.OK:
                             break
                     elif color == "green":
-                        status = self.Found_do(da.utils["绿旗"]["基点"],da.utils["绿旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="绿旗")
+                        status = self.Found_do(da.utils["绿旗"]["基点"],da.utils["绿旗"]["偏移"], 70,592,170, 1057,538,ischlik=3,name="绿旗")
                         if status == status.OK:
                             break
                     elif color == "white":
-                        status = self.Found_do(da.utils["白旗"]["基点"],da.utils["白旗"]["偏移"], 90,592,170, 1057,538,ischlik=3,name="白旗")
+                        status = self.Found_do(da.utils["白旗"]["基点"],da.utils["白旗"]["偏移"], 70,592,170, 1057,538,ischlik=3,name="白旗")
                         if status == status.OK:
                             break
                     else:
                         print("not found flags")
                         return State.NOTMATCH
+                continue
         return State.OK
         
         
@@ -198,7 +197,8 @@ class action(rb.Robot):
                 self.click(convert_pos[0]+5,convert_pos[1]+5)
                 time.sleep(0.5)
                 tpl = self.Print_screen()
-                _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"], 75, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
+                #self.show(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]])
+                _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"], 45, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
                 #self.show(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]])
                 # x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target,0.13)
                 if x != -1:
@@ -209,7 +209,7 @@ class action(rb.Robot):
                        else:
                            time.sleep(1)
                     #检测字体
-                    data = self.x_Ocrtext(da.ditu,"00E804,011805#03DC07,032006#08DD0B,072009",297,338,394,366,similarity=0.4)
+                    data = self.x_Ocrtext(da.ditu,"00E804,011805#03DC07,032006#08DD0B,072009",297,338,394,366,similarity=0.5)
                     print(data)                    
                     if data:
                         if len(data)>3:
@@ -340,7 +340,7 @@ class action(rb.Robot):
                     
     def discover_feixingfu(self):
         status = State.NOTMATCH
-        status = self.Found_do(da.utils["飞行符"]["基点"],da.utils["飞行符"]["偏移"], 80,592,170, 1057,538,name="道具栏飞行符")
+        status = self.Found_do(da.utils["飞行符"]["基点"],da.utils["飞行符"]["偏移"], 70,592,170, 1057,538,name="道具栏飞行符")
         return status
     
     def no_prop(self):
@@ -675,13 +675,13 @@ class action(rb.Robot):
                 
         self.mask_(True)
         while True:
-            status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["驿站老板"]["坐标"])
-            if status == status.NOTMATCH:
-                time.sleep(0.5)
-            else:
-                self.click(640,405)
-                time.sleep(0.5)
-                break
+            # status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["驿站老板"]["坐标"])
+            # if status == status.NOTMATCH:
+            #     time.sleep(0.5)
+            # else:
+            self.click(640,405)
+            time.sleep(0.5)
+            break
         while True:
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["我要去"]["坐标"])
             if status == status.NOTMATCH:
@@ -948,6 +948,7 @@ class action(rb.Robot):
 
 
     def orb_(self,place,place_x,place_y,x1,y1,x2,y2):
+        bF = True
         time.sleep(1)
         self.open_map()
         time.sleep(1)
@@ -956,31 +957,36 @@ class action(rb.Robot):
         time.sleep(1)
         #判断提示框是否出现
         while True:
-            status,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"], 70,x1-5,y1-5,x2,y2)
+            status,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"], 45,x1-5,y1-5,x2,y2)
             if status==status.OK:
                 self.click(x1+5,y1+5)
                 self.click(x1+5,y1+5)
                 self.click(x1+5,y1+5)
+                self.click(x1+5,y1+5)
+                bF=False
             else:
-                while True:
-                    status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["打开地图界面"]["基点"],da.prompt_box["打开地图界面"]["偏移"], 80,  1029,   22, 1098,94)
-                    if status == State.OK:
-                        self.click(1072,54) #界面返回 
-                        time.sleep(0.5)
-                        break
-                while True:
-                    time.sleep(1)
-                #没回到主界面直接代表进入战斗界面
-                    status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian,degree=80)
-                    if status==status.NOTMATCH:
-                        self.queue.put("check")
-                        self.queue.join()
-                        time.sleep(2)
-                        break
-                    else:
-                        break
-                time.sleep(0.5)
-                return
+                if bF:
+                    continue
+                else:
+                    while True:
+                        status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["打开地图界面"]["基点"],da.prompt_box["打开地图界面"]["偏移"], 80,  1029,   22, 1098,94)
+                        if status == State.OK:
+                            self.click(1072,54) #界面返回 
+                            time.sleep(0.5)
+                            break
+                    while True:
+                        time.sleep(1)
+                    #没回到主界面直接代表进入战斗界面
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian,degree=80)
+                        if status==status.NOTMATCH:
+                            self.queue.put("check")
+                            self.queue.join()
+                            time.sleep(2)
+                            break
+                        else:
+                            break
+                    time.sleep(0.5)
+                    return
         
         
     def Orb(self,b_only_load_config=False):
@@ -2023,9 +2029,9 @@ def test_ToTheXLNG():
 def test_orb(b_only_load_config=False):
     start = time.time()
     q = queue.Queue()
-    m1 = rh.MyThread(q)
-    m1.start()
     Robot = action(q)
+    m1 = rh.MyThread(q,Robot)
+    m1.start()
     while True:
         value = input("是否加载配置文件并忽略道具栏读取图信息(Y/N):")
         if 'Y' == value.upper():
@@ -2255,8 +2261,7 @@ def test_save_the_prize():
     
     
 def main():
-    test_ToTheDHW()
-    #test_orb(b_only_load_config=False)
-    #test_save_the_prize()
+    test_orb(b_only_load_config=False)
+    
 if __name__ == "__main__":
     main()

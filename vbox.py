@@ -1,7 +1,9 @@
+from ast import While
 import remotevbox
 from PIL import Image
 from io import BytesIO
-
+import queue
+import time
 
 from remotevbox.exceptions import (
     MachineCloneError,
@@ -33,7 +35,11 @@ class Vbox:
     def __init__(self) -> None:
         self.vbox = None
         self.machine = None
-        
+        self.queue = queue.Queue()
+        self.vs = None
+        self.fps = None
+
+
     def __del__(self) -> None:
         print("Quit Vbox")
         self.vbox.disconnect()
@@ -41,25 +47,26 @@ class Vbox:
     def init(self)-> None:
         self.vbox = remotevbox.connect("http://127.0.0.1:18083", "wrench", "ljl767689")
         machines = self.vbox.list_machines()
-        # for m in self.machines:
-        #     print(m)
         self.machine = self.vbox.get_machine(machines[0])
         self.machine.launch()
+        self.machine.lock()
+
         
     def lock(self):
         self.machine.lock()
         
         
     def screenshots(self):
-        try:
-            self.screenshot_data = self.machine.take_screenshot_to_bytes()
-        except WrongLockState as e:
-            self.machine.lock()
-            self.screenshot_data = self.machine.take_screenshot_to_bytes()
-        #bytes_stream = BytesIO(self.screenshot_data)
-        #roiimg = Image.open(bytes_stream)
+        self.screenshot_data = self.machine.take_screenshot_to_bytes()
         return self.screenshot_data
-        #roiimg.show()
+
+    def screenshots_loop(self):
+        while True:
+            if not self.queue.empty():
+                items = self.queue.get(timeout=0.2)
+                self.screenshot_data = self.machine.take_screenshot_to_bytes()
+                self.queue.task_done()
+                
     def put_mouse_event_absolute(self,
         x,
         y,
@@ -68,6 +75,8 @@ class Vbox:
         left_pressed=True,
         right_pressed=False,
         middle_pressed=False,)->None:
+        x=int(x)
+        y=int(y)
         self.machine.put_mouse_event_absolute(x,
                     y,
                     dz,
@@ -75,13 +84,7 @@ class Vbox:
                     left_pressed=left_pressed,
                     right_pressed=right_pressed,
                     middle_pressed=middle_pressed)
-        self.machine.put_mouse_event_absolute(x,
-                    y,
-                    dz,
-                    dw,
-                    left_pressed=left_pressed,
-                    right_pressed=right_pressed,
-                    middle_pressed=middle_pressed)        
+        
         self.machine.put_mouse_event_absolute(x,
                     y,
                     dz,
@@ -89,4 +92,4 @@ class Vbox:
                     left_pressed=False,
                     right_pressed=right_pressed,
                     middle_pressed=middle_pressed)
-        
+        time.sleep(0.1)

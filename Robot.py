@@ -92,7 +92,9 @@ class Robot:
         y = None
         tolerance = 100 - degree
         r,g,b  = Hex_to_RGB(color)
+
         tpl = self.Print_screen()
+
         #self.show(tpl)
         posandcolor_list = list()
         posandcolors_param = posandcolor.split(",")
@@ -130,7 +132,7 @@ class Robot:
                     return State.OK,x-x1,y-y1
         return State.NOTMATCH,-1,-1
     
-    def findMultiColorInRegionFuzzyByTable(self,t_Set,degree=90,x1=None,y1=None,x2=None,y2=None):
+    def findMultiColorInRegionFuzzyByTable(self,t_Set,degree=60,x1=None,y1=None,x2=None,y2=None):
         tolerance = 100 - degree
         tpl = None
         tpl = self.Print_screen()
@@ -164,9 +166,12 @@ class Robot:
 
             
     def Print_screen(self):
+        #start = time.time()
         signedIntsArray = self.vbox.screenshots()
         image = Image.open(io.BytesIO(signedIntsArray))
         img = cv2.cvtColor(np.asarray(image),cv2.COLOR_RGB2BGR)
+        #end = time.time()
+        #print("Print_screen (with compilation) = %s" % (end - start))
         return img
     
     
@@ -300,7 +305,7 @@ class Robot:
                         self.click(x,y)
                         time.sleep(1)
                     else:
-                        self.click(1420,829)
+                        self.click(1230,662)
                         time.sleep(3)
                         break
                 break
@@ -336,6 +341,7 @@ class Robot:
     
     def x_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2,similarity=0.2):
         #ret = re.findall(r"@(.*?)\$",tab,re.I|re.M)
+        image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
         for tab in tabs:
             if "@" in tab:
                 data_tuple = tab.split("@")[1]
@@ -352,9 +358,6 @@ class Robot:
                     x =  int(data_tuple[4])
                     y = int(data_tuple[3])
                     image_array = binstr_to_nparray(hexstr_2,x,y)
-                    #self.show(image_array)
-                    image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
-                    #self.show(image_array1)
                     new_X_t = self.matchTemplate(image_array1,image_array,similarity)
                     #print(new_X_t)
                     if new_X_t !=(-1,-1):
@@ -458,7 +461,7 @@ class Robot:
             if status==status.NOTMATCH:
                 pass
             else:
-                for i in  range(0,ischlik):
+                for _ in range(0,ischlik):
                     self.click(x1+x,y1+y)
                 print("found {0} ==> x:{1} y:{2}".format(name,x,y))
                 break
