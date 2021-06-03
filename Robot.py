@@ -138,7 +138,6 @@ class Robot:
         tpl = self.Print_screen()
         state = State.NOTMATCH
         for x,y,rgb_16_hex in t_Set:
-            #str_rgb = str(rgb_16_hex)
             if isinstance(rgb_16_hex,int):
                 rgb_16_hex = '0x{:06X}'.format(rgb_16_hex)
             exR = int(rgb_16_hex[2:4],16)
@@ -263,52 +262,10 @@ class Robot:
         pass
         
     
-    def click(self,x:int=None,y:int=None,DOUBLE=False):
+    def click(self,x:int=None,y:int=None,times=0.1):
         """Click at pixel xy."""
-        self.vbox.put_mouse_event_absolute(x,y)
-        
-    def check_fire(self):
-        tpl = self.Print_screen()
-        target = cv2.imread("./images/check_fire.jpg")
-        x,y = self.matchTemplate(tpl,target,0.09)
-        if x == -1:
-            return False
-        else:
-            return True
+        self.vbox.put_mouse_event_absolute(x,y,times=float(times))
 
-    #检测宝宝是否健康            
-    def check_thePetHealth(self):
-        while True:
-            status,ag= self.findMultiColorInRegionFuzzyByTable(da.check_pet_HP)
-            if status == State.NOTMATCH:
-                self.click(1575,14)
-                time.sleep(1)
-                self.click(1224,156) 
-            else:
-                break
-
-    def fire(self):
-        while True:
-            time.sleep(1)
-            tpl = self.Print_screen()
-            target = cv2.imread("./images/auto.jpg")
-            target1 = cv2.imread("./images/autoing.png")
-            x,y = self.matchTemplate(tpl,target,0.1)
-            if x == -1:
-                break
-            else:
-                print("点击自动战斗 posx:{0} posy:{1}".format(x,y))
-                while True:
-                    tpl = self.Print_screen()
-                    _x,_y = self.matchTemplate(tpl,target1,0.1)
-                    if _x == -1:
-                        self.click(x,y)
-                        time.sleep(1)
-                    else:
-                        self.click(1230,662)
-                        time.sleep(3)
-                        break
-                break
                         
     def __Ocr(self,scx_rgb,x1,y1,x2,y2):
         tpl = self.Print_screen()        
@@ -461,8 +418,12 @@ class Robot:
             if status==status.NOTMATCH:
                 pass
             else:
-                for _ in range(0,ischlik):
-                    self.click(x1+x,y1+y)
+                try:
+                    for _ in range(0,ischlik):
+                        print("click")
+                        self.click(x1+x,y1+y)
+                except:
+                    pass
                 print("found {0} ==> x:{1} y:{2}".format(name,x,y))
                 break
         return status
@@ -480,8 +441,8 @@ class Robot:
                 x1,y1,x2,y2,
                 tab,blist,ischlik,name))
         except FunctionTimedOut:
-            print ("获取时间超时\n")
+            pass
+            #print ("获取时间超时\n")
         except Exception as e:
             pass
         return doitReturnValue
-    

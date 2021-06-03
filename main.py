@@ -117,7 +117,7 @@ class action(rb.Robot):
     def map_items(self,convert_pos:list,da_items:dict):
         time.sleep(0.1)
         #print("check items_name:{0}".format(da_items["物品名"]))
-        _,x,y = self.findMultiColorInRegionFuzzy(da_items["基点"], da_items["偏移"], 75, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
+        _,x,y = self.findMultiColorInRegionFuzzy(da_items["基点"], da_items["偏移"], 80, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
         if x != -1:
             print("found items_name:{0} x:{1} y:{2}".format(da_items["物品名"],x,y)) 
             return True
@@ -127,6 +127,26 @@ class action(rb.Robot):
     发现道具栏物品，如果是非识别物品，先存入仓库中
     '''
     def find_items(self):
+        self.ToTheXLNG()
+        time.sleep(0.5)
+        self.mask_(True)
+        time.sleep(1)
+        while True:
+            if self.rgb_array(da.cangku["西凉_仓库管理员"])==State.OK:
+                self.click(642,110)
+                break
+            else:
+                time.sleep(0.5)
+        time.sleep(1)
+        while True:
+            if self.rgb_array(da.cangku["仓库操作"])==State.OK:
+                self.click(1017,424)
+                break
+            else:
+                time.sleep(0.5) 
+        while True:
+            if self.rgb_array(da.cangku["仓库界面"])==State.OK:
+                break
         start_pos = ( 625,213,708,279)
         convert_pos = [ 625,213,708,279]
         for i in range(0,5):
@@ -161,6 +181,14 @@ class action(rb.Robot):
                         time.sleep(1.5)
                         self.click(convert_pos[0]+5,convert_pos[1]+5)
                         self.click(convert_pos[0]+5,convert_pos[1]+5)
+        print("退出到主界面")
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+            if status==status.NOTMATCH:
+                self.click(1075,59)
+                time.sleep(1.5)
+            else:
+                break
     
     '''
     在各主城增加了仓库管理员NPC，坐标分别为：长安城（346，244）、长安城（224，141）、建邺城（54，32)、傲来国（143，101）、长寿村（111，62）、朱紫国（126，90）
@@ -1213,7 +1241,6 @@ class action(rb.Robot):
                 time.sleep(0.5)
                 break
         while True:
-            #self.queue.put("check")
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.map_feature["我要去"]["坐标"])
             if status == status.NOTMATCH:
                 time.sleep(0.5)
@@ -1495,34 +1522,29 @@ class action(rb.Robot):
     
     #排序仓库顺序存图，取图
     def get_set_map(self,GetOrSet='get',togo=False):
-        if togo:
-            self.ToTheXLNG()
-            time.sleep(0.5)
-            self.mask_(True)
-            time.sleep(1)
-            while True:
-                if self.rgb_array(da.cangku["西凉_仓库管理员"])==State.OK:
-                    self.click(642,110)
-                    break
-                else:
-                    time.sleep(0.5)
-            time.sleep(1)
-            while True:
-                if self.rgb_array(da.cangku["仓库操作"])==State.OK:
-                    self.click(1017,424)
-                    break
-                else:
-                    time.sleep(0.5) 
-            while True:
-                if self.rgb_array(da.cangku["仓库界面"])==State.OK:
-                    break
+        while True:
+            if self.rgb_array(da.cangku["西凉_仓库管理员"])==State.OK:
+                self.click(642,110)
+                break
+            else:
+                time.sleep(0.5)
+        time.sleep(1)
+        while True:
+            if self.rgb_array(da.cangku["仓库操作"])==State.OK:
+                self.click(1017,424)
+                break
+            else:
+                time.sleep(0.5) 
+        while True:
+            if self.rgb_array(da.cangku["仓库界面"])==State.OK:
+                break
         if GetOrSet=='get':
             n,nn,nnn,nnnn=None,None,None,None
             time.sleep(1)
             map_number = 0
             while True:
                 time.sleep(1)
-                _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"],60,x1=140,y1=205,x2=587,y2=559)
+                _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"],50,x1=140,y1=205,x2=587,y2=559)
                 time.sleep(1)
                 if x !=-1:
                     time.sleep(0.5)
@@ -1661,14 +1683,14 @@ def test_check_pet_HP():
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
 
-#测试存图    
+#测试存图,取图    
 def test_get_set_map(getorset='get'):
     start = time.time()
     q = queue.Queue()
     m1 = rh.MyThread(q)
     m1.start()
     Robot = action(q)    
-    Robot.get_set_map(getorset)
+    Robot.get_set_map(getorset,True)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()  
@@ -2029,9 +2051,10 @@ def test_ToTheXLNG():
 def test_orb(b_only_load_config=False):
     start = time.time()
     q = queue.Queue()
-    Robot = action(q)
-    m1 = rh.MyThread(q,Robot)
+    m1 = rh.MyThread(q)
     m1.start()
+    Robot = action(q)
+    #get_set_map
     while True:
         value = input("是否加载配置文件并忽略道具栏读取图信息(Y/N):")
         if 'Y' == value.upper():
@@ -2042,7 +2065,13 @@ def test_orb(b_only_load_config=False):
             break
         else:
             continue
-    Robot.Orb(b_only_load_config)
+    while True:
+        #刷图
+        Robot.Orb(b_only_load_config)
+        #卖垃圾装备
+        Robot.save_the_prize()
+        #取图
+        Robot.get_set_map('get',False)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
@@ -2261,7 +2290,9 @@ def test_save_the_prize():
     
     
 def main():
-    test_orb(b_only_load_config=False)
+    #test_get_set_map()
+    test_fire()
+    #test_orb(b_only_load_config=False)
     
 if __name__ == "__main__":
     main()

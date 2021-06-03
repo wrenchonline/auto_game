@@ -74,7 +74,8 @@ class Vbox:
         dw=0,
         left_pressed=True,
         right_pressed=False,
-        middle_pressed=False,)->None:
+        middle_pressed=False,
+        times = 0.1)->None:
         x=int(x)
         y=int(y)
         self.machine.put_mouse_event_absolute(x,
@@ -92,4 +93,4 @@ class Vbox:
                     left_pressed=False,
                     right_pressed=right_pressed,
                     middle_pressed=middle_pressed)
-        time.sleep(0.1)
+        time.sleep(times)
