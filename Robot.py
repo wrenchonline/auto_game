@@ -3,7 +3,6 @@
 import cv2
 import numpy as np
 import io
-import time
 from ctypes import *
 from PIL import ImageGrab,Image
 import vbox

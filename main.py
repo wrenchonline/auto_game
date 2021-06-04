@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import Robot as rb
 import time
 from utils import *
@@ -963,7 +962,7 @@ class action(rb.Robot):
     def config_load(self):
         load_dict = None
         time.sleep(1)
-        with open("./角色信息.json", 'r',encoding="utf-8") as f:
+        with open("./player.json", 'r',encoding="utf-8") as f:
             load_dict  = json.load(f)
         return load_dict
 
@@ -971,7 +970,7 @@ class action(rb.Robot):
         load_dict = dict()
         #maps.remove(m)
         load_dict["tu"]=maps
-        with open("./角色信息.json", 'w',encoding="utf-8") as f:
+        with open("./player.json", 'w',encoding="utf-8") as f:
             json.dump(load_dict,f,ensure_ascii=False,indent = 4)
 
 
@@ -2054,7 +2053,6 @@ def test_orb(b_only_load_config=False):
     m1 = rh.MyThread(q)
     m1.start()
     Robot = action(q)
-    #get_set_map
     while True:
         value = input("是否加载配置文件并忽略道具栏读取图信息(Y/N):")
         if 'Y' == value.upper():
@@ -2065,12 +2063,12 @@ def test_orb(b_only_load_config=False):
             break
         else:
             continue
-    while True:
-        #刷图
+    for i in range(0,3):
+        #play by the maps
         Robot.Orb(b_only_load_config)
-        #卖垃圾装备
+        #store items
         Robot.save_the_prize()
-        #取图
+        #get maps
         Robot.get_set_map('get',False)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2249,10 +2247,7 @@ def Get_Gift1(Robot):
         continue
                 
 def Get_Gift():
-    # start = time.time()
     q = queue.Queue()
-    # m1 = rh.MyThread(q,zoom_count=zoom_count)
-    # m1.start()
     Robot = action(q)
     while True:
         status,x,y=Robot.findMultiColorInRegionFuzzy(da.tantan["直播动态界面"]["基点"],da.tantan["直播动态界面"]["偏移"], 90,16,56,87,99)
@@ -2290,9 +2285,8 @@ def test_save_the_prize():
     
     
 def main():
-    #test_get_set_map()
-    test_fire()
-    #test_orb(b_only_load_config=False)
+    #test_fire()
+    test_orb(b_only_load_config=False)
     
 if __name__ == "__main__":
     main()
