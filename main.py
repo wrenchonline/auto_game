@@ -13,14 +13,14 @@ import data as da
 
 
 utils_list = [
-    # da.utils["飞行符"],
-    # da.utils["红旗"],
-    # da.utils["绿旗"],
-    # da.utils["黄旗"],
-    # da.utils["白旗"],
-    # da.utils["红罗羹"],
+    da.utils["飞行符"],
+    da.utils["红旗"],
+    da.utils["绿旗"],
+    da.utils["黄旗"],
+    da.utils["白旗"],
+    da.utils["红罗羹"],
     da.utils["绿芦羹"],
-    #da.utils["摄妖香"]
+    da.utils["摄妖香"]
     ] 
 
 
@@ -116,7 +116,7 @@ class action(rb.Robot):
     def map_items(self,convert_pos:list,da_items:dict):
         time.sleep(0.1)
         #print("check items_name:{0}".format(da_items["物品名"]))
-        _,x,y = self.findMultiColorInRegionFuzzy(da_items["基点"], da_items["偏移"], 80, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
+        _,x,y = self.findMultiColorInRegionFuzzy(da_items["基点"], da_items["偏移"], 85, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
         if x != -1:
             print("found items_name:{0} x:{1} y:{2}".format(da_items["物品名"],x,y)) 
             return True
@@ -126,32 +126,32 @@ class action(rb.Robot):
     发现道具栏物品，如果是非识别物品，先存入仓库中
     '''
     def find_items(self):
-        # self.ToTheXLNG()
-        # time.sleep(0.5)
-        # self.mask_(True)
-        # time.sleep(1)
-        # while True:
-        #     if self.rgb_array(da.cangku["西凉_仓库管理员"])==State.OK:
-        #         self.click(642,110)
-        #         break
-        #     else:
-        #         time.sleep(0.5)
-        # time.sleep(1)
-        # while True:
-        #     if self.rgb_array(da.cangku["仓库操作"])==State.OK:
-        #         self.click(1017,424)
-        #         break
-        #     else:
-        #         time.sleep(0.5) 
-        # while True:
-        #     if self.rgb_array(da.cangku["仓库界面"])==State.OK:
-        #         break
+        self.ToTheXLNG()
+        time.sleep(0.5)
+        self.mask_(True)
+        time.sleep(1)
+        status = self.Found_do(da.utils["西梁仓库管理员"]["基点"],da.utils["西梁仓库管理员"]["偏移"], 
+                            80,0, 0,1279,719,
+                            ischlik=2,timeout=10,
+                            name="西梁仓库管理员")
+        if status == State.NOTMATCH:
+            raise 
+        time.sleep(1)
+        while True:
+            if self.rgb_array(da.cangku["仓库操作"])==State.OK:
+                self.click(1017,424)
+                break
+            else:
+                time.sleep(0.5) 
+        while True:
+            if self.rgb_array(da.cangku["仓库界面"])==State.OK:
+                break
         start_pos = ( 625,213,708,279)
         convert_pos = [ 625,213,708,279]
         for i in range(0,5):
             time.sleep(1)
-            convert_pos[0] = start_pos[0] + i*93
-            convert_pos[2] = start_pos[2] + i*93
+            convert_pos[0] = start_pos[0] + i*90
+            convert_pos[2] = start_pos[2] + i*90
             for j in range(0,4):
                 time.sleep(1)
                 convert_pos[1] = start_pos[1] + j*90
@@ -167,20 +167,26 @@ class action(rb.Robot):
                     continue
                 else:
                     #print("double click on the items bar i:{0} j:{1}".format(i,j)) 
-                    self.click(convert_pos[0]+5,convert_pos[1]+5)
-                    self.click(convert_pos[0]+5,convert_pos[1]+5)
-                    status = self.Found_do(da.utils["道具栏空白"]["基点"],da.utils["道具栏空白"]["偏移"], 
-                                           90,convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3],
-                                           ischlik=2,timeout=1.5,
-                                           name="道具栏空白")
-                    if status == status.OK: continue
-                    else:
-                        time.sleep(1.5)
-                        print("the blank items is not Found")
-                        self.click(366,621)
-                        time.sleep(1.5)
+                    while True:
                         self.click(convert_pos[0]+5,convert_pos[1]+5)
                         self.click(convert_pos[0]+5,convert_pos[1]+5)
+                        _x1 = convert_pos[0]+int((convert_pos[2]-convert_pos[0])/2)
+                        _y1 = convert_pos[1]+int((convert_pos[3]-convert_pos[1])/2)         
+                        status,ag= self.findMultiColorInRegionFuzzyByTable(((_x1,_y1,0xb8b0d8),))
+                        # status = self.Found_do(da.utils["道具栏空白"]["基点"],da.utils["道具栏空白"]["偏移"], 
+                        #                     100,convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3],
+                        #                     ischlik=2,timeout=1,
+                        #                     name="道具栏空白")
+                        if status == status.OK: 
+                            break
+                        else:
+                            time.sleep(1.5)
+                            print("the blank items is not Found")
+                            self.click(366,621)
+                            time.sleep(1.5)
+                            self.click(convert_pos[0]+5,convert_pos[1]+5)
+                            self.click(convert_pos[0]+5,convert_pos[1]+5)
+                    continue
         print("退出到主界面")
         while True:
             status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
@@ -1522,12 +1528,13 @@ class action(rb.Robot):
     
     #排序仓库顺序存图，取图
     def get_set_map(self,GetOrSet='get',togo=False):
-        while True:
-            if self.rgb_array(da.cangku["西凉_仓库管理员"])==State.OK:
-                self.click(642,110)
-                break
-            else:
-                time.sleep(0.5)
+        
+        status = self.Found_do(da.utils["西梁仓库管理员"]["基点"],da.utils["西梁仓库管理员"]["偏移"], 
+                            80,0, 0,1279,719,
+                            ischlik=2,timeout=10,
+                            name="西梁仓库管理员")
+        if status == State.NOTMATCH:
+            raise 
         time.sleep(1)
         while True:
             if self.rgb_array(da.cangku["仓库操作"])==State.OK:
@@ -1560,7 +1567,7 @@ class action(rb.Robot):
                     time.sleep(0.5)
                     self.click(360,624)
                     time.sleep(1)
-            self.click(1072,54) #界面返回  
+            self.click(1072,54) #界面返回
             time.sleep(0.5)
             self.mask_(False)
             while True:
@@ -2068,9 +2075,11 @@ def test_orb(b_only_load_config=False):
         #play by the maps
         #Robot.Orb(b_only_load_config)
         #store items
-        Robot.save_the_prize()
+        #Robot.save_the_prize()
+        Robot.mask_(True)
         #get maps
         Robot.get_set_map('get',False)
+        Robot.mask_(False)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()

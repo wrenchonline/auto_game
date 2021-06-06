@@ -85,7 +85,7 @@ class Vbox:
                     left_pressed=left_pressed,
                     right_pressed=right_pressed,
                     middle_pressed=middle_pressed)
-        
+        time.sleep(times)
         self.machine.put_mouse_event_absolute(x,
                     y,
                     dz,

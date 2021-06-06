@@ -94,7 +94,7 @@ class Robot:
         #color = rgb_to_hex(r,g,b)
         #print("color:",)) 
         tpl = self.Print_screen()
-
+        #self.show(tpl[213:279,997:1080])
         #self.show(tpl[y1:y2,x1:x2])
         posandcolor_list = list()
         posandcolors_param = posandcolor.split(",")
@@ -112,7 +112,7 @@ class Robot:
                 for p in posandcolor_list:
                     newY = int(p["py"]) + y
                     newX = int(p["px"]) + x
-                    _b,_g,_r = tpl[y,x]
+                    # _b,_g,_r = tpl[y,x]
                     #print("color{0} base_pos:{1} x:{2} y:{3} newX:{4} newY:{5}".format(color,rgb_to_hex((_r,_g,_b)),x,y,newX,newY))
                     __rgb_hex = p["rgb_hex"]
                     if newY < y1 or newY > y2:
@@ -181,7 +181,9 @@ class Robot:
         cv2.startWindowThread()
         cv2.imshow("Image",tpl)
         cv2.waitKey(0) 
-        cv2.destroyAllWindows()        
+        cv2.destroyAllWindows()
+    
+
 
 
     def matchTemplate(self,tpl,target,tolerance=0.2,getone=True):
