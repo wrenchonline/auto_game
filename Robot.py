@@ -91,26 +91,28 @@ class Robot:
         y = None
         tolerance = 100 - degree
         r,g,b  = Hex_to_RGB(color)
-
+        print("color:",rgb_to_hex((r,g,b))) 
         tpl = self.Print_screen()
 
-        #self.show(tpl)
+        #self.show(tpl[y1:y2,x1:x2])
         posandcolor_list = list()
         posandcolors_param = posandcolor.split(",")
+        for p in posandcolors_param:
+            __c = p.split("|")
+            px = __c[0]
+            py = __c[1]
+            rgb_hex = __c[2]
+            _tmp = {"px":int(px),"py":int(py),"rgb_hex":rgb_hex}
+            posandcolor_list.append(_tmp)
         state = State.OK
         pos_x_y_list = self.__findMultiColor(tpl,(r,g,b),tolerance,x1,y1,x2,y2)   
         if pos_x_y_list:
-            for p in posandcolors_param:
-                __c = p.split("|")
-                px = __c[0]
-                py = __c[1]
-                rgb_hex = __c[2]
-                _tmp = {"px":int(px),"py":int(py),"rgb_hex":rgb_hex}
-                posandcolor_list.append(_tmp)
             for x,y in pos_x_y_list:
                 for p in posandcolor_list:
-                    newY = p["px"] + y
-                    newX = p["py"] + x
+                    newY = int(p["py"]) + y
+                    newX = int(p["px"]) + x
+                    _b,_g,_r = tpl[y,x]
+                    #print("base_pos:{0} x:{1} y:{2} newX:{3} newY:{4}".format(rgb_to_hex((_r,_g,_b)),x,y,newX,newY))
                     __rgb_hex = p["rgb_hex"]
                     if newY < y1 or newY > y2:
                         state = State.NOTMATCH
@@ -121,9 +123,12 @@ class Robot:
                     b,g,r = tpl[newY,newX]
                     exR = int(__rgb_hex[2:4],16) 
                     exG = int(__rgb_hex[4:6],16) 
-                    exB = int(__rgb_hex[6:8],16) 
+                    exB = int(__rgb_hex[6:8],16)
+                    # print("target_pos:",rgb_to_hex((r,g,b))) 
+                    # print("pos:",rgb_to_hex((exR,exG,exB))) 
                     if (pixelMatchesColor((r, g, b),(exR,exG,exB),tolerance)):
                         state = State.OK
+                        #print("这个坐标OK:",rgb_to_hex((exR,exG,exB)))
                     else:
                         state = State.NOTMATCH
                         break
@@ -162,15 +167,12 @@ class Robot:
     def FC_Clicke(t_Set,x1,y1,x2,y2,R,bool,sim):
         pass
 
-            
+
     def Print_screen(self):
-        #start = time.time()
         signedIntsArray = self.vbox.screenshots()
-        image = Image.open(io.BytesIO(signedIntsArray))
-        img = cv2.cvtColor(np.asarray(image),cv2.COLOR_RGB2BGR)
-        #end = time.time()
-        #print("Print_screen (with compilation) = %s" % (end - start))
-        return img
+        png = Image.open(io.BytesIO(signedIntsArray))
+        #png.show()
+        return cv2.cvtColor(np.asarray(png,np.uint8), cv2.COLOR_BGR2RGB) 
     
     
     def show(self,tpl):

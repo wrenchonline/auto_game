@@ -90,6 +90,8 @@ class MyThread (threading.Thread,rb.Robot):
                         print("退出监控员")
                         self.queue.task_done()
                         break
+                else:
+                    time.sleep(5)
                 #检查安全令牌
                 # status,x,y=self.findMultiColorInRegionFuzzy(da.prompt_box["弹出令牌界面"]["基点"],da.prompt_box["弹出令牌界面"]["偏移"],80,1213,502, 1264,561)
                 # if status==status.NOTMATCH:

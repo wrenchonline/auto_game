@@ -57,7 +57,7 @@ class Vbox:
         
         
     def screenshots(self):
-        self.screenshot_data = self.machine.take_screenshot_to_bytes()
+        self.screenshot_data = self.machine.take_screenshot_to_bytes(image_format="PNG")
         return self.screenshot_data
 
     def screenshots_loop(self):

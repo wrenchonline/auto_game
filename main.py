@@ -13,14 +13,14 @@ import data as da
 
 
 utils_list = [
-    da.utils["飞行符"],
-    da.utils["红旗"],
-    da.utils["绿旗"],
-    da.utils["黄旗"],
-    da.utils["白旗"],
-    da.utils["红罗羹"],
+    # da.utils["飞行符"],
+    # da.utils["红旗"],
+    # da.utils["绿旗"],
+    # da.utils["黄旗"],
+    # da.utils["白旗"],
+    # da.utils["红罗羹"],
     da.utils["绿芦羹"],
-    da.utils["摄妖香"]
+    #da.utils["摄妖香"]
     ] 
 
 
@@ -126,34 +126,34 @@ class action(rb.Robot):
     发现道具栏物品，如果是非识别物品，先存入仓库中
     '''
     def find_items(self):
-        self.ToTheXLNG()
-        time.sleep(0.5)
-        self.mask_(True)
-        time.sleep(1)
-        while True:
-            if self.rgb_array(da.cangku["西凉_仓库管理员"])==State.OK:
-                self.click(642,110)
-                break
-            else:
-                time.sleep(0.5)
-        time.sleep(1)
-        while True:
-            if self.rgb_array(da.cangku["仓库操作"])==State.OK:
-                self.click(1017,424)
-                break
-            else:
-                time.sleep(0.5) 
-        while True:
-            if self.rgb_array(da.cangku["仓库界面"])==State.OK:
-                break
+        # self.ToTheXLNG()
+        # time.sleep(0.5)
+        # self.mask_(True)
+        # time.sleep(1)
+        # while True:
+        #     if self.rgb_array(da.cangku["西凉_仓库管理员"])==State.OK:
+        #         self.click(642,110)
+        #         break
+        #     else:
+        #         time.sleep(0.5)
+        # time.sleep(1)
+        # while True:
+        #     if self.rgb_array(da.cangku["仓库操作"])==State.OK:
+        #         self.click(1017,424)
+        #         break
+        #     else:
+        #         time.sleep(0.5) 
+        # while True:
+        #     if self.rgb_array(da.cangku["仓库界面"])==State.OK:
+        #         break
         start_pos = ( 625,213,708,279)
         convert_pos = [ 625,213,708,279]
         for i in range(0,5):
-            time.sleep(0.5)
+            time.sleep(1)
             convert_pos[0] = start_pos[0] + i*93
             convert_pos[2] = start_pos[2] + i*93
             for j in range(0,4):
-                time.sleep(0.5)
+                time.sleep(1)
                 convert_pos[1] = start_pos[1] + j*90
                 convert_pos[3] = start_pos[3] + j*90
                 self.click(convert_pos[0]+5,convert_pos[1]+5)
@@ -175,6 +175,7 @@ class action(rb.Robot):
                                            name="道具栏空白")
                     if status == status.OK: continue
                     else:
+                        time.sleep(1.5)
                         print("the blank items is not Found")
                         self.click(366,621)
                         time.sleep(1.5)
@@ -2065,7 +2066,7 @@ def test_orb(b_only_load_config=False):
             continue
     for i in range(0,3):
         #play by the maps
-        Robot.Orb(b_only_load_config)
+        #Robot.Orb(b_only_load_config)
         #store items
         Robot.save_the_prize()
         #get maps
