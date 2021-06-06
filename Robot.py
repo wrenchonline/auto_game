@@ -91,7 +91,8 @@ class Robot:
         y = None
         tolerance = 100 - degree
         r,g,b  = Hex_to_RGB(color)
-        print("color:",rgb_to_hex((r,g,b))) 
+        #color = rgb_to_hex(r,g,b)
+        #print("color:",)) 
         tpl = self.Print_screen()
 
         #self.show(tpl[y1:y2,x1:x2])
@@ -112,7 +113,7 @@ class Robot:
                     newY = int(p["py"]) + y
                     newX = int(p["px"]) + x
                     _b,_g,_r = tpl[y,x]
-                    #print("base_pos:{0} x:{1} y:{2} newX:{3} newY:{4}".format(rgb_to_hex((_r,_g,_b)),x,y,newX,newY))
+                    #print("color{0} base_pos:{1} x:{2} y:{3} newX:{4} newY:{5}".format(color,rgb_to_hex((_r,_g,_b)),x,y,newX,newY))
                     __rgb_hex = p["rgb_hex"]
                     if newY < y1 or newY > y2:
                         state = State.NOTMATCH
