@@ -352,7 +352,7 @@ class action(rb.Robot):
                 break
         print("监控坐标")
         while True:
-            pos = self.Ocrtext(da.pos_feature,"CFE3E9,311D17#F8DDCE,072331",100,60,206,85,M=0.26)
+            pos = self.Ocrtext(da.pos_feature,"CFE3E9,311D17#F8DDCE,072331",100,60,206,85,M=0.25)
             if len(pos):
                 #pos = pos[0]["text"]
                 if pos[0] == "?":
@@ -504,8 +504,6 @@ class action(rb.Robot):
             time.sleep(1)
             self.open_map()
             time.sleep(1)        
-            #if self.rgb_array(da.map_feature["朱紫国"])==State.OK:
-            
             self.tap_("朱紫国",6,4)   
             time.sleep(0.5)
             
@@ -1792,7 +1790,7 @@ def test_tap():
     time.sleep(1)
     Robot.click(125,45)
     time.sleep(1)        
-    Robot.tap_("大唐境外",633,76)
+    Robot.tap_("北俱芦洲",108,42)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
@@ -2073,9 +2071,11 @@ def test_orb(b_only_load_config=False):
             continue
     for i in range(0,3):
         #play by the maps
-        #Robot.Orb(b_only_load_config)
+        Robot.Orb(b_only_load_config)
         #store items
-        #Robot.save_the_prize()
+        Robot.mask_(True)
+        Robot.save_the_prize()
+        Robot.mask_(False)
         Robot.mask_(True)
         #get maps
         Robot.get_set_map('get',False)
@@ -2296,7 +2296,8 @@ def test_save_the_prize():
     
 def main():
     #test_fire()
-    test_orb(b_only_load_config=False)
+    test_tap()
+    #test_orb(b_only_load_config=False)
     
 if __name__ == "__main__":
     main()

@@ -32,12 +32,14 @@ from remotevbox.exceptions import (
 
 class Vbox:
     
-    def __init__(self) -> None:
+    def __init__(self,name="wrench",password="ljl767689") -> None:
         self.vbox = None
         self.machine = None
         self.queue = queue.Queue()
         self.vs = None
         self.fps = None
+        self.name = name
+        self.password = password
 
 
     def __del__(self) -> None:
@@ -45,7 +47,7 @@ class Vbox:
         self.vbox.disconnect()
         
     def init(self)-> None:
-        self.vbox = remotevbox.connect("http://127.0.0.1:18083", "wrench", "ljl767689")
+        self.vbox = remotevbox.connect("http://127.0.0.1:18083", self.name, self.password)
         machines = self.vbox.list_machines()
         self.machine = self.vbox.get_machine(machines[0])
         self.machine.launch()
