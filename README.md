@@ -49,7 +49,7 @@ ljl260435988@gmail.com
 
  
 
-# 使用说明s
+# instructions
 
 1.Init object
 ```python
@@ -57,7 +57,7 @@ blRobot=Robot()
 blRobot.Get_GameHwnd(Simulator_Name="vbox",game_width=1280,game_height=720)
 ```
 
-
+2.example
 
 ### The Function Ocrtext
 ```python
