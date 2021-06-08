@@ -1790,7 +1790,7 @@ def test_tap():
     time.sleep(1)
     Robot.click(125,45)
     time.sleep(1)        
-    Robot.tap_("北俱芦洲",108,42)
+    Robot.tap_("建邺城",220,57)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()

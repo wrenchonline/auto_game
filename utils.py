@@ -35,8 +35,16 @@ class State(Enum):
     ROLLBACK = 3
     NOTMATCH = 4
     
+ascii_char = list("$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. ")  
 
-    
+#将256灰度映射到70个字符上  
+def get_char(r,g,b,alpha=256):#alpha透明度  
+    if alpha==0:  
+        return ' '
+    length=len(ascii_char)  
+    gray=int(0.2126*r+0.7152*g+0.0722*b)#计算灰度  
+    unit=(256.0+1)/length  
+    return ascii_char[int(gray/unit)]#不同的灰度对应着不同的字符 
     
     
 #rgb误差函数，反正是从pyscreeze这上面抄的魔改的

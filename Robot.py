@@ -383,7 +383,14 @@ class Robot:
                 n = end
                 if end - start > 1:
                     cj = image_array1[1:height+2, start:end+1]
-                    #
+                    im = Image.fromarray(np.uint8(cj)).convert('RGB')
+                    txt=""  
+                    for i in range(height+2-3):  
+                        for j in range(end+1-start):  
+                            txt+=get_char(*im.getpixel((j,i)))  
+                        txt+='\n'  
+                    print (txt)
+
                     #self.show(cj)
                     bno_found = True
                     for tab in tabs:
@@ -402,13 +409,15 @@ class Robot:
                                 x = int(data_tuple[4])
                                 y = int(data_tuple[3])
                                 image_array = binstr_to_nparray(hexstr_2,x,y)
+
                                 new_X_t = self.matchTemplate(cj,image_array,M,getone=True)
                                 if new_X_t !=(-1,-1):
                                     strs += word 
                                     bno_found = False
                                     break
                     if bno_found:
-                       strs += "?"                                            
+                       strs += "?"
+        print("当前字符串:",strs)
         return strs
     
     
