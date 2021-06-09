@@ -266,6 +266,7 @@ class action(rb.Robot):
                         else:
                                 pos = self.Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
                                                 ,370,339,485,364,M=0.2)
+                                
                                 print("postr:",pos)
                                 if len(pos):
                                     if pos[0] == "?":
@@ -1790,7 +1791,7 @@ def test_tap():
     time.sleep(1)
     Robot.click(125,45)
     time.sleep(1)        
-    Robot.tap_("建邺城",220,57)
+    Robot.tap_("北俱芦洲",166,2)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
@@ -2296,8 +2297,8 @@ def test_save_the_prize():
     
 def main():
     #test_fire()
-    test_tap()
-    #test_orb(b_only_load_config=False)
+    #test_tap()
+    test_orb(b_only_load_config=False)
     
 if __name__ == "__main__":
     main()

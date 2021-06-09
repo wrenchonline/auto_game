@@ -387,6 +387,7 @@ class Robot:
                     #         txt+=cxzc
                     #         mdsad+=cxzc
                     #     txt+='\n'
+                    # #onecomp = im.size[0]*im.size[1] - len(hexstr_16_to_hexstr_2(ont)) #补码
                     # mdsad+='$'+ str(im.size[1]) + '$' + str(im.size[0])+'\n'
                     # with open('featrue.txt',"a") as f:
                     #     f.write(mdsad)
@@ -408,7 +409,7 @@ class Robot:
                                     #print("find it")
                                     if ok:
                                         bk = True
-                                    print(len(hexstr_2))
+                                    #print(len(hexstr_2))
                                 if "@" in tab:
                                     c = p_hexstr_2
                                     c += hexstr_2
