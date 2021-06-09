@@ -12,17 +12,6 @@ import data as da
 from func_timeout import FunctionTimedOut ,func_timeout
 
 
-def binstr_to_nparray(hex_2_str,abs_x,abs_y):
-    binary = np.zeros((abs_y,abs_x), dtype=np.uint8)
-    i = 0
-    for j in range(abs_x):
-        for k in range(abs_y):
-            if hex_2_str[i] == "0":
-                binary[k][j]=0
-            else:
-                binary[k][j]=255
-            i+=1
-    return binary
 
 
 class Robot:
@@ -373,6 +362,7 @@ class Robot:
         n = 1
         start = 1
         end = 2
+        ___i = 0
         while n < width - 2:
             n += 1
             if (white[n] if arg else black[n]) > (0.05 * white_max if arg else 0.05 * black_max):
@@ -383,15 +373,24 @@ class Robot:
                 n = end
                 if end - start > 1:
                     cj = image_array1[1:height+2, start:end+1]
-                    im = Image.fromarray(np.uint8(cj)).convert('RGB')
-                    txt=""  
-                    for i in range(height+2-3):  
-                        for j in range(end+1-start):  
-                            txt+=get_char(*im.getpixel((j,i)))  
-                        txt+='\n'  
-                    print (txt)
-
-                    #self.show(cj)
+                    ok = False
+                    if ___i == 6:
+                        ok = True
+                        #self.show(cj)
+                    ___i += 1
+                    # im = Image.fromarray(np.uint8(cj)).convert('RGB')
+                    # txt=""
+                    # mdsad=""  
+                    # for i in range(im.size[0]):  
+                    #     for j in range(im.size[1]):  
+                    #         cxzc = get_char(*im.getpixel((i,j)))
+                    #         txt+=cxzc
+                    #         mdsad+=cxzc
+                    #     txt+='\n'
+                    # mdsad+='$'+ str(im.size[1]) + '$' + str(im.size[0])+'\n'
+                    # with open('featrue.txt',"a") as f:
+                    #     f.write(mdsad)
+                    # print(txt)
                     bno_found = True
                     for tab in tabs:
                         if "@" in tab:
@@ -402,14 +401,25 @@ class Robot:
                             hex_str_16 = tab.split("$")[0]
                         data_tuple = data_tuple.split("$")
                         if len(data_tuple):
+                                bk = False
                                 p_hexstr_2 = data_tuple[0]
                                 hexstr_2 = hexstr_16_to_hexstr_2(hex_str_16)
-                                hexstr_2 += p_hexstr_2
+                                if hex_str_16 == "c00000c00000c1ff00c78000ec0000f80000f0000040000":
+                                    #print("find it")
+                                    if ok:
+                                        bk = True
+                                    print(len(hexstr_2))
+                                if "@" in tab:
+                                    c = p_hexstr_2
+                                    c += hexstr_2
+                                    hexstr_2 = c
                                 word = data_tuple[1]
                                 x = int(data_tuple[4])
                                 y = int(data_tuple[3])
                                 image_array = binstr_to_nparray(hexstr_2,x,y)
-
+                                if bk:
+                                    pass
+                                    #self.show(image_array)
                                 new_X_t = self.matchTemplate(cj,image_array,M,getone=True)
                                 if new_X_t !=(-1,-1):
                                     strs += word 

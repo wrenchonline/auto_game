@@ -2,6 +2,7 @@
 import string
 from enum import Enum
 import cv2
+import numpy as np
 
 
 # RGB格式颜色转换为16进制颜色格式
@@ -35,7 +36,7 @@ class State(Enum):
     ROLLBACK = 3
     NOTMATCH = 4
     
-ascii_char = list("$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. ")  
+ascii_char = list("0@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'.1")  
 
 #将256灰度映射到70个字符上  
 def get_char(r,g,b,alpha=256):#alpha透明度  
@@ -126,3 +127,16 @@ def pian_color(img):
     result = math.sqrt(da*da+db*db)/math.sqrt(msqA*msqA+msqB*msqB)
     print("d/m = %s"%result)
     
+def binstr_to_nparray(hex_2_str,abs_x,abs_y):
+    binary = np.zeros((abs_y,abs_x), dtype=np.uint8)
+    #print("hex_2_str:{0} len:{1}".format(hex_2_str,len(hex_2_str)))
+    #display(hex_2_str,abs_x,abs_y,"")
+    i = 0
+    for j in range(abs_x):
+        for k in range(abs_y):
+            if hex_2_str[i] == "0":
+                binary[k][j]=0
+            else:
+                binary[k][j]=255
+            i+=1
+    return binary
