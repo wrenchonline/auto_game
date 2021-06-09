@@ -62,7 +62,6 @@ blRobot.Get_GameHwnd(Simulator_Name="vbox",game_width=1280,game_height=720)
 ### The Function Ocrtext
 ```python
 xstr=blRobot.Ocrtext(test,"00E804,011805#03DC07,032006#08DD0B,072009",444,506,589,560)
-
 --------------------------
 pirnt("xstr=",xstr)
 xstr="helloWorld"
@@ -94,7 +93,7 @@ blRobot.click(125,33)
 ### How About use of tools and learn touchsprite syntax?
 Answer: The use of tools and learn touchsprite syntax.You need to be very good in Chinese to read the instructions on the website: [https://helpdoc.touchsprite.com/dev_docs/598.html](https://helpdoc.touchsprite.com/dev_docs/598.html).    
 Those tools were developed on Windows, so the experience on Linux was poor.
-At present, I can use Wine to successfully run the touchsprite ColorTools, but the Word Finding Tool cannot run successfully. At present, there is no convenient solution. I am waiting for the secondary development of new tools when I am free. If you're interested in wasting your time here, please contact me about your assistives development project, or give me a cup of coffee to keep me motivated.
+At present, I can use Wine to successfully run the touchsprite ColorTools, but the OCRTEXT Tool cannot run successfully. At present, there is no convenient solution. I am waiting for the secondary development of new tools when I am free. If you're interested in wasting your time here, please contact me about your assistives development project, or give me a cup of coffee to keep me motivated.
 
 
 
