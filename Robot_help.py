@@ -81,7 +81,12 @@ class MyThread (threading.Thread,rb.Robot):
                             else:
                                 while fire_end:
                                     print("战斗结束")
-                                    self.click(1104,589)
+                                    status = self.Found_do(da.utils["战斗取消"]["基点"],da.utils["战斗取消"]["偏移"], 
+                                                        80,0, 0,1279,719,
+                                                        ischlik=2,timeout=10,
+                                                        name="战斗取消")
+                                    if status == State.NOTMATCH:
+                                        raise 
                                     break
                                 if fire_end:
                                     break

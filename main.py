@@ -137,12 +137,12 @@ class action(rb.Robot):
         if status == State.NOTMATCH:
             raise 
         time.sleep(1)
-        while True:
-            if self.rgb_array(da.cangku["仓库操作"])==State.OK:
-                self.click(1017,424)
-                break
-            else:
-                time.sleep(0.5) 
+        status = self.Found_do(da.utils["仓库操作"]["基点"],da.utils["仓库操作"]["偏移"], 
+                            80,0, 0,1279,719,
+                            ischlik=2,timeout=10,
+                            name="仓库操作")
+        if status == State.NOTMATCH:
+            raise 
         while True:
             if self.rgb_array(da.cangku["仓库界面"])==State.OK:
                 break
@@ -325,6 +325,12 @@ class action(rb.Robot):
         else:
             ry = _maxy
         return rx,ry
+    
+    #the map range as object on the warehouse  
+    def Get_map_ex(self):
+        pass
+        
+    
         
     def rgb_array(self,table_name):
         ddegree = table_name["范围参数"][0]
