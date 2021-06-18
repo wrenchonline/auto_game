@@ -71,7 +71,7 @@ class action(rb.Robot):
                     if color == "red":
                         status = self.Found_do(da.utils["红旗"]["基点"],da.utils["红旗"]["偏移"], 70,592,170, 1057,538,ischlik=2,name="红旗")
                         if status == status.OK:
-                            cbreakon
+                            break
                     elif color == "yellow":
                         status = self.Found_do(da.utils["黄旗"]["基点"],da.utils["黄旗"]["偏移"], 70,592,170, 1057,538,ischlik=3,name="黄旗")
                         if status == status.OK:
@@ -248,7 +248,7 @@ class action(rb.Robot):
                     if data:
                         if len(data)>3:
                                 pos = self.Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
-                                                ,401,343,485,364,M=0.2)
+                                                ,401,343,572,363,M=0.15)
                                 print("postr:",pos)
                                 if len(pos):
                                     if pos[0] == "?":
@@ -265,8 +265,7 @@ class action(rb.Robot):
                                         print("字库解析异常")
                         else:
                                 pos = self.Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
-                                                ,370,339,485,364,M=0.2)
-                                
+                                                ,370,339,459,363,M=0.15)
                                 print("postr:",pos)
                                 if len(pos):
                                     if pos[0] == "?":
@@ -327,9 +326,82 @@ class action(rb.Robot):
         return rx,ry
     
     #the map range as object on the warehouse  
+    #测试特殊存图
     def Get_map_ex(self):
-        pass
-        
+        tu_list = list()
+        player_dict = dict() 
+        for i in range(1,26):
+            c__x,c__y = da.CK_[str(i)]
+            #检测是否开启仓库选择栏
+            while True:
+                if self.rgb_array(da.cangku["仓库选择界面"])==State.OK:
+                    break
+                else:
+                    self.click(263,623)
+                    time.sleep(0.7)
+            while True:
+                if self.rgb_array(da.cangku["仓库选择界面"])==State.OK:
+                    self.click(c__x,c__y)
+                    time.sleep(0.6) 
+                else:
+                    time.sleep(0.7)
+                    break
+            #先大致判断一下仓库地图
+            _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"], 70, 0, 0, 1280,720)
+            if x == -1:
+                continue
+            for j in range(1,21): 
+                #开始识别宝图
+                _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"], 70, da.grids[str(j)][0], da.grids[str(j)][1],da.grids[str(j)][2], da.grids[str(j)][3])
+                if x != -1:
+                    print("找到宝图 第 {0} 页 第 {1} 格".format(i,j))
+                    self.click(da.grids[str(j)][0],da.grids[str(j)][1])
+                    while True:
+                        if self.rgb_array(da.ditu_show["仓库栏显示地图字体"]) == State.OK:
+                           break
+                        else:
+                           time.sleep(1)
+                    #检测字体
+                    data = self.x_Ocrtext(da.ditu,"00E804,011805#03DC07,032006#08DD0B,072009",715,  368, 820,  394,similarity=0.5)
+                    print(data)                    
+                    if data:
+                        if len(data)>3:
+                                pos = self.Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                                ,824,373, 915,393,M=0.15)
+                                print("postr:",pos)
+                                if len(pos):
+                                    if pos[0] == "?":
+                                        pos = pos[1:]
+                                    if pos[len(pos)-1]=="?":
+                                        pos = pos[:len(pos)-1]
+                                    postr = pos.replace("\n","")
+                                    postr = pos.replace("??","?")
+                                    try:
+                                        _x = int(postr.split('?')[0])
+                                        _y = int(postr.split('?')[1])
+                                        tu_list.append((data,_x,_y,i,j))
+                                    except Exception as e:
+                                        print("字库解析异常")
+                        else:
+                                pos = self.Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                                ,798,370,887,394,M=0.15)
+                                print("postr:",pos)
+                                if len(pos):
+                                    if pos[0] == "?":
+                                        pos = pos[1:]
+                                    if pos[len(pos)-1]=="?":
+                                        pos = pos[:len(pos)-1]
+                                    postr = pos.replace("\n","")
+                                    postr = pos.replace("??","?")
+                                    try:
+                                        _x = int(postr.split('?')[0])
+                                        _y = int(postr.split('?')[1])
+                                        tu_list.append((data,_x,_y,i,j))
+                                    except Exception as e:
+                                        print("字库解析异常")
+        with open("MapsData_Warehouse.json","w+",encoding='utf8')  as f:
+            json.dump({"MapsDatas":tu_list},f,ensure_ascii=False,indent = 4)
+        print("仓库识别完成!")
     
         
     def rgb_array(self,table_name):
@@ -2300,10 +2372,68 @@ def test_save_the_prize():
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
     
+def test_get_map_ex():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q)
+    m1.start()
+    Robot = action(q)
+    Robot.Get_map_ex()
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+
+def test_featrue_ocrtext():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q)
+    m1.start()
+    Robot = action(q)
+    #检测字体
+    data = Robot.x_Ocrtext(da.ditu,"00E804,011805#03DC07,032006#08DD0B,072009",715,  368, 820,  394,similarity=0.5)
+    print(data)
+    if data:
+        if len(data)>3:
+                pos = Robot.Ocrtext_featrue(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                ,824,373, 915,393,M=0.15)
+                print("postr:",pos)
+                if len(pos):
+                    if pos[0] == "?":
+                        pos = pos[1:]
+                    if pos[len(pos)-1]=="?":
+                        pos = pos[:len(pos)-1]
+                    postr = pos.replace("\n","")
+                    postr = pos.replace("??","?")
+                    try:
+                        _x = int(postr.split('?')[0])
+                        _y = int(postr.split('?')[1])
+                        #tu_list.append((data,_x,_y,i,j))
+                    except Exception as e:
+                        print("字库解析异常")
+        else:
+                pos = Robot.Ocrtext_featrue(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                ,798,370,900,393,M=0.15)
+                print("postr:",pos)
+                if len(pos):
+                    if pos[0] == "?":
+                        pos = pos[1:]
+                    if pos[len(pos)-1]=="?":
+                        pos = pos[:len(pos)-1]
+                    postr = pos.replace("\n","")
+                    postr = pos.replace("??","?")
+                    try:
+                        _x = int(postr.split('?')[0])
+                        _y = int(postr.split('?')[1])
+                        #tu_list.append((data,_x,_y,i,j))
+                    except Exception as e:
+                        print("字库解析异常")
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
     
 def main():
-    #test_fire()
-    #test_tap()
+    #test_get_map_ex()
+    #test_featrue_ocrtext()
     test_orb(b_only_load_config=False)
     
 if __name__ == "__main__":
