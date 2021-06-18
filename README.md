@@ -15,7 +15,6 @@ The project is designed to simulate key-and-mouse clicking on the Android virtua
 
 
 
-Demo video:[ pyAutomated demo](https://www.bilibili.com/video/BV1Ev411t7B1/)
 
 Match the pictures and OCRText engine.
 The core engine is inspired by the [ touchsprite.com ](https://www.touchsprite.com/),So you need its tools to be developed to touchsprite syntax.
