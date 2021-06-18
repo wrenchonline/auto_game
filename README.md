@@ -20,10 +20,6 @@ Match the pictures and OCRText engine.
 The core engine is inspired by the [ touchsprite.com ](https://www.touchsprite.com/),So you need its tools to be developed to touchsprite syntax.
 
 
-If you have any better ideas or questions, please contact me at email
-
-ljl260435988@gmail.com
-
 
 ## System Runtime environment:
     ubuntu 20.04 or windows 7/10
