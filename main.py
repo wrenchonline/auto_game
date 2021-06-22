@@ -195,6 +195,75 @@ class action(rb.Robot):
                 time.sleep(1.5)
             else:
                 break
+    def estimate_map(self,name):             
+        if name == "建邺城":
+            return da.map_name.JYC
+        elif name == "朱紫国":
+            return da.map_name.ZZG    
+        elif name == "女儿村":   
+            return da.map_name.NEC 
+        elif name == "东海湾":
+            return da.map_name.DHW 
+        elif name == "长寿郊外":
+            return da.map_name.CSJW 
+        elif name == "大唐国境":
+            return da.map_name.DTGJ 
+        elif name == "江南野外":
+            return da.map_name.JNYW
+        elif name == "五庄观":
+            return da.map_name.WZG
+        elif name == "北俱芦洲":
+            return da.map_name.BJLZ
+        elif name == "普陀山":
+            return da.map_name.PTS
+        elif name == "麒麟山":    
+            return da.map_name.QLS
+        elif name == "狮驼岭":
+            return da.map_name.STL
+        elif name == "大唐境外":
+            return da.map_name.DTJW
+        elif name == "墨家村":
+            return da.map_name.MJC
+        elif name == "花果山":
+            return da.map_name.HGS
+        elif name == "傲来国":
+            return da.map_name.ALG
+        
+        
+    def estimate_map_idx(self,idx):
+        if idx == da.map_name.JYC.value:
+            return "建邺城"
+        elif idx == da.map_name.ZZG.value:
+            return "朱紫国"  
+        elif idx == da.map_name.NEC.value:   
+            return "女儿村"
+        elif idx == da.map_name.DHW.value:
+            return "东海湾"
+        elif idx == da.map_name.CSJW.value:
+            return "长寿郊外"
+        elif idx == da.map_name.DTGJ.value:
+            return "大唐国境"
+        elif idx == da.map_name.JNYW.value:
+            return "江南野外"
+        elif idx == da.map_name.WZG.value:
+            return "五庄观"
+        elif idx == da.map_name.BJLZ.value:
+            return "北俱芦洲"
+        elif idx == da.map_name.PTS.value:
+            return "普陀山"
+        elif idx == da.map_name.QLS.value:    
+            return "麒麟山"
+        elif idx == da.map_name.STL.value:
+            return "狮驼岭"
+        elif idx == da.map_name.DTJW.value:
+            return "大唐境外"
+        elif idx == da.map_name.MJC.value:
+            return "墨家村"
+        elif idx == da.map_name.HGS.value:
+            return "花果山"
+        elif idx == da.map_name.ALG.value:
+            return  "傲来国"          
+        
     
     '''
     在各主城增加了仓库管理员NPC，坐标分别为：长安城（346，244）、长安城（224，141）、建邺城（54，32)、傲来国（143，101）、长寿村（111，62）、朱紫国（126，90）
@@ -248,7 +317,7 @@ class action(rb.Robot):
                     if data:
                         if len(data)>3:
                                 pos = self.Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
-                                                ,401,343,572,363,M=0.15)
+                                                ,401,343,485,364,M=0.2)
                                 print("postr:",pos)
                                 if len(pos):
                                     if pos[0] == "?":
@@ -265,7 +334,7 @@ class action(rb.Robot):
                                         print("字库解析异常")
                         else:
                                 pos = self.Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
-                                                ,370,339,459,363,M=0.15)
+                                                ,370,339,485,364,M=0.2)
                                 print("postr:",pos)
                                 if len(pos):
                                     if pos[0] == "?":
@@ -325,9 +394,116 @@ class action(rb.Robot):
             ry = _maxy
         return rx,ry
     
+    def get_mix_map_name(self,load_dict):
+        for c in range (1,16):
+            map_name = self.estimate_map_idx(c)
+            map_list = load_dict["MapsDatas"]
+            for _,j in enumerate(map_list):
+                if map_name in j[0]:
+                    return map_name
+        return False
+    #取图
+    def Get_map_ex(self,get_maps_count=12):
+        status = self.Found_do(da.utils["西梁仓库管理员"]["基点"],da.utils["西梁仓库管理员"]["偏移"], 
+                            80,0, 0,1279,719,
+                            ischlik=1,timeout=10,
+                            name="西梁仓库管理员")
+        if status == State.NOTMATCH:
+            raise
+        time.sleep(1)
+        status = self.Found_do(da.utils["仓库操作"]["基点"],da.utils["仓库操作"]["偏移"], 
+                            80,0, 0,1279,719,
+                            ischlik=1,timeout=10,
+                            name="仓库操作")
+        if status == State.NOTMATCH:
+            raise 
+        while True:
+            if self.rgb_array(da.cangku["仓库界面"])==State.OK:
+                break
+        self.mask_(False)
+        load_dict = dict()
+        with open("MapsData_Warehouse.json","r",encoding='utf8')  as f:
+            load_dict = json.load(f)
+        for i in range (1,get_maps_count+1):
+            map_name = self.get_mix_map_name(load_dict)
+            if not map_name:
+                print("没有地图了，退出")
+                return 
+            map_list = load_dict["MapsDatas"]
+            for idx,j in enumerate(map_list):
+                if j[0] in map_name:
+                    c__x,c__y = da.CK_[str(j[3])]
+                    while True:
+                        if self.rgb_array(da.cangku["仓库选择界面"])==State.OK:
+                            break
+                        else:
+                            self.click(263,623)
+                            time.sleep(0.7)
+                    while True:
+                        if self.rgb_array(da.cangku["仓库选择界面"])==State.OK:
+                            self.click(c__x,c__y)
+                            time.sleep(0.6) 
+                        else:
+                            time.sleep(0.7)
+                            break
+                    #计算道具栏空白使用
+                    X0 = da.grids[str(j[4])][0]
+                    Y0 = da.grids[str(j[4])][1]
+                    _X0 = da.grids[str(j[4])][2]
+                    _Y0 = da.grids[str(j[4])][3]
+                    print("x0:{0}y0:{1} _x0:{2} _y0:{3} 格子：{4}".format(X0,Y0,_X0,_Y0,j[4]))
+                    #_x1 = X0+int((_X0-X0)/2)
+                    #_y1 = Y0+int((_Y0-Y0)/2)
+                    while True:
+                        _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"], 70, X0,Y0,_X0,_Y0)
+                        if x == -1:
+                            print("没发现地图，跳出")
+                            break
+                        else:
+                            time.sleep(1.5)
+                            print("点击仓库地图，第{0}页仓库第{1}格,坐标({2},{3})".format(j[3],j[4],X0+5,Y0+5))
+                            self.click(X0+5,Y0+5)
+                            self.click(X0+5,Y0+5)
+                            time.sleep(1.5)
+                    print("弹出元素：{0}".format(map_list[idx]))
+                    map_list.pop(idx)
+                    load_dict["MapsDatas"] = map_list
+                    break
+        with open("MapsData_Warehouse.json","w+",encoding='utf8')  as f:
+            json.dump(load_dict,f,ensure_ascii=False,indent = 4)
+        print("取图完成！")
+        #界面返回 
+        while True:
+            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+            time.sleep(0.5)
+            if status==status.OK:
+                break
+            else:
+                self.click(1072,54) 
+
     #the map range as object on the warehouse  
-    #测试特殊存图
-    def Get_map_ex(self):
+    #存图extension
+    def Save_map_ex(self):
+        status = self.Found_do(da.utils["西梁仓库管理员"]["基点"],da.utils["西梁仓库管理员"]["偏移"], 
+                            80,0, 0,1279,719,
+                            ischlik=1,timeout=10,
+                            name="西梁仓库管理员")
+        if status == State.NOTMATCH:
+            raise
+        time.sleep(1)
+        status = self.Found_do(da.utils["仓库操作"]["基点"],da.utils["仓库操作"]["偏移"], 
+                            80,0, 0,1279,719,
+                            ischlik=1,timeout=10,
+                            name="仓库操作")
+        if status == State.NOTMATCH:
+            raise 
+        while True:
+            if self.rgb_array(da.cangku["仓库界面"])==State.OK:
+                break
+        self.mask_(False)
+        while True:
+            if self.rgb_array(da.cangku["仓库界面"])==State.OK:
+                break
         tu_list = list()
         player_dict = dict() 
         for i in range(1,26):
@@ -402,6 +578,14 @@ class action(rb.Robot):
         with open("MapsData_Warehouse.json","w+",encoding='utf8')  as f:
             json.dump({"MapsDatas":tu_list},f,ensure_ascii=False,indent = 4)
         print("仓库识别完成!")
+        while True:
+            #self.queue.put("check")
+            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+            time.sleep(0.5)
+            if status==status.OK:
+                break
+            else:
+                self.click(1072,54) #界面返回         
     
         
     def rgb_array(self,table_name):
@@ -1432,7 +1616,7 @@ class action(rb.Robot):
                     time.sleep(2)
                 elif status==status.OK:
                     while True:
-                        reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51)
+                        reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,   51,similarity=0.3)
                         if  "建邺城" in reponse:
                             print("抵达建邺城")
                             break
@@ -1540,39 +1724,8 @@ class action(rb.Robot):
                     time.sleep(0.7)
                     break
                 
-    def estimate_map(self,name):             
-        if name == "建邺城":
-            return da.map_name.JYC
-        elif name == "朱紫国":
-            return da.map_name.ZZG    
-        elif name == "女儿村":   
-            return da.map_name.NEC 
-        elif name == "东海湾":
-            return da.map_name.DHW 
-        elif name == "长寿郊外":
-            return da.map_name.CSJW 
-        elif name == "大唐国境":
-            return da.map_name.DTGJ 
-        elif name == "江南野外":
-            return da.map_name.JNYW
-        elif name == "五庄观":
-            return da.map_name.WZG
-        elif name == "北俱芦洲":
-            return da.map_name.BJLZ
-        elif name == "普陀山":
-            return da.map_name.PTS
-        elif name == "麒麟山":    
-            return da.map_name.QLS
-        elif name == "狮驼岭":
-            return da.map_name.STL
-        elif name == "大唐境外":
-            return da.map_name.DTJW
-        elif name == "墨家村":
-            return da.map_name.MJC
-        elif name == "花果山":
-            return da.map_name.HGS
-        elif name == "傲来国":
-            return da.map_name.ALG
+
+        
 
     def open_map(self):
         self.click(125,45)
@@ -2156,9 +2309,7 @@ def test_orb(b_only_load_config=False):
         Robot.save_the_prize()
         Robot.mask_(False)
         Robot.mask_(True)
-        #get maps
-        Robot.get_set_map('get',False)
-        Robot.mask_(False)
+        Robot.Get_map_ex()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
@@ -2378,6 +2529,18 @@ def test_get_map_ex():
     m1 = rh.MyThread(q)
     m1.start()
     Robot = action(q)
+    Robot.Save_map_ex()
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+    
+def test_get_map_ex():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q)
+    m1.start()
+    Robot = action(q)
+    Robot.mask_(True)
     Robot.Get_map_ex()
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2432,9 +2595,10 @@ def test_featrue_ocrtext():
     Robot.quit()
     
 def main():
+    #test_Save_map_ex()
     #test_get_map_ex()
-    #test_featrue_ocrtext()
-    test_orb(b_only_load_config=False)
+    test_featrue_ocrtext()
+    #test_orb(b_only_load_config=False)
     
 if __name__ == "__main__":
     main()

@@ -13,7 +13,7 @@ def toHex(tmp) :
 		num = string.atoi(rgb[j])  
 		strs += str(hex(num))[-2:]  #每次转换之后只取0x7b的后两位，拼接到strs中  
 	print("转换后的16进制值为：")  
-	print(strs) 
+	print(strs)
  
 def rgb_to_hex(tup):
     """Convert RGB value to hex."""

@@ -6,16 +6,16 @@ start_pos = (144,206,223,285)
 convert_pos = [144,206,223,285]
 tu_list = list()
 xi = 0
-for i in range(0,5):
+for i in range(0,4):
     convert_pos[0] = start_pos[0] + i*90
     convert_pos[2] = start_pos[2] + i*90
-    for j in range(0,4):
+    for j in range(0,5):
         convert_pos[1] = start_pos[1] + j*90
         convert_pos[3] = start_pos[3] + j*90
         xi+=1
         myjson.update({str(xi):(convert_pos[0],convert_pos[1],convert_pos[2],convert_pos[3])})
         with open("cse","w+") as f :
-            json.dump(myjson,f)
+            json.dump(myjson,ensure_ascii=False,indent = 4)
         print("Data Conversion ComPleted")
         print(myjson)
 
