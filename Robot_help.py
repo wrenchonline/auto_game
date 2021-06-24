@@ -30,7 +30,7 @@ class MyThread (threading.Thread,rb.Robot):
 
     #检测是否属于战斗状态
     def check_fire(self):
-        status = self.Found_do(da.utils["检测战斗"]["基点"],da.utils["检测战斗"]["偏移"], 90,8,139, 84,223,ischlik=0,name="检测战斗",timeout=2)
+        status = self.Found_do(da.utils["检测战斗"]["基点"],da.utils["检测战斗"]["偏移"], 50,8,139, 84,223,ischlik=0,name="检测战斗",timeout=2)
         if status != status.OK:
             return False
         else:

@@ -173,19 +173,16 @@ class action(rb.Robot):
                         _x1 = convert_pos[0]+int((convert_pos[2]-convert_pos[0])/2)
                         _y1 = convert_pos[1]+int((convert_pos[3]-convert_pos[1])/2)         
                         status,ag= self.findMultiColorInRegionFuzzyByTable(((_x1,_y1,0xb8b0d8),))
-                        # status = self.Found_do(da.utils["道具栏空白"]["基点"],da.utils["道具栏空白"]["偏移"], 
-                        #                     100,convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3],
-                        #                     ischlik=2,timeout=1,
-                        #                     name="道具栏空白")
                         if status == status.OK: 
                             break
                         else:
-                            time.sleep(1.5)
+                            time.sleep(0.2)
                             print("the blank items is not Found")
                             self.click(366,621)
+                            time.sleep(0.5)
+                            self.click(convert_pos[0]+5,convert_pos[1]+5)
+                            self.click(convert_pos[0]+5,convert_pos[1]+5)
                             time.sleep(1.5)
-                            self.click(convert_pos[0]+5,convert_pos[1]+5)
-                            self.click(convert_pos[0]+5,convert_pos[1]+5)
                     continue
         print("退出到主界面")
         while True:
@@ -317,7 +314,7 @@ class action(rb.Robot):
                     if data:
                         if len(data)>3:
                                 pos = self.Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
-                                                ,401,343,485,364,M=0.2)
+                                                ,401,343,485,364,M=0.15)
                                 print("postr:",pos)
                                 if len(pos):
                                     if pos[0] == "?":
@@ -334,7 +331,7 @@ class action(rb.Robot):
                                         print("字库解析异常")
                         else:
                                 pos = self.Ocrtext(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
-                                                ,370,339,485,364,M=0.2)
+                                                ,370,339,485,364,M=0.15)
                                 print("postr:",pos)
                                 if len(pos):
                                     if pos[0] == "?":
@@ -615,7 +612,7 @@ class action(rb.Robot):
                 break
         print("监控坐标")
         while True:
-            pos = self.Ocrtext(da.pos_feature,"CFE3E9,311D17#F8DDCE,072331",100,60,206,85,M=0.25)
+            pos = self.Ocrtext(da.pos_feature,"CFE3E9,311D17#F8DDCE,072331",100,60,206,85,M=0.15)
             if len(pos):
                 #pos = pos[0]["text"]
                 if pos[0] == "?":
@@ -1565,10 +1562,8 @@ class action(rb.Robot):
                 print("抵达目的地")
                 break
             else:
-                self.mask_(True)
                 self.click(115,225)
-                time.sleep(0.2)  
-                self.mask_(False)  
+                time.sleep(0.2)
                     
      
     #前往建邺城
@@ -2304,12 +2299,15 @@ def test_orb(b_only_load_config=False):
     for i in range(0,3):
         #play by the maps
         Robot.Orb(b_only_load_config)
+        b_only_load_config = False
+        time.sleep(2)
         #store items
         Robot.mask_(True)
         Robot.save_the_prize()
         Robot.mask_(False)
         Robot.mask_(True)
         Robot.Get_map_ex()
+        time.sleep(2)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
@@ -2594,11 +2592,93 @@ def test_featrue_ocrtext():
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
     
+def text_featrue_xx():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q)
+    m1.start()
+    Robot = action(q)
+    #检测字体
+    data = Robot.x_Ocrtext(da.ditu,"00E804,011805#03DC07,032006#08DD0B,072009",297,338,394,366,similarity=0.5)
+    print(data)
+    if data:
+        if len(data)>3:
+                pos = Robot.Ocrtext_featrue(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                ,401,343,485,364,M=0.15)
+                print("postr:",pos)
+                if len(pos):
+                    if pos[0] == "?":
+                        pos = pos[1:]
+                    if pos[len(pos)-1]=="?":
+                        pos = pos[:len(pos)-1]
+                    postr = pos.replace("\n","")
+                    postr = pos.replace("??","?")
+                    try:
+                        _x = int(postr.split('?')[0])
+                        _y = int(postr.split('?')[1])
+                        #tu_list.append((data,_x,_y,i,j))
+                    except Exception as e:
+                        print("字库解析异常")
+        else:
+                pos = Robot.Ocrtext_featrue(da.map_font,"06BE0B,06420B#03E105,031E05#00E804,011805#03DC07,032006#08DD0B,072009"
+                                ,370,339,485,364,M=0.15)
+                print("postr:",pos)
+                if len(pos):
+                    if pos[0] == "?":
+                        pos = pos[1:]
+                    if pos[len(pos)-1]=="?":
+                        pos = pos[:len(pos)-1]
+                    postr = pos.replace("\n","")
+                    postr = pos.replace("??","?")
+                    try:
+                        _x = int(postr.split('?')[0])
+                        _y = int(postr.split('?')[1])
+                        #tu_list.append((data,_x,_y,i,j))
+                    except Exception as e:
+                        print("字库解析异常")
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit() 
+    
+    
+def test_featrue_pos():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q)
+    m1.start()
+    Robot = action(q)
+    print("监控坐标")
+    X=179
+    Y=65 
+    pos = Robot.Ocrtext_featrue(da.pos_feature,"CFE3E9,311D17#F8DDCE,072331",100,60,206,85,M=0.15)
+    if len(pos):
+        #pos = pos[0]["text"]
+        if pos[0] == "?":
+            pos = pos[1:]
+        if pos[len(pos)-1]=="?":
+            pos = pos[:len(pos)-1]
+        postr = pos.replace("\n","")
+        postr = pos.replace("??","?")
+        try:
+            _x = int(postr.split('?')[0])
+            _y = int(postr.split('?')[1])
+            time.sleep(1)
+            print("当前坐标(x:{0},y:{1})----实际坐标(x:{2},y:{3})".format(str(_x),str(_y),str(X),str(Y)))
+            if (abs(X-_x)<=3) and (abs(Y-_y)<=3):
+                return
+        except Exception as e:
+            print(postr)
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()
+        
 def main():
     #test_Save_map_ex()
     #test_get_map_ex()
-    test_featrue_ocrtext()
-    #test_orb(b_only_load_config=False)
+    #test_featrue_pos()
+    #test_featrue_ocrtext()
+    #text_featrue_xx()
+    test_orb(b_only_load_config=False)
     
 if __name__ == "__main__":
     main()
