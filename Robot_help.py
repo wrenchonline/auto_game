@@ -28,9 +28,10 @@ class MyThread (threading.Thread,rb.Robot):
         name = threading.current_thread().name 
         raise MyException(self.exc) 
 
+
     #检测是否属于战斗状态
     def check_fire(self):
-        status = self.Found_do(da.utils["检测战斗"]["基点"],da.utils["检测战斗"]["偏移"], 50,8,139, 84,223,ischlik=0,name="检测战斗",timeout=2)
+        status,ag= self.findMultiColorInRegionFuzzyByTable(da.Fire)
         if status != status.OK:
             return False
         else:
@@ -80,6 +81,7 @@ class MyThread (threading.Thread,rb.Robot):
                                 print("正在战斗")
                             else:
                                 while fire_end:
+                                    #self.check_yaoxiang()
                                     print("战斗结束")
                                     status = self.Found_do(da.utils["战斗取消"]["基点"],da.utils["战斗取消"]["偏移"], 
                                                         80,0, 0,1279,719,
@@ -89,6 +91,7 @@ class MyThread (threading.Thread,rb.Robot):
                                         raise 
                                     break
                                 if fire_end:
+                                    fire_end = False
                                     break
                         self.queue.task_done()
                     if data in "exit":

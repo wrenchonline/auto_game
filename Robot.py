@@ -289,7 +289,7 @@ class Robot:
         return bin_2_
 
     
-    def x_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2,similarity=0.4):
+    def x_Ocrtext(self,tabs,scx_rgb,x1,y1,x2,y2,similarity=0.6):
         #ret = re.findall(r"@(.*?)\$",tab,re.I|re.M)
         image_array1 = self.__Ocr(scx_rgb,x1, y1, x2, y2)
         for tab in tabs:

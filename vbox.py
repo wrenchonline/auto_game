@@ -59,7 +59,14 @@ class Vbox:
         
         
     def screenshots(self):
-        self.screenshot_data = self.machine.take_screenshot_to_bytes(image_format="PNG")
+        BF = True
+        while BF:
+            try: 
+                self.screenshot_data = self.machine.take_screenshot_to_bytes(image_format="PNG")
+                BF = False
+                break
+            except BaseException as e:
+                continue
         return self.screenshot_data
 
     def screenshots_loop(self):

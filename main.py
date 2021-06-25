@@ -8,7 +8,7 @@ import queue
 import json
 import os
 import data as da
-
+import struct
 
 
 
@@ -129,17 +129,19 @@ class action(rb.Robot):
         self.ToTheXLNG()
         time.sleep(0.5)
         self.mask_(True)
-        time.sleep(1)
+        time.sleep(0.2)
+        
         status = self.Found_do(da.utils["西梁仓库管理员"]["基点"],da.utils["西梁仓库管理员"]["偏移"], 
                             80,0, 0,1279,719,
-                            ischlik=2,timeout=10,
+                            ischlik=1,timeout=10,
                             name="西梁仓库管理员")
         if status == State.NOTMATCH:
             raise 
-        time.sleep(1)
+        
+        time.sleep(0.2)
         status = self.Found_do(da.utils["仓库操作"]["基点"],da.utils["仓库操作"]["偏移"], 
                             80,0, 0,1279,719,
-                            ischlik=2,timeout=10,
+                            ischlik=1,timeout=10,
                             name="仓库操作")
         if status == State.NOTMATCH:
             raise 
@@ -149,11 +151,11 @@ class action(rb.Robot):
         start_pos = ( 625,213,708,279)
         convert_pos = [ 625,213,708,279]
         for i in range(0,5):
-            time.sleep(1)
+            time.sleep(0.2)
             convert_pos[0] = start_pos[0] + i*90
             convert_pos[2] = start_pos[2] + i*90
             for j in range(0,4):
-                time.sleep(1)
+                time.sleep(0.2)
                 convert_pos[1] = start_pos[1] + j*90
                 convert_pos[3] = start_pos[3] + j*90
                 self.click(convert_pos[0]+5,convert_pos[1]+5)
@@ -182,7 +184,6 @@ class action(rb.Robot):
                             time.sleep(0.5)
                             self.click(convert_pos[0]+5,convert_pos[1]+5)
                             self.click(convert_pos[0]+5,convert_pos[1]+5)
-                            time.sleep(1.5)
                     continue
         print("退出到主界面")
         while True:
@@ -392,7 +393,7 @@ class action(rb.Robot):
         return rx,ry
     
     def get_mix_map_name(self,load_dict):
-        for c in range (1,16):
+        for c in range (1,17):
             map_name = self.estimate_map_idx(c)
             map_list = load_dict["MapsDatas"]
             for _,j in enumerate(map_list):
@@ -403,14 +404,14 @@ class action(rb.Robot):
     def Get_map_ex(self,get_maps_count=12):
         status = self.Found_do(da.utils["西梁仓库管理员"]["基点"],da.utils["西梁仓库管理员"]["偏移"], 
                             80,0, 0,1279,719,
-                            ischlik=1,timeout=10,
+                            ischlik=2,timeout=10,
                             name="西梁仓库管理员")
         if status == State.NOTMATCH:
             raise
         time.sleep(1)
         status = self.Found_do(da.utils["仓库操作"]["基点"],da.utils["仓库操作"]["偏移"], 
                             80,0, 0,1279,719,
-                            ischlik=1,timeout=10,
+                            ischlik=2,timeout=10,
                             name="仓库操作")
         if status == State.NOTMATCH:
             raise 
@@ -425,7 +426,10 @@ class action(rb.Robot):
             map_name = self.get_mix_map_name(load_dict)
             if not map_name:
                 print("没有地图了，退出")
-                return 
+                load_dict["MapsDatas"] = []
+                with open("MapsData_Warehouse.json","w+",encoding='utf8')  as f:
+                    json.dump(load_dict,f,ensure_ascii=False,indent = 4)
+                return False
             map_list = load_dict["MapsDatas"]
             for idx,j in enumerate(map_list):
                 if j[0] in map_name:
@@ -449,8 +453,6 @@ class action(rb.Robot):
                     _X0 = da.grids[str(j[4])][2]
                     _Y0 = da.grids[str(j[4])][3]
                     print("x0:{0}y0:{1} _x0:{2} _y0:{3} 格子：{4}".format(X0,Y0,_X0,_Y0,j[4]))
-                    #_x1 = X0+int((_X0-X0)/2)
-                    #_y1 = Y0+int((_Y0-Y0)/2)
                     while True:
                         _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"], 70, X0,Y0,_X0,_Y0)
                         if x == -1:
@@ -477,6 +479,7 @@ class action(rb.Robot):
                 break
             else:
                 self.click(1072,54) 
+        return True
 
     #the map range as object on the warehouse  
     #存图extension
@@ -695,10 +698,8 @@ class action(rb.Robot):
                     print("抵达长寿郊外")
                     break
                 else:
-                    self.mask_(True)
                     self.click(1038,600)
                     time.sleep(0.5)
-                    self.mask_(False)
             return True
         else:
             return False    
@@ -905,10 +906,9 @@ class action(rb.Robot):
                 print("抵达目的地")
                 return
             else:
-                self.mask_(True)
                 self.click(14,98)
                 time.sleep(0.5)
-                self.mask_(False)
+
 
     #前往狮驼岭
     def TotheSTL(self):
@@ -1078,11 +1078,10 @@ class action(rb.Robot):
                 print("抵达目的地")
                 return
             else:
-                self.mask_(True)
                 time.sleep(1)
                 self.click(1241,80)
                 time.sleep(1) 
-                self.mask_(False)  
+
     #前往傲来国        
     def ToTheALG(self):
         while True:
@@ -1165,10 +1164,9 @@ class action(rb.Robot):
                 print("抵达五庄观")
                 break
             else:
-                self.mask_(True)
                 self.click(1245,200)
                 time.sleep(0.2)
-                self.mask_(False) 
+
                 
     def open_prop(self):
         while True:
@@ -1254,7 +1252,6 @@ class action(rb.Robot):
                 self.click(x1+5,y1+5)
                 self.click(x1+5,y1+5)
                 self.click(x1+5,y1+5)
-                self.click(x1+5,y1+5)
                 bF=False
             else:
                 if bF:
@@ -1279,11 +1276,52 @@ class action(rb.Robot):
                             break
                     time.sleep(0.5)
                     return
+    def check_yaoxiang(self):
+        with open("time.txt","rb") as f:
+            times = f.read()
+        currenttime = time.time()
+        if not len(times):
+            times = b"\x00\x00\x00\x00"
+        abstime =  currenttime - struct.unpack("f", times)[0]
+        if abstime >= float(60*30):
+            print("使用妖香")
+            #打开道具栏
+            while True:
+                #self.queue.put("check")
+                if self.no_prop():
+                    self.click(1220, 679)
+                    time.sleep(0.5)
+                    if not self.no_prop():
+                        break
+                else:
+                    break
+                time.sleep(2)
+            self.click(1121, 673)
+            time.sleep(1)
+            status = self.Found_do(da.utils["摄妖香"]["基点"],da.utils["摄妖香"]["偏移"], 70,592,170, 1057,538,ischlik=2,name="摄妖香")
+            if status == status.OK:
+                pass
+            else:
+                raise
+            print("已经超时,重新储蓄时间")
+            with open("time.txt","wb+") as f:
+                f.write(struct.pack("f",currenttime))
+            #界面返回
+            while True:
+                status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+                time.sleep(0.5)
+                if status==status.OK:
+                    break
+                else:
+                    self.click(1072,54) 
+        print("妖香使用时间 = %s" % (abstime))
         
         
     def Orb(self,b_only_load_config=False):
         #当前场景
-        scenario = ""
+        reponse = self.x_Ocrtext(da.scenario,"1C1D21,1B1C20",94,  24,208,51)
+        scenario = reponse
+        print("当前场景:{0}".format(scenario))
         if not b_only_load_config:
             tulist = self.check_map()
             while True:
@@ -1756,7 +1794,7 @@ class action(rb.Robot):
         
         status = self.Found_do(da.utils["西梁仓库管理员"]["基点"],da.utils["西梁仓库管理员"]["偏移"], 
                             80,0, 0,1279,719,
-                            ischlik=2,timeout=10,
+                            ischlik=1,timeout=10,
                             name="西梁仓库管理员")
         if status == State.NOTMATCH:
             raise 
@@ -2297,6 +2335,7 @@ def test_orb(b_only_load_config=False):
         else:
             continue
     for i in range(0,3):
+        Robot.check_yaoxiang()
         #play by the maps
         Robot.Orb(b_only_load_config)
         b_only_load_config = False
@@ -2306,7 +2345,9 @@ def test_orb(b_only_load_config=False):
         Robot.save_the_prize()
         Robot.mask_(False)
         Robot.mask_(True)
-        Robot.Get_map_ex()
+        b=Robot.Get_map_ex()
+        if not b:
+            break
         time.sleep(2)
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
@@ -2671,10 +2712,21 @@ def test_featrue_pos():
     end = time.time()
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
+
+#测试妖香   
+def test_check_yaoxiang():
+    start = time.time()
+    q = queue.Queue()
+    m1 = rh.MyThread(q)
+    m1.start()
+    Robot = action(q)        
+    Robot.check_yaoxiang()
+    end = time.time()
+    print("Elapsed (with compilation) = %s" % (end - start))
+    Robot.quit()        
         
 def main():
-    #test_Save_map_ex()
-    #test_get_map_ex()
+    #test_check_yaoxiang()
     #test_featrue_pos()
     #test_featrue_ocrtext()
     #text_featrue_xx()
