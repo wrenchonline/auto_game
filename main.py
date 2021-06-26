@@ -185,14 +185,14 @@ class action(rb.Robot):
                             self.click(convert_pos[0]+5,convert_pos[1]+5)
                             self.click(convert_pos[0]+5,convert_pos[1]+5)
                     continue
-        print("退出到主界面")
-        while True:
-            status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
-            if status==status.NOTMATCH:
-                self.click(1075,59)
-                time.sleep(1.5)
-            else:
-                break
+        # print("退出到主界面")
+        # while True:
+        #     status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
+        #     if status==status.NOTMATCH:
+        #         self.click(1075,59)
+        #         time.sleep(1.5)
+        #     else:
+        #         break
     def estimate_map(self,name):             
         if name == "建邺城":
             return da.map_name.JYC
@@ -298,10 +298,7 @@ class action(rb.Robot):
                 self.click(convert_pos[0]+5,convert_pos[1]+5)
                 time.sleep(0.5)
                 tpl = self.Print_screen()
-                #self.show(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]])
                 _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"], 45, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
-                #self.show(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]])
-                # x,y = self.matchTemplate(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]],target,0.13)
                 if x != -1:
                     print("找到宝图")
                     while True:
@@ -327,7 +324,7 @@ class action(rb.Robot):
                                     try:
                                         _x = int(postr.split('?')[0])
                                         _y = int(postr.split('?')[1])
-                                        tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5,convert_pos[2],convert_pos[3]))
+                                        tu_list.append([data,_x,_y,convert_pos[0]+5,convert_pos[1]+5,convert_pos[2],convert_pos[3]])
                                     except Exception as e:
                                         print("字库解析异常")
                         else:
@@ -344,7 +341,7 @@ class action(rb.Robot):
                                     try:
                                         _x = int(postr.split('?')[0])
                                         _y = int(postr.split('?')[1])
-                                        tu_list.append((data,_x,_y,convert_pos[0]+5,convert_pos[1]+5,convert_pos[2],convert_pos[3]))
+                                        tu_list.append([data,_x,_y,convert_pos[0]+5,convert_pos[1]+5,convert_pos[2],convert_pos[3]])
                                     except Exception as e:
                                         print("字库解析异常")
 
@@ -402,23 +399,23 @@ class action(rb.Robot):
         return False
     #取图
     def Get_map_ex(self,get_maps_count=12):
-        status = self.Found_do(da.utils["西梁仓库管理员"]["基点"],da.utils["西梁仓库管理员"]["偏移"], 
-                            80,0, 0,1279,719,
-                            ischlik=2,timeout=10,
-                            name="西梁仓库管理员")
-        if status == State.NOTMATCH:
-            raise
-        time.sleep(1)
-        status = self.Found_do(da.utils["仓库操作"]["基点"],da.utils["仓库操作"]["偏移"], 
-                            80,0, 0,1279,719,
-                            ischlik=2,timeout=10,
-                            name="仓库操作")
-        if status == State.NOTMATCH:
-            raise 
-        while True:
-            if self.rgb_array(da.cangku["仓库界面"])==State.OK:
-                break
-        self.mask_(False)
+        # status = self.Found_do(da.utils["西梁仓库管理员"]["基点"],da.utils["西梁仓库管理员"]["偏移"], 
+        #                     80,0, 0,1279,719,
+        #                     ischlik=2,timeout=10,
+        #                     name="西梁仓库管理员")
+        # if status == State.NOTMATCH:
+        #     raise
+        # time.sleep(1)
+        # status = self.Found_do(da.utils["仓库操作"]["基点"],da.utils["仓库操作"]["偏移"], 
+        #                     80,0, 0,1279,719,
+        #                     ischlik=2,timeout=10,
+        #                     name="仓库操作")
+        # if status == State.NOTMATCH:
+        #     raise 
+        # while True:
+        #     if self.rgb_array(da.cangku["仓库界面"])==State.OK:
+        #         break
+        #self.mask_(False)
         load_dict = dict()
         with open("MapsData_Warehouse.json","r",encoding='utf8')  as f:
             load_dict = json.load(f)
@@ -532,6 +529,7 @@ class action(rb.Robot):
                 if x != -1:
                     print("找到宝图 第 {0} 页 第 {1} 格".format(i,j))
                     self.click(da.grids[str(j)][0],da.grids[str(j)][1])
+                    time.sleep(0.7)
                     while True:
                         if self.rgb_array(da.ditu_show["仓库栏显示地图字体"]) == State.OK:
                            break
@@ -719,6 +717,7 @@ class action(rb.Robot):
             time.sleep(0.5)
             if status==status.NOTMATCH:
                 print("前往朱紫国")
+                self.click(567,482)
                 status,ag= self.findMultiColorInRegionFuzzyByTable(da.fanhui)
                 if status==status.OK:
                     self.click(ag[0],ag[1])
@@ -1228,11 +1227,68 @@ class action(rb.Robot):
         with open("./player.json", 'r',encoding="utf-8") as f:
             load_dict  = json.load(f)
         return load_dict
+    
+    #检测是否属于战斗状态
+    def check_fire(self):
+        status,ag= self.findMultiColorInRegionFuzzyByTable(da.Fire)
+        if status != status.OK:
+            return False
+        else:
+            return True
+    #开始战斗
+    def fire(self):
+        #bfired = False
+        while True:
+            status = self.Found_do(da.utils["自动战斗"]["基点"],da.utils["自动战斗"]["偏移"], 92, 1202,653,1254,710,ischlik=0,name="自动战斗",timeout=1)
+            if status != status.OK:
+                    break
+            else:
+                print("发现自动战斗")
+                #bfired = True
+                self.click(1230,662)
+                print("点击自动战斗")
+                time.sleep(5)
+                continue
+            
+    def testfire(self):
+        fire_end = False
+        while True:
+            bfire = self.check_fire()
+            if bfire:
+                time.sleep(1)
+                self.fire()
+                fire_end = True
+                print("正在战斗")
+            else:
+                while fire_end:
+                    print("战斗结束")
+                    status = self.Found_do(da.utils["战斗取消"]["基点"],da.utils["战斗取消"]["偏移"], 
+                                        80,0, 0,1279,719,
+                                        ischlik=2,timeout=10,
+                                        name="战斗取消")
+                    if status == State.NOTMATCH:
+                        raise 
+                    break
+                if fire_end:
+                    fire_end = False
+                    break
+            time.sleep(2)
 
     def config_save(self,maps):
+        maps = list(maps)
         load_dict = dict()
+        t_maps = list()
+        C = False
+        while True:
+            if not len(maps):
+                break
+            name = maps[0][0] 
+            for idx,j in enumerate(maps):
+                if j [0] ==  name:
+                    t_maps.append(j)
+                    maps.pop(idx)
         #maps.remove(m)
-        load_dict["tu"]=maps
+        load_dict["tu"]=t_maps
         with open("./player.json", 'w',encoding="utf-8") as f:
             json.dump(load_dict,f,ensure_ascii=False,indent = 4)
 
@@ -1251,7 +1307,6 @@ class action(rb.Robot):
             if status==status.OK:
                 self.click(x1+5,y1+5)
                 self.click(x1+5,y1+5)
-                self.click(x1+5,y1+5)
                 bF=False
             else:
                 if bF:
@@ -1268,9 +1323,9 @@ class action(rb.Robot):
                     #没回到主界面直接代表进入战斗界面
                         status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian,degree=80)
                         if status==status.NOTMATCH:
-                            self.queue.put("check")
-                            self.queue.join()
+                            self.testfire()
                             time.sleep(2)
+                            self.check_yaoxiang()
                             break
                         else:
                             break
@@ -1814,7 +1869,7 @@ class action(rb.Robot):
             map_number = 0
             while True:
                 time.sleep(1)
-                _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"],50,x1=140,y1=205,x2=587,y2=559)
+                _,x,y = self.findMultiColorInRegionFuzzy(da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"],50,x1=140,y1=205,x2=587,y2=559)
                 time.sleep(1)
                 if x !=-1:
                     time.sleep(0.5)
@@ -1834,7 +1889,6 @@ class action(rb.Robot):
             time.sleep(0.5)
             self.mask_(False)
             while True:
-                #self.queue.put("check")
                 status,ag= self.findMultiColorInRegionFuzzyByTable(da.zhujiemian)
                 time.sleep(0.5)
                 if status==status.OK:
@@ -1843,11 +1897,6 @@ class action(rb.Robot):
             return  map_number
         else:
             print("存图") 
-            #tpl = self.Print_screen()
-            #target = cv2.imread("./images/tu.png")
-            # start_pos = (627,207,709,287)
-            # convert_pos = [627,207,709,287]
-            #self.show(tpl[convert_pos[1]:convert_pos[3],convert_pos[0]:convert_pos[2]])
             while True:
                 _,x,y = self.findMultiColorInRegionFuzzy( da.daoju["普通宝图A"]["基点"], da.daoju["普通宝图A"]["偏移"],60, 628,201,1073,558)
                 if x ==-1:
@@ -1884,7 +1933,6 @@ class action(rb.Robot):
                     else:
                         time.sleep(0.7)
                         break
-
                 c1,c2,c3,c4 = self.VerifyRange(x,y,627,207,709,287,90,90)
                 while True:
                     time.sleep(1)
@@ -2344,7 +2392,7 @@ def test_orb(b_only_load_config=False):
         Robot.mask_(True)
         Robot.save_the_prize()
         Robot.mask_(False)
-        Robot.mask_(True)
+        #Robot.mask_(True)
         b=Robot.Get_map_ex()
         if not b:
             break
@@ -2562,7 +2610,8 @@ def test_save_the_prize():
     print("Elapsed (with compilation) = %s" % (end - start))
     Robot.quit()
     
-def test_get_map_ex():
+#仓库存图    
+def test_save_map_ex():
     start = time.time()
     q = queue.Queue()
     m1 = rh.MyThread(q)
@@ -2730,6 +2779,7 @@ def main():
     #test_featrue_pos()
     #test_featrue_ocrtext()
     #text_featrue_xx()
+    #test_save_map_ex()
     test_orb(b_only_load_config=False)
     
 if __name__ == "__main__":

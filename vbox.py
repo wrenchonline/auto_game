@@ -66,7 +66,8 @@ class Vbox:
                 BF = False
                 break
             except BaseException as e:
-                continue
+                self.machine.lock()
+                print("异常")
         return self.screenshot_data
 
     def screenshots_loop(self):

@@ -61,7 +61,29 @@ class MyThread (threading.Thread,rb.Robot):
                 print("点击自动战斗")
                 time.sleep(5)
                 continue
-
+            
+    def testfire(self):
+        while True:
+            bfire = self.check_fire()
+            if bfire:
+                time.sleep(1)
+                self.fire()
+                fire_end = True
+                print("正在战斗")
+            else:
+                while fire_end:
+                    print("战斗结束")
+                    status = self.Found_do(da.utils["战斗取消"]["基点"],da.utils["战斗取消"]["偏移"], 
+                                        80,0, 0,1279,719,
+                                        ischlik=2,timeout=10,
+                                        name="战斗取消")
+                    if status == State.NOTMATCH:
+                        raise 
+                    break
+                if fire_end:
+                    fire_end = False
+                    break
+            time.sleep(2)
 
     def run(self): 
         # Variable that stores the exception, if raised by someFunction 
@@ -81,7 +103,6 @@ class MyThread (threading.Thread,rb.Robot):
                                 print("正在战斗")
                             else:
                                 while fire_end:
-                                    #self.check_yaoxiang()
                                     print("战斗结束")
                                     status = self.Found_do(da.utils["战斗取消"]["基点"],da.utils["战斗取消"]["偏移"], 
                                                         80,0, 0,1279,719,
@@ -93,6 +114,7 @@ class MyThread (threading.Thread,rb.Robot):
                                 if fire_end:
                                     fire_end = False
                                     break
+                            time.sleep(2)
                         self.queue.task_done()
                     if data in "exit":
                         print("退出监控员")
