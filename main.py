@@ -116,7 +116,7 @@ class action(rb.Robot):
     def map_items(self,convert_pos:list,da_items:dict):
         time.sleep(0.1)
         #print("check items_name:{0}".format(da_items["物品名"]))
-        _,x,y = self.findMultiColorInRegionFuzzy(da_items["基点"], da_items["偏移"], 85, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
+        _,x,y = self.findMultiColorInRegionFuzzy(da_items["基点"], da_items["偏移"], 82, convert_pos[0], convert_pos[1], convert_pos[2], convert_pos[3])
         if x != -1:
             print("found items_name:{0} x:{1} y:{2}".format(da_items["物品名"],x,y)) 
             return True
@@ -141,7 +141,7 @@ class action(rb.Robot):
         time.sleep(0.2)
         status = self.Found_do(da.utils["仓库操作"]["基点"],da.utils["仓库操作"]["偏移"], 
                             80,0, 0,1279,719,
-                            ischlik=1,timeout=10,
+                            ischlik=1,timeout=3,
                             name="仓库操作")
         if status == State.NOTMATCH:
             raise 
@@ -398,7 +398,7 @@ class action(rb.Robot):
                     return map_name
         return False
     #取图
-    def Get_map_ex(self,get_maps_count=12):
+    def Get_map_ex(self,get_maps_count=13):
         # status = self.Found_do(da.utils["西梁仓库管理员"]["基点"],da.utils["西梁仓库管理员"]["偏移"], 
         #                     80,0, 0,1279,719,
         #                     ischlik=2,timeout=10,
@@ -856,7 +856,7 @@ class action(rb.Robot):
                 return
             else:
                 time.sleep(0.5)
-                self.click(12,704)
+                self.click(60,704)
                 time.sleep(0.5)
 
     #前往麒麟山
@@ -1027,17 +1027,10 @@ class action(rb.Robot):
                 break
             else:
                 self.mask_(True)
-                self.click(1190,697)
+                self.click(1177,624)
                 time.sleep(0.5)
                 self.mask_(False)
-        while True:
-            if self.no_prop():
-                self.click(1220, 679)
-                time.sleep(0.5)
-                if not self.no_prop():
-                    break
-            else:
-                break
+
             
     #前往花果山
     def ToTheHGS(self):
@@ -1143,7 +1136,7 @@ class action(rb.Robot):
         self.tap_("大唐国境",5,79)
         time.sleep(0.5)
         self.mask_(True)
-        self.click(16,195)
+        self.click(69,203)
         time.sleep(0.5)
         self.mask_(False)
         while True:
@@ -1163,7 +1156,7 @@ class action(rb.Robot):
                 print("抵达五庄观")
                 break
             else:
-                self.click(1245,200)
+                self.click(1170,249)
                 time.sleep(0.2)
 
                 
@@ -1239,7 +1232,7 @@ class action(rb.Robot):
     def fire(self):
         #bfired = False
         while True:
-            status = self.Found_do(da.utils["自动战斗"]["基点"],da.utils["自动战斗"]["偏移"], 92, 1202,653,1254,710,ischlik=0,name="自动战斗",timeout=1)
+            status = self.Found_do(da.utils["自动战斗"]["基点"],da.utils["自动战斗"]["偏移"], 90, 1202,653,1254,710,ischlik=1,name="自动战斗",timeout=1)
             if status != status.OK:
                     break
             else:
@@ -1264,7 +1257,7 @@ class action(rb.Robot):
                     print("战斗结束")
                     status = self.Found_do(da.utils["战斗取消"]["基点"],da.utils["战斗取消"]["偏移"], 
                                         80,0, 0,1279,719,
-                                        ischlik=2,timeout=10,
+                                        ischlik=1,timeout=10,
                                         name="战斗取消")
                     if status == State.NOTMATCH:
                         raise 
@@ -1307,6 +1300,7 @@ class action(rb.Robot):
             if status==status.OK:
                 self.click(x1+5,y1+5)
                 self.click(x1+5,y1+5)
+                time.sleep(0.8)
                 bF=False
             else:
                 if bF:
@@ -2367,6 +2361,7 @@ def test_ToTheXLNG():
     Robot.quit()
 
 def test_orb(b_only_load_config=False):
+    bF = True
     start = time.time()
     q = queue.Queue()
     m1 = rh.MyThread(q)
@@ -2387,8 +2382,31 @@ def test_orb(b_only_load_config=False):
         #play by the maps
         Robot.Orb(b_only_load_config)
         b_only_load_config = False
-        time.sleep(2)
-        #store items
+        time.sleep(1)
+        # if bF:
+        #     bF = False
+        #     Robot.ToTheXLNG()
+        #     time.sleep(0.5)
+        #     Robot.mask_(True)
+        #     time.sleep(0.2)
+        #     status = Robot.Found_do(da.utils["西梁仓库管理员"]["基点"],da.utils["西梁仓库管理员"]["偏移"], 
+        #                         80,0, 0,1279,719,
+        #                         ischlik=1,timeout=10,
+        #                         name="西梁仓库管理员")
+        #     if status == State.NOTMATCH:
+        #         raise 
+        #     time.sleep(0.2)
+        #     status = Robot.Found_do(da.utils["仓库操作"]["基点"],da.utils["仓库操作"]["偏移"], 
+        #                         80,0, 0,1279,719,
+        #                         ischlik=1,timeout=10,
+        #                         name="仓库操作")
+        #     if status == State.NOTMATCH:
+        #         raise 
+        #     while True:
+        #         if Robot.rgb_array(da.cangku["仓库界面"])==State.OK:
+        #             break
+        #     Robot.mask_(False)
+        # else:
         Robot.mask_(True)
         Robot.save_the_prize()
         Robot.mask_(False)

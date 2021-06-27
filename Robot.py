@@ -10,6 +10,7 @@ from utils import *
 from numba import jit
 import data as da
 from func_timeout import FunctionTimedOut ,func_timeout
+import time
 
 
 
@@ -572,6 +573,7 @@ class Robot:
                     for _ in range(0,ischlik):
                         print("click")
                         self.click(x1+x,y1+y)
+                    time.sleep(0.8)
                 except:
                     pass
                 print("found {0} ==> x:{1} y:{2}".format(name,x,y))

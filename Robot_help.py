@@ -51,7 +51,7 @@ class MyThread (threading.Thread,rb.Robot):
     def fire(self):
         #bfired = False
         while True:
-            status = self.Found_do(da.utils["自动战斗"]["基点"],da.utils["自动战斗"]["偏移"], 92, 1202,653,1254,710,ischlik=0,name="自动战斗",timeout=1)
+            status = self.Found_do(da.utils["自动战斗"]["基点"],da.utils["自动战斗"]["偏移"], 90, 1202,653,1254,710,ischlik=0,name="自动战斗",timeout=1)
             if status != status.OK:
                     break
             else:
@@ -106,7 +106,7 @@ class MyThread (threading.Thread,rb.Robot):
                                     print("战斗结束")
                                     status = self.Found_do(da.utils["战斗取消"]["基点"],da.utils["战斗取消"]["偏移"], 
                                                         80,0, 0,1279,719,
-                                                        ischlik=2,timeout=10,
+                                                        ischlik=1,timeout=10,
                                                         name="战斗取消")
                                     if status == State.NOTMATCH:
                                         raise 
